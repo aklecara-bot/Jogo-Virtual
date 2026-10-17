@@ -3,48 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modo Carreira Manager - Light Theme & Ícones de Posição</title>
+  <title>Modo Carreira Manager - Layout Profissional</title>
+  
+  <!-- Fontes do Google: Outfit (Títulos/Destaques) e Inter (Dados/Texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brandGreen: '#10b981',
-            brandEmerald: '#059669',
-            brandDark: '#0f172a',
-            surfaceBg: '#f8fafc',
-            surfaceCard: '#ffffff'
-          }
-        }
-      }
-    }
-  </script>
+  <!-- Chart.js para Gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     body {
-      background-color: #f1f5f9;
-      color: #1e293b;
-      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-    }
-    /* Estilização dos ícones de chuteiras e luvas */
-    .icon-glove-yellow { color: #eab308; filter: drop-shadow(0 2px 4px rgba(234, 179, 8, 0.4)); }
-    .icon-boot-orange { color: #f97316; filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.35)); }
-    .icon-boot-blue { color: #2563eb; filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.35)); }
-    .icon-boot-red { color: #dc2626; filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.35)); }
-    .icon-boot-black { color: #1e293b; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)); }
-    .icon-boot-gray { color: #64748b; filter: drop-shadow(0 2px 3px rgba(100, 116, 139, 0.3)); }
-    /* Chuteira Dourada para o TOP 11 */
-    .icon-boot-gold {
-      color: #eab308;
-      background: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.7));
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
 
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Cores das Chuteiras e Luvas por Posição */
+    .icon-glove-yellow { color: #d97706; filter: drop-shadow(0 1px 2px rgba(217, 119, 6, 0.3)); }
+    .icon-boot-orange  { color: #ea580c; filter: drop-shadow(0 1px 2px rgba(234, 88, 12, 0.3)); }
+    .icon-boot-blue    { color: #2563eb; filter: drop-shadow(0 1px 2px rgba(37, 99, 235, 0.3)); }
+    .icon-boot-red     { color: #dc2626; filter: drop-shadow(0 1px 2px rgba(220, 38, 38, 0.3)); }
+    .icon-boot-black   { color: #0f172a; filter: drop-shadow(0 1px 2px rgba(15, 23, 42, 0.3)); }
+    .icon-boot-gray    { color: #64748b; filter: drop-shadow(0 1px 2px rgba(100, 116, 139, 0.3)); }
+    
+    /* Chuteira Dourada para o TOP 11 */
+    .icon-boot-gold {
+      color: #b45309;
+      filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.6));
+    }
+
+    /* Bandeira real com borda fina */
+    .country-flag {
+      display: inline-block;
+      width: 22px;
+      height: 15px;
+      object-fit: cover;
+      border-radius: 2px;
+      border: 1px solid rgba(15, 23, 42, 0.15);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+      vertical-align: middle;
+    }
+
+    /* Scrollbar sutil */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -53,47 +64,47 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- CABEÇALHO CLARO E ELEGANTE -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-3 shadow-sm">
+  <!-- CABEÇALHO SUPERIOR -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-3 shadow-xs">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
       
       <!-- Símbolo do Clube + Nome + Temporada -->
       <div class="flex items-center gap-3.5">
-        <div id="clubLogoContainer" class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shadow-sm">
+        <div id="clubLogoContainer" class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-xs">
           <img id="clubBadgeImg" src="" alt="Escudo" class="w-full h-full object-contain hidden" onerror="showDefaultLogo()">
-          <span id="clubDefaultBadge" class="text-xl font-black text-emerald-600">⚽</span>
+          <span id="clubDefaultBadge" class="text-xl font-bold text-slate-800">⚽</span>
         </div>
         <div>
-          <h1 class="text-lg font-black tracking-wide text-slate-900 uppercase flex items-center gap-2">
+          <h1 class="text-lg font-black tracking-tight text-slate-900 uppercase flex items-center gap-2">
             <span id="headerClubName">A carregar...</span>
-            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold" id="headerSeason">---</span>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-300 font-semibold" id="headerSeason">---</span>
           </h1>
-          <p class="text-xs text-slate-500 flex items-center gap-1.5" id="syncStatus">
+          <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5" id="syncStatus">
             <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-            Ligado à folha do Google Sheets
+            Ligado ao Google Sheets
           </p>
         </div>
       </div>
 
       <!-- Barra de Ações -->
       <div class="flex items-center flex-wrap gap-2">
-        <button onclick="loadFromGoogleSheets()" title="Puxar dados atualizados do Drive" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 text-xs font-bold flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-cloud-arrow-down"></i> Sincronizar Nuvem
+        <button onclick="loadFromGoogleSheets()" title="Puxar dados atualizados do Drive" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-cloud-arrow-down"></i> Sincronizar
         </button>
 
-        <button onclick="syncAllToCloud()" title="Guardar atletas e clube na folha de cálculo" class="px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-300 text-xs font-bold flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-cloud-arrow-up"></i> Guardar no Sheets
+        <button onclick="syncAllToCloud()" title="Guardar atletas e clube na folha de cálculo" class="px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-800 text-xs font-semibold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Nuvem
         </button>
 
-        <button onclick="openChangeClubModal()" class="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-shield-halved"></i> Trocar Clube / Escudo
+        <button onclick="openChangeClubModal()" class="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 text-xs font-semibold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-shield-halved"></i> Clube & Escudo
         </button>
 
-        <button onclick="openSeasonAdvanceModal()" class="px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 text-xs font-bold flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-calendar-plus"></i> Avançar Época
+        <button onclick="openSeasonAdvanceModal()" class="px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-xs font-semibold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-calendar-plus"></i> Nova Época
         </button>
 
-        <button onclick="exportData()" title="Descarregar Backup em JSON" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs">
+        <button onclick="exportData()" title="Descarregar Backup em JSON" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs">
           <i class="fa-solid fa-download"></i>
         </button>
       </div>
@@ -101,152 +112,190 @@
   </header>
 
   <!-- ABAS DE NAVEGAÇÃO -->
-  <nav class="bg-white/90 border-b border-slate-200 px-4">
-    <div class="max-w-7xl mx-auto flex gap-4 overflow-x-auto py-2">
-      <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 border-b-2 border-emerald-600 text-emerald-700 bg-emerald-50">
+  <nav class="bg-white border-b border-slate-200 px-4">
+    <div class="max-w-7xl mx-auto flex gap-2 overflow-x-auto py-2">
+      <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 border-slate-900 text-slate-900 bg-slate-100">
         <i class="fa-solid fa-chart-pie"></i> Visão Geral & Finanças
       </button>
-      <button onclick="switchTab('athletes')" id="tabBtn-athletes" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+      <button onclick="switchTab('athletes')" id="tabBtn-athletes" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50">
         <i class="fa-solid fa-users"></i> Atletas & Estatísticas
       </button>
-      <button onclick="switchTab('matches')" id="tabBtn-matches" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+      <button onclick="switchTab('matches')" id="tabBtn-matches" class="tab-btn px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 border-b-2 border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50">
         <i class="fa-solid fa-trophy"></i> Campeonatos & Resultados
       </button>
     </div>
   </nav>
 
-  <!-- ÁREA DE CONTEÚDO -->
+  <!-- CONTEÚDO PRINCIPAL -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
     <!-- ABA 1: VISÃO GERAL & FINANÇAS -->
     <section id="tab-dashboard" class="space-y-6">
+      
+      <!-- Cards Rápidos de Finanças -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm relative overflow-hidden">
-          <div class="text-xs text-slate-500 font-semibold">Verba de Transferências</div>
-          <div class="text-xl sm:text-2xl font-black text-emerald-600 mt-1" id="dashBudget">€ 0</div>
-          <div class="text-xs text-slate-400 mt-1">Inicial: <span id="dashInitialBudget">€ 0</span></div>
+        <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs relative overflow-hidden">
+          <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Verba de Transferências</div>
+          <div class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-heading" id="dashBudget">€ 0</div>
+          <div class="text-xs text-slate-500 mt-1 font-medium">Inicial: <span id="dashInitialBudget">€ 0</span></div>
           <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-vault"></i></div>
         </div>
 
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm relative overflow-hidden">
-          <div class="text-xs text-slate-500 font-semibold">Folha Salarial / Semanal</div>
-          <div class="text-xl sm:text-2xl font-black text-blue-600 mt-1" id="dashWage">€ 0</div>
-          <div class="text-xs text-slate-400 mt-1">Limite: <span id="dashWageBudget">€ 0</span></div>
+        <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs relative overflow-hidden">
+          <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Folha Salarial / Semanal</div>
+          <div class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-heading" id="dashWage">€ 0</div>
+          <div class="text-xs text-slate-500 mt-1 font-medium">Limite: <span id="dashWageBudget">€ 0</span></div>
           <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-money-bill-wave"></i></div>
         </div>
 
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm relative overflow-hidden">
-          <div class="text-xs text-slate-500 font-semibold">Média de Força (OVR)</div>
-          <div class="text-xl sm:text-2xl font-black text-amber-500 mt-1" id="dashAvgOvr">0.0</div>
-          <div class="text-xs text-slate-400 mt-1">Maior OVR: <span id="dashMaxOvr">0</span></div>
-          <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-bolt"></i></div>
+        <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs relative overflow-hidden">
+          <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Valor Total do Plantel</div>
+          <div class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-heading" id="dashTotalSquadValue">€ 0</div>
+          <div class="text-xs text-slate-500 mt-1 font-medium">Plantel: <span id="dashTotalSquad">0</span> jogadores</div>
+          <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-coins"></i></div>
         </div>
 
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm relative overflow-hidden">
-          <div class="text-xs text-slate-500 font-semibold">Média de Idade</div>
-          <div class="text-xl sm:text-2xl font-black text-indigo-600 mt-1" id="dashAvgAge">0.0</div>
-          <div class="text-xs text-slate-400 mt-1">Plantel Total: <span id="dashTotalSquad">0</span> atletas</div>
-          <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-user-group"></i></div>
+        <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs relative overflow-hidden">
+          <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Média de Força (OVR)</div>
+          <div class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-heading" id="dashAvgOvr">0.0</div>
+          <div class="text-xs text-slate-500 mt-1 font-medium">Média Idade: <span id="dashAvgAge">0.0</span> anos</div>
+          <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-bolt"></i></div>
         </div>
+      </div>
+
+      <!-- SEÇÃO DE GRÁFICOS INTERATIVOS -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Gráfico 1: Variação de Nacionalidades -->
+        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+              <i class="fa-solid fa-earth-americas text-emerald-600"></i> Nacionalidades do Plantel
+            </h3>
+            <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full" id="natCountLabel">0 países</span>
+          </div>
+          <div class="relative h-64 flex items-center justify-center">
+            <canvas id="nationalityChart"></canvas>
+            <div id="noNatChartData" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 font-medium italic hidden">
+              Nenhum atleta registado para exibir nacionalidades.
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico 2: Variação de Valor de Mercado por Setor -->
+        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+              <i class="fa-solid fa-chart-column text-indigo-600"></i> Valor de Mercado por Setor (€)
+            </h3>
+            <span class="text-xs font-semibold text-slate-500">Defesa • Meio • Ataque</span>
+          </div>
+          <div class="relative h-64 flex items-center justify-center">
+            <canvas id="sectorMarketChart"></canvas>
+            <div id="noSectorChartData" class="absolute inset-0 flex items-center justify-center text-xs text-slate-400 font-medium italic hidden">
+              Preencha valores de mercado nos atletas para ver o gráfico.
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Destaques Individuais -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-futbol"></i></div>
+        <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center text-xl"><i class="fa-solid fa-futbol"></i></div>
           <div>
-            <div class="text-xs text-slate-400 font-medium">Melhor Marcador</div>
-            <div class="font-bold text-slate-800 text-sm" id="bestScorer">-</div>
-            <div class="text-xs text-amber-600 font-bold" id="bestScorerGols">0 Golos</div>
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Melhor Marcador</div>
+            <div class="font-bold text-slate-900 text-sm truncate max-w-[130px]" id="bestScorer">-</div>
+            <div class="text-xs font-semibold text-amber-700" id="bestScorerGols">0 Golos</div>
           </div>
         </div>
 
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-handshake-angle"></i></div>
+        <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center text-xl"><i class="fa-solid fa-handshake-angle"></i></div>
           <div>
-            <div class="text-xs text-slate-400 font-medium">Líder de Assistências</div>
-            <div class="font-bold text-slate-800 text-sm" id="bestAssister">-</div>
-            <div class="text-xs text-blue-600 font-bold" id="bestAssisterCount">0 Ass.</div>
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Líder Assistências</div>
+            <div class="font-bold text-slate-900 text-sm truncate max-w-[130px]" id="bestAssister">-</div>
+            <div class="text-xs font-semibold text-blue-700" id="bestAssisterCount">0 Ass.</div>
           </div>
         </div>
 
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center text-xl"><i class="fa-solid fa-shield-halved"></i></div>
           <div>
-            <div class="text-xs text-slate-400 font-medium">Jogos Sem Sofrer (SSG)</div>
-            <div class="font-bold text-slate-800 text-sm" id="bestSsgPlayer">-</div>
-            <div class="text-xs text-emerald-600 font-bold" id="bestSsgCount">0 Jogos</div>
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Paredão (SSG)</div>
+            <div class="font-bold text-slate-900 text-sm truncate max-w-[130px]" id="bestSsgPlayer">-</div>
+            <div class="text-xs font-semibold text-emerald-700" id="bestSsgCount">0 Jogos</div>
           </div>
         </div>
 
-        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center gap-4">
-          <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-star"></i></div>
+        <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center text-xl"><i class="fa-solid fa-star"></i></div>
           <div>
-            <div class="text-xs text-slate-400 font-medium">Melhor Nota Média</div>
-            <div class="font-bold text-slate-800 text-sm" id="bestRatingPlayer">-</div>
-            <div class="text-xs text-purple-600 font-bold" id="bestRatingVal">0.00</div>
+            <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Melhor Nota Média</div>
+            <div class="font-bold text-slate-900 text-sm truncate max-w-[130px]" id="bestRatingPlayer">-</div>
+            <div class="text-xs font-semibold text-purple-700" id="bestRatingVal">0.00</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ABA 2: ATLETAS & ESTATÍSTICAS COM CHUTEIRAS COLORIDAS -->
+    <!-- ABA 2: ATLETAS & ESTATÍSTICAS -->
     <section id="tab-athletes" class="hidden space-y-4">
       
       <!-- Legenda Visual dos Ícones -->
-      <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex flex-wrap items-center gap-4 text-xs font-medium text-slate-600">
-        <span class="font-bold text-slate-800 uppercase text-[11px]"><i class="fa-solid fa-circle-info mr-1 text-emerald-600"></i> Legenda de Calçado:</span>
-        <span class="flex items-center gap-1"><i class="fa-solid fa-mitten icon-glove-yellow"></i> Goleiro (Luvas Amarelas)</span>
-        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-orange"></i> LD / LE / ME / MD / MEI (Laranja)</span>
-        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-blue"></i> Zagueiros (Azul)</span>
-        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-red"></i> MC / VOL (Vermelho)</span>
-        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-black"></i> ATA / SA (Preto)</span>
-        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-gray"></i> PD / PE (Cinza)</span>
-        <span class="flex items-center gap-1 font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-          <i class="fa-solid fa-shoe-prints icon-boot-gold"></i> Top 11 Mais Jogos (Chuteira Dourada)
+      <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-xs flex flex-wrap items-center gap-4 text-xs text-slate-700">
+        <span class="font-bold text-slate-900 uppercase text-[11px] flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-slate-400"></i> Calçado Tático:</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-mitten icon-glove-yellow"></i> Goleiro</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-orange"></i> Laterais / Meias Abertos</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-blue"></i> Zagueiros</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-red"></i> MC / VOL</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-black"></i> Centroavantes</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-gray"></i> Pontas</span>
+        <span class="flex items-center gap-1.5 font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+          <i class="fa-solid fa-shoe-prints icon-boot-gold"></i> Top 11 Mais Utilizados (Ouro)
         </span>
       </div>
 
       <!-- Filtros e Busca -->
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
         <div class="flex items-center gap-2 flex-wrap">
-          <button onclick="setPosFilter('TODOS')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white" data-pos="TODOS">Todos</button>
-          <button onclick="setPosFilter('GOL')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-pos="GOL">Goleiros</button>
-          <button onclick="setPosFilter('DEF')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-pos="DEF">Defesa</button>
-          <button onclick="setPosFilter('MEI')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-pos="MEI">Meio-Campo</button>
-          <button onclick="setPosFilter('ATA')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-pos="ATA">Ataque</button>
-          <input type="text" id="playerSearch" oninput="renderAthletesTable()" placeholder="Pesquisar atleta..." class="bg-slate-50 border border-slate-300 text-xs px-3 py-1.5 rounded-lg text-slate-800 focus:outline-none focus:border-emerald-500">
+          <button onclick="setPosFilter('TODOS')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white" data-pos="TODOS">Todos</button>
+          <button onclick="setPosFilter('GOL')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="GOL">Goleiros</button>
+          <button onclick="setPosFilter('DEF')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="DEF">Defesa</button>
+          <button onclick="setPosFilter('MEI')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="MEI">Meio-Campo</button>
+          <button onclick="setPosFilter('ATA')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="ATA">Ataque</button>
+          <input type="text" id="playerSearch" oninput="renderAthletesTable()" placeholder="Pesquisar por nome ou país..." class="bg-slate-50 border border-slate-300 text-xs px-3 py-1.5 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-800">
         </div>
 
-        <button onclick="openAthleteModal()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition">
+        <button onclick="openAthleteModal()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition">
           <i class="fa-solid fa-user-plus"></i> Novo Atleta
         </button>
       </div>
 
-      <!-- Tabela de Jogadores com Fundo Branco -->
-      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+      <!-- Tabela de Atletas -->
+      <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">
+            <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider border-b border-slate-200">
               <tr>
-                <th class="p-3">Nº</th>
-                <th class="p-3">Atleta / Nacionalidade</th>
-                <th class="p-3">Posição & Chuteira</th>
+                <th class="p-3 w-10 text-center">Nº</th>
+                <th class="p-3">Atleta</th>
+                <th class="p-3">Posição</th>
                 <th class="p-3">Idade</th>
                 <th class="p-3">OVR</th>
+                <th class="p-3">V. Mercado</th>
                 <th class="p-3 text-center">Jogos</th>
-                <th class="p-3 text-center text-amber-600 font-bold">Golos</th>
-                <th class="p-3 text-center text-blue-600 font-bold">Ass</th>
-                <th class="p-3 text-center text-emerald-600 font-bold">SSG</th>
-                <th class="p-3 text-center text-yellow-600 font-bold">CA</th>
-                <th class="p-3 text-center text-red-600 font-bold">CV</th>
-                <th class="p-3 text-center text-purple-600 font-bold">Nota Média</th>
+                <th class="p-3 text-center">Golos</th>
+                <th class="p-3 text-center">Ass</th>
+                <th class="p-3 text-center">SSG</th>
+                <th class="p-3 text-center">CA</th>
+                <th class="p-3 text-center">CV</th>
+                <th class="p-3 text-center">Nota Média</th>
                 <th class="p-3 text-right">Ações</th>
               </tr>
             </thead>
-            <tbody id="athletesTableBody" class="divide-y divide-slate-100 font-medium">
-              <!-- Preenchido via Google Sheets -->
-            </tbody>
+            <tbody id="athletesTableBody" class="divide-y divide-slate-100"></tbody>
           </table>
         </div>
       </div>
@@ -254,16 +303,26 @@
 
     <!-- ABA 3: CAMPEONATOS & RESULTADOS -->
     <section id="tab-matches" class="hidden space-y-6">
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+        
+        <!-- Seleção de Torneio + Imagem da Taça -->
         <div class="flex items-center gap-3">
-          <label class="text-xs text-slate-500 font-bold uppercase">Campeonato:</label>
-          <select id="champSelect" onchange="onChampSelectChange()" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold focus:border-emerald-500"></select>
-          <button onclick="openNewChampModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs border border-slate-300">
+          <div id="champTrophyPreview" class="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden">
+            <img id="trophyImg" src="" alt="Taça" class="w-full h-full object-contain hidden" onerror="this.classList.add('hidden'); document.getElementById('trophyDefaultIcon').classList.remove('hidden');">
+            <i id="trophyDefaultIcon" class="fa-solid fa-trophy text-amber-500 text-base"></i>
+          </div>
+
+          <div>
+            <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Campeonato Ativo:</label>
+            <select id="champSelect" onchange="onChampSelectChange()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-900 focus:border-slate-800"></select>
+          </div>
+
+          <button onclick="openNewChampModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 self-end">
             <i class="fa-solid fa-plus"></i> Novo Torneio
           </button>
         </div>
 
-        <button onclick="openMatchModal()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition">
+        <button onclick="openMatchModal()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition">
           <i class="fa-solid fa-clipboard-check"></i> Registar Resultado do Jogo
         </button>
       </div>
@@ -271,11 +330,11 @@
       <!-- Cards de Estatísticas do Torneio -->
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-3 text-center" id="champStatsCards"></div>
 
-      <!-- Lista de Jogos -->
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-        <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center justify-between">
-          <span><i class="fa-solid fa-clock-rotate-left text-emerald-600 mr-2"></i> Jogos Registados</span>
-          <span class="text-xs font-normal text-slate-400" id="matchesCountLabel">0 partidas</span>
+      <!-- Histórico de Partidas -->
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
+        <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center justify-between border-b border-slate-100 pb-2">
+          <span><i class="fa-solid fa-clock-rotate-left mr-2 text-slate-400"></i> Histórico de Jogos</span>
+          <span class="text-xs font-normal text-slate-500" id="matchesCountLabel">0 partidas</span>
         </h3>
         <div id="matchesList" class="space-y-3"></div>
       </div>
@@ -283,28 +342,30 @@
 
   </main>
 
+  <!-- ================= MODAIS ================= -->
+
   <!-- MODAL: REGISTAR PARTIDA -->
-  <div id="matchModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3">
+  <div id="matchModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-3">
     <div class="bg-white border border-slate-200 w-full max-w-3xl rounded-2xl shadow-xl max-h-[92vh] flex flex-col overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-        <h3 class="text-sm font-black uppercase text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-futbol text-emerald-600"></i> Registar Nova Partida
+        <h3 class="text-sm font-bold uppercase tracking-wide text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-futbol text-emerald-600"></i> Registar Partida
         </h3>
         <button onclick="closeMatchModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div class="p-5 overflow-y-auto space-y-6 flex-1">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
           <div>
-            <label class="text-[11px] text-slate-500 font-bold block mb-1">Campeonato</label>
-            <select id="matchModalChamp" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 font-semibold"></select>
+            <label class="text-[11px] font-semibold text-slate-600 block mb-1">Campeonato</label>
+            <select id="matchModalChamp" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-medium text-slate-900"></select>
           </div>
           <div>
-            <label class="text-[11px] text-slate-500 font-bold block mb-1">Adversário</label>
-            <input type="text" id="matchOpponent" placeholder="Ex: Real Madrid, Porto..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800">
+            <label class="text-[11px] font-semibold text-slate-600 block mb-1">Adversário</label>
+            <input type="text" id="matchOpponent" placeholder="Ex: Real Madrid, Porto..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-900">
           </div>
           <div>
-            <label class="text-[11px] text-slate-500 font-bold block mb-1">Mando de Campo</label>
-            <select id="matchLocation" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800">
+            <label class="text-[11px] font-semibold text-slate-600 block mb-1">Mando de Campo</label>
+            <select id="matchLocation" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-medium text-slate-900">
               <option value="CASA">Casa (Mandante)</option>
               <option value="FORA">Fora (Visitante)</option>
               <option value="NEUTRO">Campo Neutro</option>
@@ -314,48 +375,48 @@
 
         <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-around">
           <div class="text-center">
-            <span class="text-xs text-slate-500 block font-bold mb-1" id="matchModalMyClubName">O Meu Clube</span>
-            <input type="number" id="matchMyScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-emerald-400 rounded-xl text-emerald-700 focus:outline-none">
+            <span class="text-xs font-bold text-slate-700 block mb-1" id="matchModalMyClubName">O Meu Clube</span>
+            <input type="number" id="matchMyScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-slate-800 font-heading">
           </div>
-          <div class="text-xl font-black text-slate-400">X</div>
+          <div class="text-xl font-black text-slate-400 font-heading">VS</div>
           <div class="text-center">
-            <span class="text-xs text-slate-500 block font-bold mb-1">Adversário</span>
-            <input type="number" id="matchOppScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none">
+            <span class="text-xs font-bold text-slate-700 block mb-1">Adversário</span>
+            <input type="number" id="matchOppScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-slate-300 rounded-xl focus:outline-none focus:border-slate-800 font-heading">
           </div>
         </div>
 
         <!-- Golos Detalhados -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <label class="text-xs font-bold uppercase text-emerald-700 flex items-center gap-1.5">
-              <i class="fa-solid fa-bullseye"></i> Golos Marcados
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-bullseye text-emerald-600"></i> Marcadores de Golos
             </label>
-            <button type="button" onclick="addGoalDetailRow()" class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-xs font-bold border border-emerald-300 flex items-center gap-1">
+            <button type="button" onclick="addGoalDetailRow()" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 border border-slate-300 flex items-center gap-1">
               <i class="fa-solid fa-plus"></i> Adicionar Golo
             </button>
           </div>
           <div id="goalDetailsContainer" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <p class="text-xs text-slate-400 text-center py-2 italic" id="emptyGoalsMsg">Nenhum golo registado.</p>
+            <p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>
           </div>
         </div>
 
         <!-- Atuação Individual -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <label class="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5">
+            <label class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
               <i class="fa-solid fa-star text-amber-500"></i> Desempenho dos Atletas
             </label>
-            <span class="text-[11px] text-slate-400">Marque quem jogou</span>
+            <span class="text-[11px] text-slate-400 font-medium">Marque quem esteve em campo</span>
           </div>
           <div class="border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100 sticky top-0 text-[10px] uppercase text-slate-500">
+              <thead class="bg-slate-50 sticky top-0 text-[10px] uppercase font-bold text-slate-500">
                 <tr>
                   <th class="p-2 w-10 text-center">Jogou?</th>
                   <th class="p-2">Atleta</th>
                   <th class="p-2 w-20 text-center">Nota (0-10)</th>
-                  <th class="p-2 w-16 text-center">C. Amarelo</th>
-                  <th class="p-2 w-16 text-center">C. Vermelho</th>
+                  <th class="p-2 w-16 text-center">CA</th>
+                  <th class="p-2 w-16 text-center">CV</th>
                 </tr>
               </thead>
               <tbody id="matchAthletesPerformanceBody" class="divide-y divide-slate-100 bg-white"></tbody>
@@ -365,72 +426,37 @@
       </div>
 
       <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-end gap-2">
-        <button onclick="closeMatchModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-300">Cancelar</button>
-        <button onclick="saveMatchData()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm">Guardar Partida no Sheets</button>
+        <button onclick="closeMatchModal()" class="px-4 py-2 rounded-lg bg-slate-100 text-xs font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+        <button onclick="saveMatchData()" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs">Guardar Partida</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: TROCAR CLUBE E DEFINIR URL DO ESCUDO -->
-  <div id="changeClubModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 class="text-sm font-bold text-slate-900 uppercase flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-indigo-600"></i> Dados do Clube & Símbolo
-        </h3>
-        <button onclick="closeChangeClubModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block text-slate-600 mb-1 font-bold">Nome do Clube</label>
-          <input type="text" id="newClubNameInput" placeholder="Ex: FC Porto, Real Madrid, Benfica..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:border-indigo-500">
-        </div>
-        <div>
-          <label class="block text-slate-600 mb-1 font-bold">URL do Símbolo / Escudo da Equipa</label>
-          <input type="url" id="newClubLogoUrlInput" placeholder="https://exemplo.com/escudo.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:border-indigo-500">
-          <span class="text-[10px] text-slate-400">Cole o link direto da imagem (PNG, JPG ou SVG)</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-slate-600 mb-1 font-bold">Verba de Transf. (€)</label>
-            <input type="number" id="newClubBudgetInput" value="15000000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800">
-          </div>
-          <div>
-            <label class="block text-slate-600 mb-1 font-bold">Teto Salarial Semanal (€)</label>
-            <input type="number" id="newClubWageInput" value="180000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800">
-          </div>
-        </div>
-      </div>
-      <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
-        <button onclick="closeChangeClubModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-bold">Cancelar</button>
-        <button onclick="confirmChangeClub()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-sm">Confirmar Alteração</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: CADASTRAR / EDITAR ATLETA -->
-  <div id="athleteModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <!-- MODAL: CADASTRAR OU EDITAR ATLETA -->
+  <div id="athleteModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 w-full max-w-lg rounded-2xl shadow-xl p-5 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-        <h3 class="text-sm font-bold text-slate-900 uppercase" id="athleteModalTitle">Cadastrar Atleta</h3>
-        <button onclick="closeAthleteModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+        <h3 class="text-sm font-bold uppercase tracking-wide text-slate-900" id="athleteModalTitle">Cadastrar Atleta</h3>
+        <button onclick="closeAthleteModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <form id="athleteForm" onsubmit="saveAthlete(event)" class="space-y-3 text-xs">
         <input type="hidden" id="athleteEditId">
+        
         <div class="grid grid-cols-3 gap-2">
           <div class="col-span-2">
-            <label class="block text-slate-600 mb-1 font-bold">Nome do Atleta</label>
-            <input type="text" id="athName" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+            <label class="block mb-1 font-semibold text-slate-700">Nome do Atleta</label>
+            <input type="text" id="athName" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900 focus:outline-none focus:border-slate-800">
           </div>
           <div>
-            <label class="block text-slate-600 mb-1 font-bold">Nº Camisola</label>
-            <input type="number" id="athNumber" min="1" max="99" value="10" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+            <label class="block mb-1 font-semibold text-slate-700">Nº Camisola</label>
+            <input type="number" id="athNumber" min="1" max="99" value="10" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900 focus:outline-none focus:border-slate-800">
           </div>
         </div>
+
         <div class="grid grid-cols-3 gap-2">
           <div>
-            <label class="block text-slate-600 mb-1 font-bold">Posição</label>
-            <select id="athPos" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+            <label class="block mb-1 font-semibold text-slate-700">Posição</label>
+            <select id="athPos" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
               <option value="GOL">GOL (Goleiro)</option>
               <option value="ZAG">ZAG (Zagueiro)</option>
               <option value="LD">LD (Lateral Dir.)</option>
@@ -444,112 +470,249 @@
               <option value="PE">PE (Ponta Esquerda)</option>
               <option value="ATA">ATA (Centroavante)</option>
               <option value="SA">SA (Segundo Atacante)</option>
+              <option value="ATD">ATD (Atacante Dir.)</option>
+              <option value="ATE">ATE (Atacante Esq.)</option>
             </select>
           </div>
           <div>
-            <label class="block text-slate-600 mb-1 font-bold">Idade</label>
-            <input type="number" id="athAge" value="23" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+            <label class="block mb-1 font-semibold text-slate-700">Idade</label>
+            <input type="number" id="athAge" value="23" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
           </div>
           <div>
-            <label class="block text-slate-600 mb-1 font-bold">País (Sigla)</label>
-            <input type="text" id="athNat" value="POR" maxlength="3" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800 uppercase">
+            <label class="block mb-1 font-semibold text-slate-700">País (Sigla)</label>
+            <input type="text" id="athNat" value="BRA" maxlength="3" placeholder="BRA, POR..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold uppercase text-slate-900">
           </div>
         </div>
-        <div class="grid grid-cols-3 gap-2">
+
+        <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-slate-600 mb-1 font-bold">Força (OVR)</label>
-            <input type="number" id="athOvr" min="40" max="99" value="72" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800 font-bold text-amber-600">
+            <label class="block mb-1 font-semibold text-slate-700">Força Geral (OVR)</label>
+            <input type="number" id="athOvr" min="40" max="99" value="72" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
           </div>
           <div>
-            <label class="block text-slate-600 mb-1 font-bold">Função</label>
-            <select id="athRole" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+            <label class="block mb-1 font-semibold text-slate-700">Papel no Plantel</label>
+            <select id="athRole" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
               <option value="CRUCIAL">Crucial</option>
               <option value="IMPORTANTE" selected>Importante</option>
               <option value="RODIZIO">Rodízio</option>
               <option value="PROMESSA">Promessa</option>
             </select>
           </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-slate-600 mb-1 font-bold">Salário (€/sem)</label>
-            <input type="number" id="athWage" value="5000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+            <label class="block mb-1 font-semibold text-slate-700">Valor de Mercado (€)</label>
+            <input type="number" id="athMarketValue" value="5000000" min="0" step="50000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Salário Semanal (€)</label>
+            <input type="number" id="athWage" value="5000" min="0" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
           </div>
         </div>
+
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
-          <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 font-bold">Cancelar</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-sm">Guardar Atleta</button>
+          <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold text-white shadow-xs">Guardar Atleta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITAR ESTATÍSTICAS GERAIS DO ATLETA -->
+  <div id="statsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div>
+          <h3 class="text-sm font-bold uppercase tracking-wide text-slate-900">Corrigir Estatísticas</h3>
+          <p class="text-xs text-slate-500 font-medium" id="statsModalPlayerName">-</p>
+        </div>
+        <button onclick="closeStatsModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <form id="statsForm" onsubmit="saveAthleteStats(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="statsPlayerId">
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Total de Jogos</label>
+            <input type="number" id="statsMatches" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Nota Média (0 - 10)</label>
+            <input type="number" id="statsAvgRating" step="0.01" min="0" max="10" placeholder="6.50" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Golos</label>
+            <input type="number" id="statsGoals" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Assistências</label>
+            <input type="number" id="statsAssists" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">SSG (Sem Levar Golo)</label>
+            <input type="number" id="statsSsg" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Cartões Amarelos (CA)</label>
+            <input type="number" id="statsYellow" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Cartões Vermelhos (CV)</label>
+            <input type="number" id="statsRed" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+          <button type="button" onclick="closeStatsModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-semibold text-white shadow-xs">Atualizar Dados</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- MODAL: NOVO TORNEIO -->
-  <div id="champModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="champModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 w-full max-w-sm rounded-2xl shadow-xl p-5 space-y-4">
-      <h3 class="text-sm font-bold text-slate-900 uppercase">Novo Campeonato</h3>
+      <h3 class="text-sm font-bold uppercase tracking-wide text-slate-900 flex items-center gap-2">
+        <i class="fa-solid fa-trophy text-amber-500"></i> Novo Torneio
+      </h3>
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-600 mb-1 font-bold">Nome do Torneio</label>
-          <input type="text" id="newChampName" placeholder="Ex: Liga Portugal, Taça" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+          <label class="block mb-1 font-semibold text-slate-700">Nome do Torneio</label>
+          <input type="text" id="newChampName" placeholder="Ex: Liga Portugal, Taça..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
         </div>
         <div>
-          <label class="block text-slate-600 mb-1 font-bold">Formato</label>
-          <select id="newChampFormat" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
-            <option value="PONTOS">Pontos Corridos</option>
+          <label class="block mb-1 font-semibold text-slate-700">URL da Imagem da Taça</label>
+          <input type="url" id="newChampTrophyUrl" placeholder="https://exemplo.com/taca.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+          <span class="text-[10px] text-slate-400 block mt-0.5">Link direto da imagem do troféu</span>
+        </div>
+        <div>
+          <label class="block mb-1 font-semibold text-slate-700">Formato de Disputa</label>
+          <select id="newChampFormat" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+            <option value="PONTOS">Pontos Corridos (Liga)</option>
             <option value="MATA">Eliminatória / Taça</option>
           </select>
         </div>
       </div>
       <div class="flex justify-end gap-2">
-        <button onclick="closeNewChampModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-bold">Cancelar</button>
-        <button onclick="saveNewChamp()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs">Cadastrar</button>
+        <button onclick="closeNewChampModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+        <button onclick="saveNewChamp()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold text-white">Criar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TROCAR CLUBE E ESCUDO -->
+  <div id="changeClubModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="text-sm font-bold uppercase tracking-wide text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-indigo-600"></i> Clube & Escudo
+        </h3>
+        <button onclick="closeChangeClubModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block mb-1 font-semibold text-slate-700">Nome do Clube</label>
+          <input type="text" id="newClubNameInput" placeholder="Ex: FC Porto, Benfica, Real Madrid..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-medium text-slate-900 focus:outline-none focus:border-slate-800">
+        </div>
+        <div>
+          <label class="block mb-1 font-semibold text-slate-700">URL do Escudo da Equipa</label>
+          <input type="url" id="newClubLogoUrlInput" placeholder="https://exemplo.com/escudo.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-medium text-slate-900 focus:outline-none focus:border-slate-800">
+          <span class="text-[10px] text-slate-400 block mt-0.5">Link direto da imagem do emblema</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Verba Transf. (€)</label>
+            <input type="number" id="newClubBudgetInput" value="15000000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Teto Salarial (€/sem)</label>
+            <input type="number" id="newClubWageInput" value="180000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-semibold text-slate-900">
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <button onclick="closeChangeClubModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+        <button onclick="confirmChangeClub()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-xs">Confirmar</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL: AVANÇAR ÉPOCA -->
-  <div id="seasonAdvanceModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="seasonAdvanceModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
-      <h3 class="text-sm font-bold text-amber-700 uppercase flex items-center gap-2">
+      <h3 class="text-sm font-bold uppercase tracking-wide text-amber-800 flex items-center gap-2">
         <i class="fa-solid fa-calendar-check"></i> Virada de Época
       </h3>
-      <p class="text-xs text-slate-600 leading-relaxed">
+      <p class="text-xs text-slate-600 leading-relaxed font-normal">
         • A idade de todos os atletas aumenta em <strong>+1 ano</strong>.<br>
         • Os golos, assistências e notas médias são reiniciados para a nova época.<br>
         • O OVR atual torna-se a força inicial do novo ano.
       </p>
       <div class="text-xs">
-        <label class="block text-slate-600 mb-1 font-bold">Nome da Nova Época</label>
-        <input type="text" id="nextSeasonNameInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 font-bold">
+        <label class="block mb-1 font-semibold text-slate-700">Nome da Nova Época</label>
+        <input type="text" id="nextSeasonNameInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-bold text-slate-900">
       </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button onclick="closeSeasonAdvanceModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-bold">Cancelar</button>
-        <button onclick="confirmAdvanceSeason()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm">Confirmar</button>
+        <button onclick="closeSeasonAdvanceModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+        <button onclick="confirmAdvanceSeason()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 font-semibold text-white shadow-xs">Confirmar</button>
       </div>
     </div>
   </div>
 
-  <!-- JAVASCRIPT: LÓGICA DE ÍCONES, CHUTEIRAS E GOOGLE SHEETS -->
+  <!-- JAVASCRIPT: LÓGICA COMPLETA -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzefT1l9-in-oDcAAmsVm-4yWUboMYoDwAjfqTqi0LGTlHYlu9OmhTcPku1Ver-uPMC/exec";
-    const STORAGE_KEY = 'MODO_CARREIRA_FIFA_APP_LIGHT_V1';
+    const STORAGE_KEY = 'MODO_CARREIRA_FIFA_APP_V6_PRO_LAYOUT';
 
     const defaultState = {
       clubName: 'O Meu Clube',
-      clubLogoUrl: '', // URL do símbolo
+      clubLogoUrl: '',
       currentSeason: '2025/2026',
       budget: 0,
       initialBudget: 0,
       wageBudget: 0,
       currentChampId: 'c1',
       championships: [
-        { id: 'c1', name: 'Liga Principal', format: 'PONTOS' }
+        { id: 'c1', name: 'Liga Principal', format: 'PONTOS', trophyUrl: '' }
       ],
-      athletes: [], // Vazio: apenas os dados reais da planilha
+      athletes: [],
       matches: []
     };
 
     let state = loadState();
     let currentPosFilter = 'TODOS';
+    let nationalityChartInstance = null;
+    let sectorMarketChartInstance = null;
+
+    // Dicionário de Códigos de Países FIFA/ISO-3 para ISO-2
+    const countryIsoMap = {
+      'BRA': 'br', 'ESP': 'es', 'POR': 'pt', 'ARG': 'ar', 'FRA': 'fr', 'GER': 'de', 'ALE': 'de',
+      'ENG': 'gb-eng', 'ING': 'gb-eng', 'ITA': 'it', 'NED': 'nl', 'HOL': 'nl', 'BEL': 'be', 'URU': 'uy',
+      'COL': 'co', 'CHI': 'cl', 'PAR': 'py', 'ECU': 'ec', 'PER': 'pe', 'VEN': 've', 'BOL': 'bo',
+      'MEX': 'mx', 'USA': 'us', 'EUA': 'us', 'CAN': 'ca', 'CRO': 'hr', 'SRB': 'rs', 'SUI': 'ch',
+      'AUT': 'at', 'SWE': 'se', 'NOR': 'no', 'DEN': 'dk', 'DIN': 'dk', 'POL': 'pl', 'CZE': 'cz',
+      'TUR': 'tr', 'GRE': 'gr', 'UKR': 'ua', 'RUS': 'ru', 'SCO': 'gb-sct', 'WAL': 'gb-wls',
+      'IRL': 'ie', 'NIR': 'gb-nir', 'MAR': 'ma', 'SEN': 'sn', 'NGA': 'ng', 'GHA': 'gh', 'CIV': 'ci',
+      'CMR': 'cm', 'EGY': 'eg', 'ALG': 'dz', 'TUN': 'tn', 'RSA': 'za', 'JPN': 'jp', 'KOR': 'kr',
+      'AUS': 'au', 'NZL': 'nz', 'KSA': 'sa', 'QAT': 'qa', 'UAE': 'ae', 'IRN': 'ir', 'CHN': 'cn'
+    };
+
+    function getCountryFlagImg(natCode) {
+      if (!natCode) return `<span class="text-xs">🌐</span>`;
+      const clean = natCode.toUpperCase().trim();
+      const iso2 = countryIsoMap[clean] || clean.toLowerCase();
+      
+      return `<img src="https://flagcdn.com/24x18/${iso2}.png" alt="${clean}" title="${clean}" class="country-flag" onerror="this.onerror=null; this.outerHTML='<span class=\\'font-semibold text-[11px] text-slate-500\\'>${clean}</span>';">`;
+    }
 
     function loadState() {
       const data = localStorage.getItem(STORAGE_KEY);
@@ -583,61 +746,169 @@
       def.innerText = state.clubName ? state.clubName.charAt(0).toUpperCase() : '⚽';
     }
 
-    // ================= REGRAS DE ÍCONES DE POSIÇÃO E CHUTEIRAS =================
+    // ================= CHUTEIRAS E LUVAS =================
     function getPlayerShoeOrGloveIcon(player, isTop11) {
       const pos = (player.pos || '').toUpperCase().trim();
 
-      // Regra de Ouro: os 11 com mais jogos recebem Chuteira Dourada (ou Luva Dourada se for GOL)
       if (isTop11 && Number(player.matches) > 0) {
         if (pos === 'GOL') {
-          return `<span title="Top 11 Mais Jogos (Titular)" class="inline-flex items-center gap-1.5 font-bold"><i class="fa-solid fa-mitten text-amber-500 drop-shadow"></i> <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded border border-amber-300 font-bold">Top 11</span></span>`;
+          return `<span title="Top 11 Mais Utilizados" class="inline-flex items-center gap-1 font-semibold text-amber-800"><i class="fa-solid fa-mitten text-amber-600"></i> <span class="text-[9px] bg-amber-100 border border-amber-300 px-1 rounded font-bold">11</span></span>`;
         }
-        return `<span title="Top 11 Mais Jogos (Titular)" class="inline-flex items-center gap-1.5 font-bold"><i class="fa-solid fa-shoe-prints icon-boot-gold"></i> <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded border border-amber-300 font-bold">Top 11</span></span>`;
+        return `<span title="Top 11 Mais Utilizados" class="inline-flex items-center gap-1 font-semibold text-amber-800"><i class="fa-solid fa-shoe-prints icon-boot-gold"></i> <span class="text-[9px] bg-amber-100 border border-amber-300 px-1 rounded font-bold">11</span></span>`;
       }
 
-      // 1. Luvas Amarelas para Goleiros
-      if (pos === 'GOL') {
-        return `<i class="fa-solid fa-mitten icon-glove-yellow text-sm" title="Guarda-Redes (Luva Amarela)"></i>`;
-      }
+      if (pos === 'GOL') return `<i class="fa-solid fa-mitten icon-glove-yellow text-sm" title="Goleiro"></i>`;
+      if (['LD', 'LE', 'LAT'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Lateral"></i>`;
+      if (['ZAG', 'DEF'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-blue text-sm" title="Zagueiro"></i>`;
+      if (['ME', 'MD', 'MEI'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Meia Aberto / Armador"></i>`;
+      if (['MC', 'VOL'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-red text-sm" title="Volante / Central"></i>`;
+      if (['ATA', 'SA', 'ATD', 'ATE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-black text-sm" title="Centroavante"></i>`;
+      if (['PD', 'PE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-gray text-sm" title="Ponta"></i>`;
 
-      // 2. Chuteira Laranja para Laterais (LD, LE)
-      if (pos === 'LD' || pos === 'LE') {
-        return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Lateral (Chuteira Laranja)"></i>`;
-      }
-
-      // 3. Chuteira Azul para Zagueiros (ZAG, DEF)
-      if (pos === 'ZAG' || pos === 'DEF') {
-        return `<i class="fa-solid fa-shoe-prints icon-boot-blue text-sm" title="Zagueiro (Chuteira Azul)"></i>`;
-      }
-
-      // 4. Chuteiras Laranjas para ME, MD e MEI
-      if (['ME', 'MD', 'MEI'].includes(pos)) {
-        return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Meia (Chuteira Laranja)"></i>`;
-      }
-
-      // 5. Chuteiras Vermelhas para MC e VOL
-      if (['MC', 'VOL'].includes(pos)) {
-        return `<i class="fa-solid fa-shoe-prints icon-boot-red text-sm" title="Volante / Central (Chuteira Vermelha)"></i>`;
-      }
-
-      // 6. Chuteiras Pretas para Atacantes (ATA, SA, ATD, ATE)
-      if (['ATA', 'SA', 'ATD', 'ATE'].includes(pos)) {
-        return `<i class="fa-solid fa-shoe-prints icon-boot-black text-sm" title="Avançado (Chuteira Preta)"></i>`;
-      }
-
-      // 7. Chuteiras Cinzas para Pontas (PD, PE)
-      if (['PD', 'PE'].includes(pos)) {
-        return `<i class="fa-solid fa-shoe-prints icon-boot-gray text-sm" title="Ponta (Chuteira Cinza)"></i>`;
-      }
-
-      // Padrão genérico
       return `<i class="fa-solid fa-shoe-prints text-slate-400 text-sm"></i>`;
+    }
+
+    // ================= GRÁFICOS (CHART.JS) =================
+    function renderCharts() {
+      // 1. Gráfico de Nacionalidades
+      const natMap = {};
+      state.athletes.forEach(a => {
+        const nat = (a.nat || 'OUT').toUpperCase().trim();
+        natMap[nat] = (natMap[nat] || 0) + 1;
+      });
+
+      const natLabels = Object.keys(natMap);
+      const natData = Object.values(natMap);
+      document.getElementById('natCountLabel').innerText = `${natLabels.length} nacionalidades`;
+
+      const natCanvas = document.getElementById('nationalityChart');
+      const noNatMsg = document.getElementById('noNatChartData');
+
+      if (natLabels.length === 0) {
+        noNatMsg.classList.remove('hidden');
+        if (nationalityChartInstance) nationalityChartInstance.destroy();
+      } else {
+        noNatMsg.classList.add('hidden');
+        if (nationalityChartInstance) nationalityChartInstance.destroy();
+
+        nationalityChartInstance = new Chart(natCanvas, {
+          type: 'doughnut',
+          data: {
+            labels: natLabels,
+            datasets: [{
+              data: natData,
+              backgroundColor: [
+                '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
+                '#ec4899', '#06b6d4', '#64748b', '#14b8a6', '#f97316'
+              ],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { 
+                position: 'bottom', 
+                labels: { 
+                  boxWidth: 10, 
+                  font: { size: 11, family: 'Inter', weight: '500' },
+                  color: '#1e293b'
+                } 
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Gráfico de Valor de Mercado por Setor
+      let totalDef = 0, totalMei = 0, totalAta = 0;
+      let countDef = 0, countMei = 0, countAta = 0;
+
+      state.athletes.forEach(a => {
+        const val = Number(a.marketValue) || 0;
+        const pos = (a.pos || '').toUpperCase().trim();
+
+        if (['GOL', 'LAT', 'LD', 'LE', 'ZAG', 'DEF'].includes(pos)) {
+          totalDef += val;
+          countDef++;
+        } else if (['VOL', 'MC', 'MEI', 'ME', 'MD'].includes(pos)) {
+          totalMei += val;
+          countMei++;
+        } else if (['PE', 'PD', 'ATA', 'ATD', 'ATE', 'SA'].includes(pos)) {
+          totalAta += val;
+          countAta++;
+        }
+      });
+
+      const sectorCanvas = document.getElementById('sectorMarketChart');
+      const noSectorMsg = document.getElementById('noSectorChartData');
+
+      if (state.athletes.length === 0) {
+        noSectorMsg.classList.remove('hidden');
+        if (sectorMarketChartInstance) sectorMarketChartInstance.destroy();
+      } else {
+        noSectorMsg.classList.add('hidden');
+        if (sectorMarketChartInstance) sectorMarketChartInstance.destroy();
+
+        sectorMarketChartInstance = new Chart(sectorCanvas, {
+          type: 'bar',
+          data: {
+            labels: [
+              `Defesa (${countDef})`,
+              `Meio-Campo (${countMei})`,
+              `Ataque (${countAta})`
+            ],
+            datasets: [{
+              label: 'Valor Total (€)',
+              data: [totalDef, totalMei, totalAta],
+              backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'],
+              borderRadius: 6,
+              maxBarThickness: 45
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    return '€ ' + Number(ctx.raw).toLocaleString('pt-PT');
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                ticks: { color: '#475569', font: { family: 'Inter', weight: '600' } },
+                grid: { display: false }
+              },
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: '#64748b',
+                  font: { family: 'Inter' },
+                  callback: function(value) {
+                    if (value >= 1000000) return '€' + (value / 1000000).toFixed(1) + 'M';
+                    if (value >= 1000) return '€' + (value / 1000).toFixed(0) + 'K';
+                    return '€' + value;
+                  }
+                },
+                grid: { color: '#f1f5f9' }
+              }
+            }
+          }
+        });
+      }
     }
 
     // ================= SINCRONIZAÇÃO GOOGLE SHEETS =================
     async function loadFromGoogleSheets() {
       const statusEl = document.getElementById('syncStatus');
-      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A ler a folha de cálculo...`;
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A ler dados da folha...`;
 
       try {
         const response = await fetch(`${API_URL}?action=getAll`);
@@ -661,10 +932,11 @@
               name: a.nome || 'Sem Nome',
               pos: a.pos || 'MEI',
               age: Number(a.idade) || 0,
-              nat: a.nat || '---',
+              nat: a.nat || 'BRA',
               role: a.role || 'RODIZIO',
               initialOvr: Number(a.ovr) || 70,
               currentOvr: Number(a.ovr) || 70,
+              marketValue: Number(a.valor_mercado || a.marketValue) || 1000000,
               wage: Number(a.salario) || 0,
               matches: Number(a.jogos) || 0,
               goals: Number(a.gols) || 0,
@@ -678,12 +950,21 @@
             state.athletes = [];
           }
 
+          if (Array.isArray(remote.campeonatos) && remote.campeonatos.length > 0) {
+            state.championships = remote.campeonatos.map(c => ({
+              id: c.id,
+              name: c.nome,
+              format: c.formato,
+              trophyUrl: c.trophyUrl || c.taca_url || ''
+            }));
+          }
+
           if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
           saveState();
         }
       } catch (err) {
         console.warn('Erro ao ligar ao Google Sheets:', err);
-        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Sem ligação à folha`;
+        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Modo Offline`;
       }
     }
 
@@ -698,7 +979,8 @@
             verba: state.budget,
             teto_salarial: state.wageBudget
           },
-          atletas: state.athletes
+          atletas: state.athletes,
+          campeonatos: state.championships
         }
       };
 
@@ -715,18 +997,22 @@
       }
     }
 
-    // ================= INTERFACE & ATUALIZAÇÕES =================
+    // ================= ABAS & RENDERIZAÇÃO =================
     function switchTab(tab) {
       document.querySelectorAll('section[id^="tab-"]').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('border-emerald-600', 'text-emerald-700', 'bg-emerald-50');
+        btn.classList.remove('border-slate-900', 'text-slate-900', 'bg-slate-100');
         btn.classList.add('border-transparent', 'text-slate-600');
       });
 
       document.getElementById('tab-' + tab).classList.remove('hidden');
       const activeBtn = document.getElementById('tabBtn-' + tab);
-      activeBtn.classList.add('border-emerald-600', 'text-emerald-700', 'bg-emerald-50');
+      activeBtn.classList.add('border-slate-900', 'text-slate-900', 'bg-slate-100');
       activeBtn.classList.remove('border-transparent', 'text-slate-600');
+
+      if (tab === 'dashboard') {
+        renderCharts();
+      }
     }
 
     function updateUI() {
@@ -736,6 +1022,7 @@
 
       updateClubLogo();
       renderDashboard();
+      renderCharts();
       renderAthletesTable();
       renderChampionshipsSelect();
       renderChampStats();
@@ -750,16 +1037,17 @@
       document.getElementById('dashWage').innerText = '€ ' + totalWage.toLocaleString('pt-PT');
       document.getElementById('dashWageBudget').innerText = '€ ' + Number(state.wageBudget).toLocaleString('pt-PT');
 
+      const totalSquadValue = state.athletes.reduce((acc, p) => acc + (Number(p.marketValue) || 0), 0);
+      document.getElementById('dashTotalSquadValue').innerText = '€ ' + totalSquadValue.toLocaleString('pt-PT');
+
       const totalSquad = state.athletes.length;
       document.getElementById('dashTotalSquad').innerText = totalSquad;
 
       if (totalSquad > 0) {
         const avgOvr = (state.athletes.reduce((acc, p) => acc + Number(p.currentOvr), 0) / totalSquad).toFixed(1);
-        const maxOvr = Math.max(...state.athletes.map(p => Number(p.currentOvr)));
         const avgAge = (state.athletes.reduce((acc, p) => acc + Number(p.age), 0) / totalSquad).toFixed(1);
 
         document.getElementById('dashAvgOvr').innerText = avgOvr;
-        document.getElementById('dashMaxOvr').innerText = maxOvr;
         document.getElementById('dashAvgAge').innerText = avgAge;
 
         const sortedScorers = [...state.athletes].sort((a,b) => b.goals - a.goals);
@@ -785,7 +1073,6 @@
         }
       } else {
         document.getElementById('dashAvgOvr').innerText = '0.0';
-        document.getElementById('dashMaxOvr').innerText = '0';
         document.getElementById('dashAvgAge').innerText = '0.0';
         document.getElementById('bestScorer').innerText = '-';
         document.getElementById('bestScorerGols').innerText = '0 Golos';
@@ -802,19 +1089,19 @@
       currentPosFilter = pos;
       document.querySelectorAll('.pos-filter-btn').forEach(btn => {
         if(btn.dataset.pos === pos) {
-          btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white';
+          btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white';
         } else {
-          btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200';
+          btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200';
         }
       });
       renderAthletesTable();
     }
 
+    // ================= TABELA DE ATLETAS =================
     function renderAthletesTable() {
       const tbody = document.getElementById('athletesTableBody');
       const query = (document.getElementById('playerSearch')?.value || '').toLowerCase();
 
-      // Identifica os IDs dos 11 atletas com mais jogos
       const top11Ids = [...state.athletes]
         .filter(a => Number(a.matches) > 0)
         .sort((a, b) => b.matches - a.matches)
@@ -822,59 +1109,76 @@
         .map(a => a.id);
 
       let list = state.athletes.filter(p => {
-        const matchesQuery = p.name.toLowerCase().includes(query) || p.nat.toLowerCase().includes(query);
+        const matchesQuery = p.name.toLowerCase().includes(query) || (p.nat || '').toLowerCase().includes(query);
         if (currentPosFilter === 'TODOS') return matchesQuery;
         if (currentPosFilter === 'GOL') return matchesQuery && p.pos === 'GOL';
-        if (currentPosFilter === 'DEF') return matchesQuery && ['ZAG','LD','LE','DEF'].includes(p.pos);
+        if (currentPosFilter === 'DEF') return matchesQuery && ['ZAG','LD','LE','LAT','DEF'].includes(p.pos);
         if (currentPosFilter === 'MEI') return matchesQuery && ['VOL','MC','MEI','ME','MD'].includes(p.pos);
-        if (currentPosFilter === 'ATA') return matchesQuery && ['ATA','PE','PD','SA'].includes(p.pos);
+        if (currentPosFilter === 'ATA') return matchesQuery && ['ATA','PE','PD','SA','ATD','ATE'].includes(p.pos);
         return matchesQuery;
       });
 
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="13" class="p-8 text-center text-slate-400 italic">Nenhum atleta encontrado na folha de cálculo.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="14" class="p-8 text-center text-xs text-slate-400 font-medium italic">Nenhum atleta registado.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = list.map(p => {
         const isTop11 = top11Ids.includes(p.id);
         const iconHtml = getPlayerShoeOrGloveIcon(p, isTop11);
+        const flagHtml = getCountryFlagImg(p.nat);
         const avgRating = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(2) : '-';
+        const formattedMarketValue = Number(p.marketValue || 0).toLocaleString('pt-PT');
 
         return `
-          <tr class="hover:bg-slate-50 transition ${isTop11 ? 'bg-amber-50/40' : ''}">
-            <td class="p-3 text-slate-400 font-mono font-bold">${p.number || '-'}</td>
+          <tr class="hover:bg-slate-50 transition ${isTop11 ? 'bg-amber-50/50' : ''}">
+            <td class="p-3 text-center font-mono font-bold text-slate-400">${p.number || '-'}</td>
             <td class="p-3">
-              <div class="font-bold text-slate-900 text-xs">${p.name}</div>
-              <div class="text-[10px] text-slate-400 uppercase tracking-wider">${p.nat} • ${p.role}</div>
+              <div class="flex items-center gap-2.5">
+                ${flagHtml}
+                <div>
+                  <div class="font-bold text-slate-900 text-xs">${p.name}</div>
+                  <div class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">${p.role}</div>
+                </div>
+              </div>
             </td>
             <td class="p-3">
               <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">${p.pos}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${p.pos}</span>
                 ${iconHtml}
               </div>
             </td>
-            <td class="p-3 text-slate-600">${p.age} anos</td>
+            <td class="p-3 text-slate-600 font-medium">${p.age} anos</td>
             <td class="p-3 font-bold text-slate-900">${p.currentOvr}</td>
-            <td class="p-3 text-center text-slate-700 font-semibold">${p.matches}</td>
-            <td class="p-3 text-center font-bold text-amber-600">${p.goals}</td>
-            <td class="p-3 text-center font-bold text-blue-600">${p.assists}</td>
-            <td class="p-3 text-center text-emerald-600 font-bold">${p.ssg}</td>
-            <td class="p-3 text-center text-yellow-600 font-bold">${p.yellow}</td>
-            <td class="p-3 text-center text-red-600 font-bold">${p.red}</td>
-            <td class="p-3 text-center font-bold text-purple-600">${avgRating}</td>
-            <td class="p-3 text-right space-x-1">
-              <button onclick="editAthlete(${p.id})" class="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
-              <button onclick="deleteAthlete(${p.id})" class="p-1.5 rounded bg-red-50 hover:bg-red-100 text-red-600 border border-red-200" title="Remover"><i class="fa-solid fa-trash"></i></button>
+            <td class="p-3 font-semibold text-slate-900">€ ${formattedMarketValue}</td>
+            <td class="p-3 text-center text-slate-700 font-medium">${p.matches}</td>
+            <td class="p-3 text-center font-bold text-amber-700">${p.goals}</td>
+            <td class="p-3 text-center font-bold text-blue-700">${p.assists}</td>
+            <td class="p-3 text-center font-bold text-emerald-700">${p.ssg}</td>
+            <td class="p-3 text-center font-bold text-yellow-600">${p.yellow}</td>
+            <td class="p-3 text-center font-bold text-red-600">${p.red}</td>
+            <td class="p-3 text-center font-bold text-purple-700">${avgRating}</td>
+            <td class="p-3 text-right space-x-1 whitespace-nowrap">
+              <button onclick="openStatsModal(${p.id})" class="p-1.5 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-semibold" title="Corrigir Estatísticas">
+                <i class="fa-solid fa-chart-simple"></i>
+              </button>
+              <button onclick="editAthlete(${p.id})" class="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200" title="Editar Atleta">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button onclick="deleteAthlete(${p.id})" class="p-1.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200" title="Remover">
+                <i class="fa-solid fa-trash"></i>
+              </button>
             </td>
           </tr>
         `;
       }).join('');
     }
 
+    // ================= MODAL ATLETA =================
     function openAthleteModal() {
       document.getElementById('athleteForm').reset();
       document.getElementById('athleteEditId').value = '';
+      document.getElementById('athMarketValue').value = 5000000;
       document.getElementById('athleteModalTitle').innerText = 'Cadastrar Atleta';
       document.getElementById('athleteModal').classList.remove('hidden');
     }
@@ -891,9 +1195,10 @@
       document.getElementById('athNumber').value = p.number;
       document.getElementById('athPos').value = p.pos;
       document.getElementById('athAge').value = p.age;
-      document.getElementById('athNat').value = p.nat;
+      document.getElementById('athNat').value = p.nat || 'BRA';
       document.getElementById('athOvr').value = p.currentOvr;
       document.getElementById('athRole').value = p.role;
+      document.getElementById('athMarketValue').value = p.marketValue || 0;
       document.getElementById('athWage').value = p.wage;
       document.getElementById('athleteModalTitle').innerText = 'Editar Atleta';
       document.getElementById('athleteModal').classList.remove('hidden');
@@ -903,6 +1208,8 @@
       e.preventDefault();
       const editId = document.getElementById('athleteEditId').value;
       const ovr = Number(document.getElementById('athOvr').value);
+      const marketValue = Number(document.getElementById('athMarketValue').value) || 0;
+      const nat = document.getElementById('athNat').value.toUpperCase().trim() || 'BRA';
 
       if (editId) {
         const p = state.athletes.find(a => a.id === Number(editId));
@@ -910,9 +1217,10 @@
         p.number = Number(document.getElementById('athNumber').value);
         p.pos = document.getElementById('athPos').value;
         p.age = Number(document.getElementById('athAge').value);
-        p.nat = document.getElementById('athNat').value.toUpperCase();
+        p.nat = nat;
         p.currentOvr = ovr;
         p.role = document.getElementById('athRole').value;
+        p.marketValue = marketValue;
         p.wage = Number(document.getElementById('athWage').value);
       } else {
         const newPlayer = {
@@ -921,10 +1229,11 @@
           number: Number(document.getElementById('athNumber').value),
           pos: document.getElementById('athPos').value,
           age: Number(document.getElementById('athAge').value),
-          nat: document.getElementById('athNat').value.toUpperCase(),
+          nat: nat,
           role: document.getElementById('athRole').value,
           initialOvr: ovr,
           currentOvr: ovr,
+          marketValue: marketValue,
           wage: Number(document.getElementById('athWage').value),
           matches: 0,
           goals: 0,
@@ -949,7 +1258,59 @@
       }
     }
 
-    // ================= CAMPEONATOS & PONTOS =================
+    // ================= MODAL ESTATÍSTICAS =================
+    function openStatsModal(playerId) {
+      const p = state.athletes.find(a => a.id === playerId);
+      if (!p) return;
+
+      document.getElementById('statsPlayerId').value = p.id;
+      document.getElementById('statsModalPlayerName').innerText = `${p.name} (${p.pos}) - OVR ${p.currentOvr}`;
+      document.getElementById('statsMatches').value = p.matches;
+      document.getElementById('statsGoals').value = p.goals;
+      document.getElementById('statsAssists').value = p.assists;
+      document.getElementById('statsSsg').value = p.ssg;
+      document.getElementById('statsYellow').value = p.yellow;
+      document.getElementById('statsRed').value = p.red;
+      
+      const currentAvg = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(2) : '6.50';
+      document.getElementById('statsAvgRating').value = currentAvg;
+
+      document.getElementById('statsModal').classList.remove('hidden');
+    }
+
+    function closeStatsModal() {
+      document.getElementById('statsModal').classList.add('hidden');
+    }
+
+    function saveAthleteStats(e) {
+      e.preventDefault();
+      const pId = Number(document.getElementById('statsPlayerId').value);
+      const p = state.athletes.find(a => a.id === pId);
+      if (!p) return;
+
+      const matches = Number(document.getElementById('statsMatches').value) || 0;
+      const goals = Number(document.getElementById('statsGoals').value) || 0;
+      const assists = Number(document.getElementById('statsAssists').value) || 0;
+      const ssg = Number(document.getElementById('statsSsg').value) || 0;
+      const yellow = Number(document.getElementById('statsYellow').value) || 0;
+      const red = Number(document.getElementById('statsRed').value) || 0;
+      const avgRating = Number(document.getElementById('statsAvgRating').value) || 0;
+
+      p.matches = matches;
+      p.goals = goals;
+      p.assists = assists;
+      p.ssg = ssg;
+      p.yellow = yellow;
+      p.red = red;
+      p.ratingSum = matches > 0 ? (avgRating * matches) : 0;
+
+      closeStatsModal();
+      saveState();
+      syncAllToCloud();
+      alert(`Estatísticas de ${p.name} atualizadas!`);
+    }
+
+    // ================= CAMPEONATOS & TAÇAS =================
     function renderChampionshipsSelect() {
       const select = document.getElementById('champSelect');
       const modalSelect = document.getElementById('matchModalChamp');
@@ -962,16 +1323,34 @@
         state.currentChampId = state.championships[0].id;
       }
       select.value = state.currentChampId;
+      updateTrophyDisplay();
     }
 
     function onChampSelectChange() {
       state.currentChampId = document.getElementById('champSelect').value;
+      updateTrophyDisplay();
       renderChampStats();
       renderMatchesHistory();
     }
 
+    function updateTrophyDisplay() {
+      const activeChamp = state.championships.find(c => c.id === state.currentChampId);
+      const img = document.getElementById('trophyImg');
+      const def = document.getElementById('trophyDefaultIcon');
+
+      if (activeChamp && activeChamp.trophyUrl && activeChamp.trophyUrl.trim() !== '') {
+        img.src = activeChamp.trophyUrl;
+        img.classList.remove('hidden');
+        def.classList.add('hidden');
+      } else {
+        img.classList.add('hidden');
+        def.classList.remove('hidden');
+      }
+    }
+
     function openNewChampModal() {
       document.getElementById('newChampName').value = '';
+      document.getElementById('newChampTrophyUrl').value = '';
       document.getElementById('champModal').classList.remove('hidden');
     }
     function closeNewChampModal() {
@@ -979,13 +1358,16 @@
     }
     function saveNewChamp() {
       const name = document.getElementById('newChampName').value.trim();
+      const trophyUrl = document.getElementById('newChampTrophyUrl').value.trim();
       const format = document.getElementById('newChampFormat').value;
+
       if (!name) return alert('Insira o nome do campeonato');
-      const newC = { id: 'c_' + Date.now(), name, format };
+      const newC = { id: 'c_' + Date.now(), name, format, trophyUrl };
       state.championships.push(newC);
       state.currentChampId = newC.id;
       closeNewChampModal();
       saveState();
+      syncAllToCloud();
     }
 
     function renderChampStats() {
@@ -1008,44 +1390,44 @@
       const aproveitamento = games > 0 ? ((points / (games * 3)) * 100).toFixed(0) : 0;
 
       container.innerHTML = `
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
-          <div class="text-[10px] text-slate-400 font-bold uppercase">Pontos</div>
-          <div class="text-2xl font-black text-emerald-600">${points}</div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Pontos</div>
+          <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${points}</div>
         </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
-          <div class="text-[10px] text-slate-400 font-bold uppercase">Jogos</div>
-          <div class="text-2xl font-black text-slate-800">${games}</div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Jogos</div>
+          <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${games}</div>
         </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
-          <div class="text-[10px] text-slate-400 font-bold uppercase">V / E / D</div>
-          <div class="text-xl font-bold text-slate-700">${wins} / ${draws} / ${losses}</div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">V / E / D</div>
+          <div class="text-base sm:text-lg font-bold text-slate-800 font-heading mt-1">${wins}/${draws}/${losses}</div>
         </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
-          <div class="text-[10px] text-slate-400 font-bold uppercase">Golos Pró</div>
-          <div class="text-2xl font-black text-amber-600">${gp}</div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Golos Pró</div>
+          <div class="text-xl sm:text-2xl font-black text-amber-700 font-heading">${gp}</div>
         </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
-          <div class="text-[10px] text-slate-400 font-bold uppercase">Golos Contra</div>
-          <div class="text-2xl font-black text-red-600">${gc}</div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Golos Contra</div>
+          <div class="text-xl sm:text-2xl font-black text-red-600 font-heading">${gc}</div>
         </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
-          <div class="text-[10px] text-slate-400 font-bold uppercase">Saldo</div>
-          <div class="text-2xl font-black ${gd >= 0 ? 'text-emerald-600' : 'text-red-600'}">${gd > 0 ? '+'+gd : gd}</div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Saldo</div>
+          <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${gd > 0 ? '+'+gd : gd}</div>
         </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
-          <div class="text-[10px] text-slate-400 font-bold uppercase">Aprov.</div>
-          <div class="text-2xl font-black text-purple-600">${aproveitamento}%</div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Aproveitamento</div>
+          <div class="text-xl sm:text-2xl font-black text-purple-700 font-heading">${aproveitamento}%</div>
         </div>
       `;
     }
 
-    // ================= MODAL DE PARTIDA =================
+    // ================= MODAL PARTIDA =================
     function openMatchModal() {
       document.getElementById('matchOpponent').value = '';
       document.getElementById('matchMyScore').value = 0;
       document.getElementById('matchOppScore').value = 0;
       document.getElementById('goalDetailsContainer').innerHTML = `
-        <p class="text-xs text-slate-400 text-center py-2 italic" id="emptyGoalsMsg">Nenhum golo registado.</p>
+        <p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>
       `;
       renderMatchAthletesPerformanceInputs();
       document.getElementById('matchModal').classList.remove('hidden');
@@ -1064,24 +1446,24 @@
       const playerOptions = state.athletes.map(a => `<option value="${a.id}">${a.name} (${a.pos})</option>`).join('');
 
       const div = document.createElement('div');
-      div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm';
+      div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs';
       div.id = rowId;
       div.innerHTML = `
         <div class="sm:col-span-5">
-          <span class="text-[10px] text-slate-500 font-bold block">Autor do Golo:</span>
-          <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-800">
+          <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Autor do Golo:</span>
+          <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs font-medium text-slate-900">
             ${playerOptions}
           </select>
         </div>
         <div class="sm:col-span-5">
-          <span class="text-[10px] text-slate-500 font-bold block">Assistência:</span>
-          <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-800">
+          <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Assistência:</span>
+          <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs font-medium text-slate-900">
             <option value="">Nenhuma / Jogada Individual</option>
             ${playerOptions}
           </select>
         </div>
         <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-3 sm:mt-0">
-          <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-red-50 text-red-600 hover:bg-red-100 text-xs border border-red-200">
+          <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-red-50 hover:bg-red-100 text-xs text-red-600 border border-red-200">
             <i class="fa-solid fa-trash"></i>
           </button>
         </div>
@@ -1098,7 +1480,7 @@
       document.getElementById('matchMyScore').value = remaining;
       if (remaining === 0) {
         document.getElementById('goalDetailsContainer').innerHTML = `
-          <p class="text-xs text-slate-400 text-center py-2 italic" id="emptyGoalsMsg">Nenhum golo registado.</p>
+          <p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>
         `;
       }
     }
@@ -1108,20 +1490,20 @@
       tbody.innerHTML = state.athletes.map(a => `
         <tr class="hover:bg-slate-50">
           <td class="p-2 text-center">
-            <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-emerald-600 w-4 h-4 cursor-pointer" onchange="toggleRatingField(${a.id})">
+            <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-slate-900 w-4 h-4 cursor-pointer" onchange="toggleRatingField(${a.id})">
           </td>
           <td class="p-2">
             <div class="font-bold text-slate-900 text-xs">${a.name}</div>
-            <div class="text-[10px] text-slate-500">${a.pos} • OVR ${a.currentOvr}</div>
+            <div class="text-[10px] text-slate-400">${a.pos} • OVR ${a.currentOvr}</div>
           </td>
           <td class="p-2 text-center">
-            <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-amber-600 font-bold disabled:opacity-30">
+            <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
           </td>
           <td class="p-2 text-center">
-            <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-yellow-600 font-bold disabled:opacity-30">
+            <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
           </td>
           <td class="p-2 text-center">
-            <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-red-600 font-bold disabled:opacity-30">
+            <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
           </td>
         </tr>
       `).join('');
@@ -1173,7 +1555,7 @@
           a.yellow += yellow;
           a.red += red;
 
-          if (oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'DEF'].includes(a.pos)) {
+          if (oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes(a.pos)) {
             a.ssg += 1;
           }
         }
@@ -1240,14 +1622,14 @@
       countLabel.innerText = `${champMatches.length} jogos nesta época`;
 
       if (champMatches.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 italic">Nenhum jogo registado neste campeonato.</div>`;
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 font-medium italic">Nenhum jogo registado neste campeonato.</div>`;
         return;
       }
 
       container.innerHTML = champMatches.map(m => {
         const isWin = m.myScore > m.oppScore;
         const isDraw = m.myScore === m.oppScore;
-        const badgeColor = isWin ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : (isDraw ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-red-100 text-red-800 border-red-300');
+        const badgeColor = isWin ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (isDraw ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200');
         const badgeText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
 
         const scorersText = (m.goals || []).map(g => {
@@ -1257,20 +1639,20 @@
         }).join(' • ');
 
         return `
-          <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+          <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
             <div class="space-y-1">
               <div class="flex items-center gap-2">
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${badgeText}</span>
-                <span class="text-xs font-semibold text-slate-500">${m.location} • ${m.date}</span>
+                <span class="text-xs text-slate-500 font-medium">${m.location} • ${m.date}</span>
               </div>
-              <div class="text-base font-black text-slate-900 flex items-center gap-3">
+              <div class="text-base font-bold text-slate-900 flex items-center gap-3 font-heading">
                 <span>${state.clubName}</span>
-                <span class="px-2 py-0.5 bg-white border border-slate-300 rounded text-emerald-700 shadow-sm">${m.myScore} - ${m.oppScore}</span>
-                <span class="text-slate-600">${m.opponent}</span>
+                <span class="px-2.5 py-0.5 bg-white border border-slate-300 rounded-lg text-slate-900 shadow-xs">${m.myScore} - ${m.oppScore}</span>
+                <span>${m.opponent}</span>
               </div>
-              ${scorersText ? `<div class="text-xs text-amber-700 font-bold">${scorersText}</div>` : ''}
+              ${scorersText ? `<div class="text-xs text-slate-600 font-medium">${scorersText}</div>` : ''}
             </div>
-            <button onclick="deleteMatch(${m.id})" class="text-xs text-red-500 hover:text-red-700 p-2 self-end sm:self-center" title="Remover"><i class="fa-solid fa-trash-can"></i></button>
+            <button onclick="deleteMatch(${m.id})" class="text-xs text-slate-400 hover:text-red-600 p-2 self-end sm:self-center" title="Remover"><i class="fa-solid fa-trash-can"></i></button>
           </div>
         `;
       }).join('');
@@ -1283,7 +1665,7 @@
       }
     }
 
-    // ================= TROCAR CLUBE COM LOGO =================
+    // ================= TROCAR CLUBE =================
     function openChangeClubModal() {
       document.getElementById('newClubNameInput').value = state.clubName;
       document.getElementById('newClubLogoUrlInput').value = state.clubLogoUrl || '';
