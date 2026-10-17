@@ -743,1620 +743,1702 @@
 
   <!-- JAVASCRIPT: LÓGICA COMPLETA -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzefT1l9-in-oDcAAmsVm-4yWUboMYoDwAjfqTqi0LGTlHYlu9OmhTcPku1Ver-uPMC/exec";
-    const STORAGE_KEY = 'MODO_CARREIRA_FIFA_APP_V8_KNOCKOUT';
+  // ==========================================
+  // CONFIGURAÇÃO DA API & ESTADO
+  // ==========================================
+  const API_URL = "https://script.google.com/macros/s/AKfycbysXpEpvC2Yjl_ksDdXvVCLTSrPG4NzHxa1Y3szeCbh25nLQ5VJVCQUTW7Z2VAYjPRh/exec";
+  const STORAGE_KEY = 'MODO_CARREIRA_FIFA_APP_V8_KNOCKOUT';
 
-    const ALL_KNOCKOUT_STAGES = [
-      "32 avos de Final",
-      "16 avos de Final",
-      "Oitavas de Final",
-      "Quartas de Final",
-      "Semifinal",
-      "Final"
-    ];
+  const ALL_KNOCKOUT_STAGES = [
+    "32 avos de Final",
+    "16 avos de Final",
+    "Oitavas de Final",
+    "Quartas de Final",
+    "Semifinal",
+    "Final"
+  ];
 
-    const defaultState = {
-      clubName: 'O Meu Clube',
-      clubLogoUrl: '',
-      currentSeason: '2025/2026',
-      budget: 0,
-      initialBudget: 0,
-      wageBudget: 0,
-      currentChampId: 'ALL',
-      championships: [
-        { id: 'c1', name: 'Liga Principal', format: 'PONTOS', stagesCount: 0, trophyUrl: '' }
-      ],
-      athletes: [],
-      matches: []
-    };
+  const defaultState = {
+    clubName: 'O Meu Clube',
+    clubLogoUrl: '',
+    currentSeason: '2025/2026',
+    budget: 0,
+    initialBudget: 0,
+    wageBudget: 0,
+    currentChampId: 'ALL',
+    championships: [
+      { id: 'c1', name: 'Liga Principal', format: 'PONTOS', stagesCount: 0, trophyUrl: '', trophy_url: '', taca_url: '' }
+    ],
+    athletes: [],
+    matches: []
+  };
 
-    let state = loadState();
-    let currentPosFilter = 'TODOS';
-    let nationalityChartInstance = null;
-    let sectorMarketChartInstance = null;
+  let state = loadState();
+  let currentPosFilter = 'TODOS';
+  let nationalityChartInstance = null;
+  let sectorMarketChartInstance = null;
 
-    // Dicionário de Códigos de Países FIFA/ISO-3 para ISO-2
-    const countryIsoMap = {
-      'BRA': 'br', 'ESP': 'es', 'POR': 'pt', 'ARG': 'ar', 'FRA': 'fr', 'GER': 'de', 'ALE': 'de',
-      'ENG': 'gb-eng', 'ING': 'gb-eng', 'ITA': 'it', 'NED': 'nl', 'HOL': 'nl', 'BEL': 'be', 'URU': 'uy',
-      'COL': 'co', 'CHI': 'cl', 'PAR': 'py', 'ECU': 'ec', 'PER': 'pe', 'VEN': 've', 'BOL': 'bo',
-      'MEX': 'mx', 'USA': 'us', 'EUA': 'us', 'CAN': 'ca', 'CRO': 'hr', 'SRB': 'rs', 'SUI': 'ch',
-      'AUT': 'at', 'SWE': 'se', 'NOR': 'no', 'DEN': 'dk', 'DIN': 'dk', 'POL': 'pl', 'CZE': 'cz',
-      'TUR': 'tr', 'GRE': 'gr', 'UKR': 'ua', 'RUS': 'ru', 'SCO': 'gb-sct', 'WAL': 'gb-wls',
-      'IRL': 'ie', 'NIR': 'gb-nir', 'MAR': 'ma', 'SEN': 'sn', 'NGA': 'ng', 'GHA': 'gh', 'CIV': 'ci',
-      'CMR': 'cm', 'CAM': 'cm', 'EGY': 'eg', 'ALG': 'dz', 'TUN': 'tn', 'RSA': 'za', 'JPN': 'jp',
-      'KOR': 'kr', 'AUS': 'au', 'NZL': 'nz', 'KSA': 'sa', 'QAT': 'qa', 'UAE': 'ae', 'IRN': 'ir', 'CHN': 'cn'
-    };
+  // Dicionário de Códigos de Países FIFA/ISO-3 para ISO-2
+  const countryIsoMap = {
+    'BRA': 'br', 'ESP': 'es', 'POR': 'pt', 'ARG': 'ar', 'FRA': 'fr', 'GER': 'de', 'ALE': 'de',
+    'ENG': 'gb-eng', 'ING': 'gb-eng', 'ITA': 'it', 'NED': 'nl', 'HOL': 'nl', 'BEL': 'be', 'URU': 'uy',
+    'COL': 'co', 'CHI': 'cl', 'PAR': 'py', 'ECU': 'ec', 'PER': 'pe', 'VEN': 've', 'BOL': 'bo',
+    'MEX': 'mx', 'USA': 'us', 'EUA': 'us', 'CAN': 'ca', 'CRO': 'hr', 'SRB': 'rs', 'SUI': 'ch',
+    'AUT': 'at', 'SWE': 'se', 'NOR': 'no', 'DEN': 'dk', 'DIN': 'dk', 'POL': 'pl', 'CZE': 'cz',
+    'TUR': 'tr', 'GRE': 'gr', 'UKR': 'ua', 'RUS': 'ru', 'SCO': 'gb-sct', 'WAL': 'gb-wls',
+    'IRL': 'ie', 'NIR': 'gb-nir', 'MAR': 'ma', 'SEN': 'sn', 'NGA': 'ng', 'GHA': 'gh', 'CIV': 'ci',
+    'CMR': 'cm', 'CAM': 'cm', 'EGY': 'eg', 'ALG': 'dz', 'TUN': 'tn', 'RSA': 'za', 'JPN': 'jp',
+    'KOR': 'kr', 'AUS': 'au', 'NZL': 'nz', 'KSA': 'sa', 'QAT': 'qa', 'UAE': 'ae', 'IRN': 'ir', 'CHN': 'cn'
+  };
 
-    const countryColorsMap = {
-      'BRA': '#009b3a', 'ESP': '#c60b1e', 'POR': '#046a38', 'ARG': '#75aadb', 'FRA': '#002395',
-      'GER': '#000000', 'ALE': '#000000', 'ENG': '#cf081f', 'ING': '#cf081f', 'ITA': '#0064aa',
-      'NED': '#ff4f00', 'HOL': '#ff4f00', 'BEL': '#ed2939', 'URU': '#5b92e5', 'COL': '#fcd116',
-      'CHI': '#d52b1e', 'PAR': '#d52b1e', 'ECU': '#ffdd00', 'PER': '#d91023', 'MEX': '#006847',
-      'USA': '#3c3b6e', 'EUA': '#3c3b6e', 'CRO': '#ff0000', 'CAM': '#007a5e', 'CMR': '#007a5e',
-      'SEN': '#00853f', 'MAR': '#c1272d', 'NGA': '#008751', 'JPN': '#00205b'
-    };
+  const countryColorsMap = {
+    'BRA': '#009b3a', 'ESP': '#c60b1e', 'POR': '#046a38', 'ARG': '#75aadb', 'FRA': '#002395',
+    'GER': '#000000', 'ALE': '#000000', 'ENG': '#cf081f', 'ING': '#cf081f', 'ITA': '#0064aa',
+    'NED': '#ff4f00', 'HOL': '#ff4f00', 'BEL': '#ed2939', 'URU': '#5b92e5', 'COL': '#fcd116',
+    'CHI': '#d52b1e', 'PAR': '#d52b1e', 'ECU': '#ffdd00', 'PER': '#d91023', 'MEX': '#006847',
+    'USA': '#3c3b6e', 'EUA': '#3c3b6e', 'CRO': '#ff0000', 'CAM': '#007a5e', 'CMR': '#007a5e',
+    'SEN': '#00853f', 'MAR': '#c1272d', 'NGA': '#008751', 'JPN': '#00205b'
+  };
 
-    function formatCurrency(val) {
-      const num = Number(val) || 0;
-      return num.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  // ==========================================
+  // FORMATAÇÃO E AUXILIARES
+  // ==========================================
+  function formatCurrency(val) {
+    const num = Number(val) || 0;
+    return num.toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function getCountryFlagImg(natCode) {
+    if (!natCode) return `<span class="text-xs">🌐</span>`;
+    const clean = natCode.toUpperCase().trim();
+    const iso2 = countryIsoMap[clean] || clean.toLowerCase();
+    return `<img src="https://flagcdn.com/24x18/${iso2}.png" alt="${clean}" title="${clean}" class="country-flag" onerror="this.onerror=null; this.outerHTML='<span class=\\'font-semibold text-[11px] text-slate-500\\'>${clean}</span>';">`;
+  }
+
+  function getRoleBadge(role) {
+    const r = (role || 'IMPORTANTE').toUpperCase().trim();
+    if (r === 'CRUCIAL') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-300">Crucial</span>`;
+    if (r === 'IMPORTANTE') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-300">Importante</span>`;
+    if (r === 'ESPORADICO') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-50 text-orange-700 border border-orange-300">Esporádico</span>`;
+    if (r === 'RODIZIO') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-300">Rodízio</span>`;
+    if (r === 'PROMESSA') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300">Promessa</span>`;
+    return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300">${role}</span>`;
+  }
+
+  function calculateMarketEvaluationText(player) {
+    const age = Number(player.age) || 24;
+    const initial = Number(player.initialOvr) || Number(player.currentOvr) || 70;
+    const current = Number(player.currentOvr) || 70;
+    const diff = current - initial;
+
+    if (age <= 21) {
+      if (diff >= 2) return "Manter / Titular";
+      if (Number(player.matches) < 5) return "Emprestar";
+      return "Promessa / Manter";
+    } else if (age >= 32) {
+      if (diff < 0) return "Vender Urgente";
+      return "Veterano";
+    } else {
+      if (diff > 0) return "Em Alta";
+      if (diff < -1) return "Avaliar Venda";
+      return "Estável";
     }
+  }
 
-    function getCountryFlagImg(natCode) {
-      if (!natCode) return `<span class="text-xs">🌐</span>`;
-      const clean = natCode.toUpperCase().trim();
-      const iso2 = countryIsoMap[clean] || clean.toLowerCase();
-      return `<img src="https://flagcdn.com/24x18/${iso2}.png" alt="${clean}" title="${clean}" class="country-flag" onerror="this.onerror=null; this.outerHTML='<span class=\\'font-semibold text-[11px] text-slate-500\\'>${clean}</span>';">`;
+  function getPotentialEvaluation(player) {
+    const txt = calculateMarketEvaluationText(player);
+    if (txt === "Manter / Titular") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">${txt}</span>`;
+    if (txt === "Emprestar") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">${txt}</span>`;
+    if (txt === "Promessa / Manter") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-800 border border-teal-300">${txt}</span>`;
+    if (txt === "Vender Urgente") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">${txt}</span>`;
+    if (txt === "Veterano") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">${txt}</span>`;
+    if (txt === "Em Alta") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">${txt}</span>`;
+    if (txt === "Avaliar Venda") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300">${txt}</span>`;
+    return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">Estável</span>`;
+  }
+
+  function toggleLoanClubInput() {
+    const val = document.getElementById('athLoanStatus').value;
+    const cont = document.getElementById('loanClubContainer');
+    const label = document.getElementById('loanClubLabel');
+
+    if (val === 'LOAN_OUT') {
+      cont.classList.remove('hidden');
+      label.innerText = 'Emprestado para qual clube?';
+    } else if (val === 'LOAN_IN') {
+      cont.classList.remove('hidden');
+      label.innerText = 'Pertence a qual clube?';
+    } else {
+      cont.classList.add('hidden');
     }
+  }
 
-    function getRoleBadge(role) {
-      const r = (role || 'IMPORTANTE').toUpperCase().trim();
-      if (r === 'CRUCIAL') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-50 text-red-700 border border-red-300">Crucial</span>`;
-      if (r === 'IMPORTANTE') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-300">Importante</span>`;
-      if (r === 'ESPORADICO') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-50 text-orange-700 border border-orange-300">Esporádico</span>`;
-      if (r === 'RODIZIO') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-300">Rodízio</span>`;
-      if (r === 'PROMESSA') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300">Promessa</span>`;
-      return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-300">${role}</span>`;
-    }
-
-    function calculateMarketEvaluationText(player) {
-      const age = Number(player.age) || 24;
-      const initial = Number(player.initialOvr) || Number(player.currentOvr) || 70;
-      const current = Number(player.currentOvr) || 70;
-      const diff = current - initial;
-
-      if (age <= 21) {
-        if (diff >= 2) return "Manter / Titular";
-        if (Number(player.matches) < 5) return "Emprestar";
-        return "Promessa / Manter";
-      } else if (age >= 32) {
-        if (diff < 0) return "Vender Urgente";
-        return "Veterano";
-      } else {
-        if (diff > 0) return "Em Alta";
-        if (diff < -1) return "Avaliar Venda";
-        return "Estável";
-      }
-    }
-
-    function getPotentialEvaluation(player) {
-      const txt = calculateMarketEvaluationText(player);
-      if (txt === "Manter / Titular") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">${txt}</span>`;
-      if (txt === "Emprestar") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-300">${txt}</span>`;
-      if (txt === "Promessa / Manter") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-100 text-teal-800 border border-teal-300">${txt}</span>`;
-      if (txt === "Vender Urgente") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">${txt}</span>`;
-      if (txt === "Veterano") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300">${txt}</span>`;
-      if (txt === "Em Alta") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">${txt}</span>`;
-      if (txt === "Avaliar Venda") return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-300">${txt}</span>`;
-      return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">Estável</span>`;
-    }
-
-    function toggleLoanClubInput() {
-      const val = document.getElementById('athLoanStatus').value;
-      const cont = document.getElementById('loanClubContainer');
-      const label = document.getElementById('loanClubLabel');
-
-      if (val === 'LOAN_OUT') {
-        cont.classList.remove('hidden');
-        label.innerText = 'Emprestado para qual clube?';
-      } else if (val === 'LOAN_IN') {
-        cont.classList.remove('hidden');
-        label.innerText = 'Pertence a qual clube?';
-      } else {
-        cont.classList.add('hidden');
-      }
-    }
-
-    function loadState() {
+  function loadState() {
+    try {
       const data = localStorage.getItem(STORAGE_KEY);
       return data ? JSON.parse(data) : JSON.parse(JSON.stringify(defaultState));
+    } catch (e) {
+      console.warn("Erro ao ler localStorage:", e);
+      return JSON.parse(JSON.stringify(defaultState));
     }
+  }
 
-    function saveState() {
+  function saveState() {
+    try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      updateUI();
+    } catch (e) {
+      console.error("Erro ao salvar no localStorage:", e);
     }
+    updateUI();
+  }
 
-    function updateClubLogo() {
-      const img = document.getElementById('clubBadgeImg');
-      const def = document.getElementById('clubDefaultBadge');
+  function updateClubLogo() {
+    const img = document.getElementById('clubBadgeImg');
+    const def = document.getElementById('clubDefaultBadge');
 
-      if (state.clubLogoUrl && state.clubLogoUrl.trim() !== '') {
-        img.src = state.clubLogoUrl;
-        img.classList.remove('hidden');
-        def.classList.add('hidden');
-      } else {
-        showDefaultLogo();
-      }
+    if (state.clubLogoUrl && state.clubLogoUrl.trim() !== '') {
+      img.src = state.clubLogoUrl;
+      img.classList.remove('hidden');
+      def.classList.add('hidden');
+    } else {
+      showDefaultLogo();
     }
+  }
 
-    function showDefaultLogo() {
-      const img = document.getElementById('clubBadgeImg');
-      const def = document.getElementById('clubDefaultBadge');
-      img.classList.add('hidden');
+  function showDefaultLogo() {
+    const img = document.getElementById('clubBadgeImg');
+    const def = document.getElementById('clubDefaultBadge');
+    if (img) img.classList.add('hidden');
+    if (def) {
       def.classList.remove('hidden');
       def.innerText = state.clubName ? state.clubName.charAt(0).toUpperCase() : '⚽';
     }
+  }
 
-    function getPlayerShoeOrGloveIcon(player, isTop11) {
-      const pos = (player.pos || '').toUpperCase().trim();
+  function getPlayerShoeOrGloveIcon(player, isTop11) {
+    const pos = (player.pos || '').toUpperCase().trim();
 
-      if (isTop11 && Number(player.matches) > 0) {
-        if (pos === 'GOL') {
-          return `<span title="Top 11 Mais Utilizados" class="inline-flex items-center gap-1 font-semibold text-amber-800"><i class="fa-solid fa-mitten text-amber-600"></i> <span class="text-[9px] bg-amber-100 border border-amber-300 px-1 rounded font-bold">11</span></span>`;
-        }
-        return `<span title="Top 11 Mais Utilizados" class="inline-flex items-center gap-1 font-semibold text-amber-800"><i class="fa-solid fa-shoe-prints icon-boot-gold"></i> <span class="text-[9px] bg-amber-100 border border-amber-300 px-1 rounded font-bold">11</span></span>`;
+    if (isTop11 && Number(player.matches) > 0) {
+      if (pos === 'GOL') {
+        return `<span title="Top 11 Mais Utilizados" class="inline-flex items-center gap-1 font-semibold text-amber-800"><i class="fa-solid fa-mitten text-amber-600"></i> <span class="text-[9px] bg-amber-100 border border-amber-300 px-1 rounded font-bold">11</span></span>`;
       }
-
-      if (pos === 'GOL') return `<i class="fa-solid fa-mitten icon-glove-yellow text-sm" title="Goleiro"></i>`;
-      if (['LD', 'LE', 'LAT'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Lateral"></i>`;
-      if (['ZAG', 'DEF'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-blue text-sm" title="Zagueiro"></i>`;
-      if (['ME', 'MD', 'MEI'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Meia Aberto / Armador"></i>`;
-      if (['MC', 'VOL'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-red text-sm" title="Volante / Central"></i>`;
-      if (['ATA', 'SA', 'ATD', 'ATE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-black text-sm" title="Centroavante"></i>`;
-      if (['PD', 'PE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-gray text-sm" title="Ponta"></i>`;
-
-      return `<i class="fa-solid fa-shoe-prints text-slate-400 text-sm"></i>`;
+      return `<span title="Top 11 Mais Utilizados" class="inline-flex items-center gap-1 font-semibold text-amber-800"><i class="fa-solid fa-shoe-prints icon-boot-gold"></i> <span class="text-[9px] bg-amber-100 border border-amber-300 px-1 rounded font-bold">11</span></span>`;
     }
 
-    function renderCharts() {
-      const natMap = {};
-      state.athletes.forEach(a => {
-        let nat = (a.nat || 'OUT').toUpperCase().trim();
-        natMap[nat] = (natMap[nat] || 0) + 1;
-      });
+    if (pos === 'GOL') return `<i class="fa-solid fa-mitten icon-glove-yellow text-sm" title="Goleiro"></i>`;
+    if (['LD', 'LE', 'LAT'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Lateral"></i>`;
+    if (['ZAG', 'DEF'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-blue text-sm" title="Zagueiro"></i>`;
+    if (['ME', 'MD', 'MEI'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Meia Aberto / Armador"></i>`;
+    if (['MC', 'VOL'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-red text-sm" title="Volante / Central"></i>`;
+    if (['ATA', 'SA', 'ATD', 'ATE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-black text-sm" title="Centroavante"></i>`;
+    if (['PD', 'PE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-gray text-sm" title="Ponta"></i>`;
 
-      const natLabels = Object.keys(natMap);
-      const natData = Object.values(natMap);
-      document.getElementById('natCountLabel').innerText = `${natLabels.length} nacionalidades`;
+    return `<i class="fa-solid fa-shoe-prints text-slate-400 text-sm"></i>`;
+  }
 
-      const natColors = natLabels.map((n, i) => countryColorsMap[n] || ['#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'][i % 7]);
+  // ==========================================
+  // GRÁFICOS
+  // ==========================================
+  function renderCharts() {
+    const natMap = {};
+    state.athletes.forEach(a => {
+      let nat = (a.nat || 'OUT').toUpperCase().trim();
+      natMap[nat] = (natMap[nat] || 0) + 1;
+    });
 
-      const natCanvas = document.getElementById('nationalityChart');
-      const noNatMsg = document.getElementById('noNatChartData');
+    const natLabels = Object.keys(natMap);
+    const natData = Object.values(natMap);
+    const natCountLabel = document.getElementById('natCountLabel');
+    if (natCountLabel) natCountLabel.innerText = `${natLabels.length} nacionalidades`;
 
-      if (natLabels.length === 0) {
-        noNatMsg.classList.remove('hidden');
-        if (nationalityChartInstance) nationalityChartInstance.destroy();
-      } else {
-        noNatMsg.classList.add('hidden');
-        if (nationalityChartInstance) nationalityChartInstance.destroy();
+    const natColors = natLabels.map((n, i) => countryColorsMap[n] || ['#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'][i % 7]);
 
-        nationalityChartInstance = new Chart(natCanvas, {
-          type: 'doughnut',
-          data: {
-            labels: natLabels,
-            datasets: [{
-              data: natData,
-              backgroundColor: natColors,
-              borderWidth: 2,
-              borderColor: '#ffffff'
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { 
-                position: 'bottom', 
-                labels: { boxWidth: 10, font: { size: 11, family: 'Inter', weight: '500' }, color: '#1e293b' } 
-              },
-              tooltip: {
-                callbacks: {
-                  label: function(ctx) {
-                    const total = natData.reduce((a, b) => a + b, 0);
-                    const pct = ((ctx.raw / total) * 100).toFixed(1);
-                    return ` ${ctx.label}: ${ctx.raw} jogador(es) (${pct}%)`;
-                  }
-                }
-              }
-            }
-          }
-        });
-      }
+    const natCanvas = document.getElementById('nationalityChart');
+    const noNatMsg = document.getElementById('noNatChartData');
 
-      let totalDef = 0, totalMei = 0, totalAta = 0;
-      let countDef = 0, countMei = 0, countAta = 0;
-      let sumOvrDef = 0, sumOvrMei = 0, sumOvrAta = 0;
+    if (natLabels.length === 0) {
+      if (noNatMsg) noNatMsg.classList.remove('hidden');
+      if (nationalityChartInstance) nationalityChartInstance.destroy();
+    } else if (natCanvas) {
+      if (noNatMsg) noNatMsg.classList.add('hidden');
+      if (nationalityChartInstance) nationalityChartInstance.destroy();
 
-      state.athletes.forEach(a => {
-        const val = Number(a.marketValue) || 0;
-        const ovr = Number(a.currentOvr) || 70;
-        const pos = (a.pos || '').toUpperCase().trim();
-
-        if (['GOL', 'LAT', 'LD', 'LE', 'ZAG', 'DEF'].includes(pos)) {
-          totalDef += val;
-          sumOvrDef += ovr;
-          countDef++;
-        } else if (['VOL', 'MC', 'MEI', 'ME', 'MD'].includes(pos)) {
-          totalMei += val;
-          sumOvrMei += ovr;
-          countMei++;
-        } else if (['PE', 'PD', 'ATA', 'ATD', 'ATE', 'SA'].includes(pos)) {
-          totalAta += val;
-          sumOvrAta += ovr;
-          countAta++;
-        }
-      });
-
-      document.getElementById('sectorDefAvgOvr').innerText = countDef > 0 ? (sumOvrDef / countDef).toFixed(1) : '0.0';
-      document.getElementById('sectorDefTotalValue').innerText = '€ ' + formatCurrency(totalDef);
-
-      document.getElementById('sectorMeiAvgOvr').innerText = countMei > 0 ? (sumOvrMei / countMei).toFixed(1) : '0.0';
-      document.getElementById('sectorMeiTotalValue').innerText = '€ ' + formatCurrency(totalMei);
-
-      document.getElementById('sectorAtaAvgOvr').innerText = countAta > 0 ? (sumOvrAta / countAta).toFixed(1) : '0.0';
-      document.getElementById('sectorAtaTotalValue').innerText = '€ ' + formatCurrency(totalAta);
-
-      const sectorCanvas = document.getElementById('sectorMarketChart');
-      const noSectorMsg = document.getElementById('noSectorChartData');
-
-      if (state.athletes.length === 0) {
-        noSectorMsg.classList.remove('hidden');
-        if (sectorMarketChartInstance) sectorMarketChartInstance.destroy();
-      } else {
-        noSectorMsg.classList.add('hidden');
-        if (sectorMarketChartInstance) sectorMarketChartInstance.destroy();
-
-        sectorMarketChartInstance = new Chart(sectorCanvas, {
-          type: 'bar',
-          data: {
-            labels: [`Defesa (${countDef})`, `Meio-Campo (${countMei})`, `Ataque (${countAta})`],
-            datasets: [{
-              label: 'Valor Total (€)',
-              data: [totalDef, totalMei, totalAta],
-              backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'],
-              borderRadius: 6,
-              maxBarThickness: 45
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: function(ctx) { return ' Valor Acumulado: € ' + formatCurrency(ctx.raw); }
-                }
-              }
-            },
-            scales: {
-              x: { ticks: { color: '#475569', font: { family: 'Inter', weight: '600' } }, grid: { display: false } },
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  color: '#64748b',
-                  callback: function(v) { return v >= 1000000 ? '€' + (v / 1000000).toFixed(1) + 'M' : '€' + v; }
-                },
-                grid: { color: '#f1f5f9' }
-              }
-            }
-          }
-        });
-      }
-    }
-
-    // ================= SINCRONIZAÇÃO COMPLETA COM GOOGLE SHEETS =================
-    async function loadFromGoogleSheets() {
-      const statusEl = document.getElementById('syncStatus');
-      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A ler dados da folha...`;
-
-      try {
-        const response = await fetch(`${API_URL}?action=getAll`);
-        const result = await response.json();
-
-        if (result.status === 'success' && result.data) {
-          const remote = result.data;
-          
-          if (remote.clube && remote.clube.length > 0) {
-            state.clubName = remote.clube[0].nome || state.clubName;
-            state.clubLogoUrl = remote.clube[0].logo_url || state.clubLogoUrl || '';
-            state.currentSeason = remote.clube[0].temporada || state.currentSeason;
-            state.budget = Number(remote.clube[0].verba) || 0;
-            state.wageBudget = Number(remote.clube[0].teto_salarial) || 0;
-          }
-
-          if (Array.isArray(remote.atletas)) {
-            state.athletes = remote.atletas.map(a => ({
-              id: Number(a.id) || Date.now(),
-              number: a.numero !== undefined && a.numero !== '' ? a.numero : '-',
-              name: a.nome || 'Sem Nome',
-              pos: a.pos || 'MEI',
-              age: Number(a.idade) || 0,
-              nat: a.nat || 'BRA',
-              role: a.role || 'IMPORTANTE',
-              initialOvr: Number(a.ovr_inicial || a.ovr) || 70,
-              currentOvr: Number(a.ovr) || 70,
-              contractYears: Number(a.contrato) || 3,
-              loanStatus: a.emprestimo_status || 'NONE',
-              loanClub: a.emprestimo_clube || '',
-              marketValue: Number(a.valor_mercado || a.marketValue) || 1000000,
-              wage: Number(a.salario) || 0,
-              matches: Number(a.jogos) || 0,
-              goals: Number(a.gols) || 0,
-              assists: Number(a.assists) || 0,
-              ssg: Number(a.ssg) || 0,
-              yellow: Number(a.ca) || 0,
-              red: Number(a.cv) || 0,
-              ratingSum: Number(a.nota_soma) || 0
-            }));
-          }
-
-          // LER CAMPEONATOS E FASES
-          if (Array.isArray(remote.campeonatos) && remote.campeonatos.length > 0) {
-            state.championships = remote.campeonatos.map(c => {
-              let stages = Number(c.stagesCount || c.fases || 0);
-              let format = (c.formato || c.format || 'PONTOS').toUpperCase();
-              if (format.includes('MATA') && stages === 0) stages = 3;
-              return {
-                id: c.id,
-                name: c.nome || c.name || 'Torneio',
-                format: format,
-                stagesCount: stages,
-                trophyUrl: c.trophyUrl || c.taca_url || ''
-              };
-            });
-          }
-
-          // LER PARTIDAS E FASES ELIMINATÓRIAS
-          const partidasRemote = remote.partidas || remote.matches || [];
-          if (Array.isArray(partidasRemote)) {
-            state.matches = partidasRemote.map(m => {
-              let parsedGoals = [];
-              const rawGoals = m.detalhes_gols !== undefined ? m.detalhes_gols : (m.gols || m.goals);
-              if (typeof rawGoals === 'string') {
-                try { parsedGoals = JSON.parse(rawGoals); } catch(e) { parsedGoals = []; }
-              } else if (Array.isArray(rawGoals)) {
-                parsedGoals = rawGoals;
-              }
-
-              let parsedPerf = [];
-              const rawPerf = m.detalhes_notas !== undefined ? m.detalhes_notas : (m.performances || m.notas);
-              if (typeof rawPerf === 'string') {
-                try { parsedPerf = JSON.parse(rawPerf); } catch(e) { parsedPerf = []; }
-              } else if (Array.isArray(rawPerf)) {
-                parsedPerf = rawPerf;
-              }
-
-              let matchDate = m.data || m.date || new Date().toLocaleDateString('pt-PT');
-              if (typeof matchDate === 'string' && matchDate.includes('T')) {
-                matchDate = new Date(matchDate).toLocaleDateString('pt-PT');
-              }
-
-              const champObj = state.championships.find(c => c.id === (m.campeonato || m.champId));
-              return {
-                id: Number(m.id) || Date.now(),
-                season: m.temporada || m.season || state.currentSeason,
-                champId: m.campeonato || m.champId,
-                champName: m.nome_campeonato || m.champName || (champObj ? champObj.name : 'Torneio'),
-                stage: m.fase || m.stage || '',
-                opponent: m.adversario || m.opponent,
-                location: m.mando || m.location || 'CASA',
-                myScore: Number(m.gols_pro !== undefined ? m.gols_pro : m.myScore) || 0,
-                oppScore: Number(m.gols_contra !== undefined ? m.gols_contra : m.oppScore) || 0,
-                goals: parsedGoals,
-                performances: parsedPerf,
-                date: matchDate
-              };
-            });
-          }
-
-          if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
-          saveState();
-        }
-      } catch (err) {
-        console.warn('Erro ao ligar ao Google Sheets:', err);
-        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Modo Offline`;
-      }
-    }
-
-    async function syncAllToCloud() {
-      const payload = {
-        action: 'syncAll',
+      nationalityChartInstance = new Chart(natCanvas, {
+        type: 'doughnut',
         data: {
-          clube: {
-            nome: state.clubName,
-            logo_url: state.clubLogoUrl,
-            temporada: state.currentSeason,
-            verba: state.budget,
-            teto_salarial: state.wageBudget
+          labels: natLabels,
+          datasets: [{
+            data: natData,
+            backgroundColor: natColors,
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { 
+              position: 'bottom', 
+              labels: { boxWidth: 10, font: { size: 11, family: 'Inter', weight: '500' }, color: '#1e293b' } 
+            },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+                  const total = natData.reduce((a, b) => a + b, 0);
+                  const pct = ((ctx.raw / total) * 100).toFixed(1);
+                  return ` ${ctx.label}: ${ctx.raw} jogador(es) (${pct}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    let totalDef = 0, totalMei = 0, totalAta = 0;
+    let countDef = 0, countMei = 0, countAta = 0;
+    let sumOvrDef = 0, sumOvrMei = 0, sumOvrAta = 0;
+
+    state.athletes.forEach(a => {
+      const val = Number(a.marketValue) || 0;
+      const ovr = Number(a.currentOvr) || 70;
+      const pos = (a.pos || '').toUpperCase().trim();
+
+      if (['GOL', 'LAT', 'LD', 'LE', 'ZAG', 'DEF'].includes(pos)) {
+        totalDef += val;
+        sumOvrDef += ovr;
+        countDef++;
+      } else if (['VOL', 'MC', 'MEI', 'ME', 'MD'].includes(pos)) {
+        totalMei += val;
+        sumOvrMei += ovr;
+        countMei++;
+      } else if (['PE', 'PD', 'ATA', 'ATD', 'ATE', 'SA'].includes(pos)) {
+        totalAta += val;
+        sumOvrAta += ovr;
+        countAta++;
+      }
+    });
+
+    const elDefAvg = document.getElementById('sectorDefAvgOvr');
+    const elDefVal = document.getElementById('sectorDefTotalValue');
+    const elMeiAvg = document.getElementById('sectorMeiAvgOvr');
+    const elMeiVal = document.getElementById('sectorMeiTotalValue');
+    const elAtaAvg = document.getElementById('sectorAtaAvgOvr');
+    const elAtaVal = document.getElementById('sectorAtaTotalValue');
+
+    if (elDefAvg) elDefAvg.innerText = countDef > 0 ? (sumOvrDef / countDef).toFixed(1) : '0.0';
+    if (elDefVal) elDefVal.innerText = '€ ' + formatCurrency(totalDef);
+    if (elMeiAvg) elMeiAvg.innerText = countMei > 0 ? (sumOvrMei / countMei).toFixed(1) : '0.0';
+    if (elMeiVal) elMeiVal.innerText = '€ ' + formatCurrency(totalMei);
+    if (elAtaAvg) elAtaAvg.innerText = countAta > 0 ? (sumOvrAta / countAta).toFixed(1) : '0.0';
+    if (elAtaVal) elAtaVal.innerText = '€ ' + formatCurrency(totalAta);
+
+    const sectorCanvas = document.getElementById('sectorMarketChart');
+    const noSectorMsg = document.getElementById('noSectorChartData');
+
+    if (state.athletes.length === 0) {
+      if (noSectorMsg) noSectorMsg.classList.remove('hidden');
+      if (sectorMarketChartInstance) sectorMarketChartInstance.destroy();
+    } else if (sectorCanvas) {
+      if (noSectorMsg) noSectorMsg.classList.add('hidden');
+      if (sectorMarketChartInstance) sectorMarketChartInstance.destroy();
+
+      sectorMarketChartInstance = new Chart(sectorCanvas, {
+        type: 'bar',
+        data: {
+          labels: [`Defesa (${countDef})`, `Meio-Campo (${countMei})`, `Ataque (${countAta})`],
+          datasets: [{
+            label: 'Valor Total (€)',
+            data: [totalDef, totalMei, totalAta],
+            backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'],
+            borderRadius: 6,
+            maxBarThickness: 45
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) { return ' Valor Acumulado: € ' + formatCurrency(ctx.raw); }
+              }
+            }
           },
-          // ATLETAS COM VALOR E AVALIAÇÃO DE MERCADO
-          atletas: state.athletes.map(a => ({
-            id: a.id,
-            numero: a.number,
-            nome: a.name,
-            pos: a.pos,
-            idade: a.age,
-            nat: a.nat,
-            role: a.role,
-            ovr: a.currentOvr,
-            ovr_inicial: a.initialOvr,
-            salario: a.wage,
-            jogos: a.matches,
-            gols: a.goals,
-            assists: a.assists,
-            ssg: a.ssg,
-            ca: a.yellow,
-            cv: a.red,
-            nota_soma: a.ratingSum,
-            valor_mercado: a.marketValue || 0,
-            avaliacao_mercado: calculateMarketEvaluationText(a)
-          })),
-          // CAMPEONATOS COM NOMES PARA A FOLHA DE CÁLCULO
-          campeonatos: state.championships.map(c => ({
+          scales: {
+            x: { ticks: { color: '#475569', font: { family: 'Inter', weight: '600' } }, grid: { display: false } },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#64748b',
+                callback: function(v) { return v >= 1000000 ? '€' + (v / 1000000).toFixed(1) + 'M' : '€' + v; }
+              },
+              grid: { color: '#f1f5f9' }
+            }
+          }
+        }
+      });
+    }
+  }
+
+  // ==========================================
+  // SINCRONIZAÇÃO SEGURA (GOOGLE SHEETS)
+  // ==========================================
+  async function loadFromGoogleSheets() {
+    const statusEl = document.getElementById('syncStatus');
+    if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A ler dados da folha...`;
+
+    try {
+      const response = await fetch(`${API_URL}?action=getAll`);
+      if (!response.ok) throw new Error("Erro na rede ao tentar buscar dados.");
+
+      const result = await response.json();
+
+      if (result.status === 'success' && result.data) {
+        const remote = result.data;
+        
+        if (remote.clube && remote.clube.length > 0) {
+          state.clubName = remote.clube[0].nome || state.clubName;
+          state.clubLogoUrl = remote.clube[0].logo_url || state.clubLogoUrl || '';
+          state.currentSeason = remote.clube[0].temporada || state.currentSeason;
+          state.budget = Number(remote.clube[0].verba) || state.budget;
+          state.wageBudget = Number(remote.clube[0].teto_salarial) || state.wageBudget;
+        }
+
+        // Evita apagar atletas caso a lista retorne vazia da folha
+        if (Array.isArray(remote.atletas) && remote.atletas.length > 0) {
+          state.athletes = remote.atletas.map(a => ({
+            id: Number(a.id) || Date.now(),
+            number: a.numero !== undefined && a.numero !== '' ? a.numero : '-',
+            name: a.nome || 'Sem Nome',
+            pos: a.pos || 'MEI',
+            age: Number(a.idade) || 0,
+            nat: a.nat || 'BRA',
+            role: a.role || 'IMPORTANTE',
+            initialOvr: Number(a.ovr_inicial || a.ovr) || 70,
+            currentOvr: Number(a.ovr) || 70,
+            contractYears: Number(a.contrato) || 3,
+            loanStatus: a.emprestimo_status || 'NONE',
+            loanClub: a.emprestimo_clube || '',
+            marketValue: Number(a.valor_mercado || a.marketValue) || 1000000,
+            wage: Number(a.salario) || 0,
+            matches: Number(a.jogos) || 0,
+            goals: Number(a.gols) || 0,
+            assists: Number(a.assists) || 0,
+            ssg: Number(a.ssg) || 0,
+            yellow: Number(a.ca) || 0,
+            red: Number(a.cv) || 0,
+            ratingSum: Number(a.nota_soma) || 0
+          }));
+        }
+
+        // Leitura resiliente de torneios com preservação de trophyUrl
+        if (Array.isArray(remote.campeonatos) && remote.campeonatos.length > 0) {
+          state.championships = remote.campeonatos.map(c => {
+            let stages = Number(c.stagesCount || c.fases || 0);
+            let format = (c.formato || c.format || 'PONTOS').toUpperCase();
+            if (format.includes('MATA') && stages === 0) stages = 3;
+            
+            const trophyImgUrl = c.trophyUrl || c.trophy_url || c.taca_url || c.logo_url || '';
+
+            return {
+              id: c.id,
+              name: c.nome || c.name || 'Torneio',
+              format: format,
+              stagesCount: stages,
+              trophyUrl: trophyImgUrl,
+              trophy_url: trophyImgUrl,
+              taca_url: trophyImgUrl
+            };
+          });
+        }
+
+        const partidasRemote = remote.partidas || remote.matches || [];
+        if (Array.isArray(partidasRemote) && partidasRemote.length > 0) {
+          state.matches = partidasRemote.map(m => {
+            let parsedGoals = [];
+            const rawGoals = m.detalhes_gols !== undefined ? m.detalhes_gols : (m.gols || m.goals);
+            if (typeof rawGoals === 'string') {
+              try { parsedGoals = JSON.parse(rawGoals); } catch(e) { parsedGoals = []; }
+            } else if (Array.isArray(rawGoals)) {
+              parsedGoals = rawGoals;
+            }
+
+            let parsedPerf = [];
+            const rawPerf = m.detalhes_notas !== undefined ? m.detalhes_notas : (m.performances || m.notas);
+            if (typeof rawPerf === 'string') {
+              try { parsedPerf = JSON.parse(rawPerf); } catch(e) { parsedPerf = []; }
+            } else if (Array.isArray(rawPerf)) {
+              parsedPerf = rawPerf;
+            }
+
+            let matchDate = m.data || m.date || new Date().toLocaleDateString('pt-PT');
+            if (typeof matchDate === 'string' && matchDate.includes('T')) {
+              matchDate = new Date(matchDate).toLocaleDateString('pt-PT');
+            }
+
+            const champObj = state.championships.find(c => c.id === (m.campeonato || m.champId));
+            return {
+              id: Number(m.id) || Date.now(),
+              season: m.temporada || m.season || state.currentSeason,
+              champId: m.campeonato || m.champId,
+              champName: m.nome_campeonato || m.champName || (champObj ? champObj.name : 'Torneio'),
+              stage: m.fase || m.stage || '',
+              opponent: m.adversario || m.opponent,
+              location: m.mando || m.location || 'CASA',
+              myScore: Number(m.gols_pro !== undefined ? m.gols_pro : m.myScore) || 0,
+              oppScore: Number(m.gols_contra !== undefined ? m.gols_contra : m.oppScore) || 0,
+              goals: parsedGoals,
+              performances: parsedPerf,
+              date: matchDate
+            };
+          });
+        }
+
+        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
+        saveState();
+      }
+    } catch (err) {
+      console.warn('Erro ao ligar ao Google Sheets:', err);
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Dados Locais (Offline)`;
+    }
+  }
+
+  async function syncAllToCloud() {
+    const statusEl = document.getElementById('syncStatus');
+    if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse"></span> A guardar na folha...`;
+
+    // Persiste imediatamente no dispositivo
+    saveState();
+
+    const payload = {
+      action: 'syncAll',
+      data: {
+        clube: [{
+          nome: state.clubName,
+          logo_url: state.clubLogoUrl,
+          temporada: state.currentSeason,
+          verba: state.budget,
+          teto_salarial: state.wageBudget
+        }],
+        atletas: state.athletes.map(a => ({
+          id: a.id,
+          numero: a.number !== undefined && a.number !== '' ? a.number : '-',
+          nome: a.name || 'Sem Nome',
+          pos: a.pos || '',
+          idade: Number(a.age) || 0,
+          nat: a.nat || 'BRA',
+          role: a.role || 'IMPORTANTE',
+          ovr: Number(a.currentOvr) || Number(a.ovr) || 70,
+          ovr_inicial: Number(a.initialOvr) || Number(a.currentOvr) || 70,
+          salario: Number(a.wage) || 0,
+          jogos: Number(a.matches) || 0,
+          gols: Number(a.goals) || 0,
+          assists: Number(a.assists) || 0,
+          ssg: Number(a.ssg) || 0,
+          ca: Number(a.yellow) || 0,
+          cv: Number(a.red) || 0,
+          nota_soma: Number(a.ratingSum) || 0,
+          valor_mercado: Number(a.marketValue) || 0,
+          avaliacao_mercado: calculateMarketEvaluationText(a)
+        })),
+        campeonatos: state.championships.map(c => {
+          const tUrl = c.trophyUrl || c.trophy_url || c.taca_url || '';
+          return {
             id: c.id,
             nome: c.name || c.nome,
             formato: c.format || c.formato,
-            fases: c.stagesCount || 0,
-            stagesCount: c.stagesCount || 0,
-            trophyUrl: c.trophyUrl || ''
-          })),
-          // PARTIDAS COM GOLOS, NOTAS E FASES
-          partidas: state.matches.map(m => ({
-            id: m.id,
-            temporada: m.season,
-            campeonato: m.champId,
-            nome_campeonato: m.champName,
-            fase: m.stage || '',
-            adversario: m.opponent,
-            mando: m.location,
-            gols_pro: m.myScore,
-            gols_contra: m.oppScore,
-            data: m.date,
-            detalhes_gols: JSON.stringify(m.goals || []),
-            detalhes_notas: JSON.stringify(m.performances || []),
-            gols: JSON.stringify(m.goals || []),
-            performances: JSON.stringify(m.performances || [])
-          }))
-        }
-      };
-
-      try {
-        await fetch(API_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        alert('Tudo sincronizado: Campeonatos, Atletas, Valores e Partidas salvos no Google Sheets!');
-      } catch (err) {
-        alert('Erro ao enviar dados para a folha de cálculo.');
+            fases: c.stagesCount || c.fases || 0,
+            stagesCount: c.stagesCount || c.fases || 0,
+            trophyUrl: tUrl,
+            trophy_url: tUrl,
+            taca_url: tUrl
+          };
+        }),
+        partidas: state.matches.map(m => ({
+          id: m.id,
+          temporada: m.season,
+          campeonato: m.champId,
+          nome_campeonato: m.champName,
+          fase: m.stage || '',
+          adversario: m.opponent,
+          mando: m.location,
+          gols_pro: m.myScore,
+          gols_contra: m.oppScore,
+          data: m.date,
+          detalhes_gols: JSON.stringify(m.goals || []),
+          detalhes_notas: JSON.stringify(m.performances || []),
+          gols: JSON.stringify(m.goals || []),
+          performances: JSON.stringify(m.performances || [])
+        }))
       }
+    };
+
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Guardado na Nuvem!`;
+      alert('Tudo sincronizado: Campeonatos, Atletas, Valores e Partidas salvos no Google Sheets!');
+    } catch (err) {
+      console.warn('Erro ao sincronizar online:', err);
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Guardado apenas localmente`;
+      alert('Não foi possível conectar com o Google Sheets no momento. As informações foram gravadas com segurança no seu dispositivo.');
+    }
+  }
+
+  // ==========================================
+  // ABAS & INTERFACE (UI)
+  // ==========================================
+  function switchTab(tab) {
+    document.querySelectorAll('section[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('border-slate-900', 'text-slate-900', 'bg-slate-100');
+      btn.classList.add('border-transparent', 'text-slate-600');
+    });
+
+    const targetTab = document.getElementById('tab-' + tab);
+    if (targetTab) targetTab.classList.remove('hidden');
+
+    const activeBtn = document.getElementById('tabBtn-' + tab);
+    if (activeBtn) {
+      activeBtn.classList.add('border-slate-900', 'text-slate-900', 'bg-slate-100');
+      activeBtn.classList.remove('border-transparent', 'text-slate-600');
     }
 
-    // ================= ABAS & RENDERIZAÇÃO =================
-    function switchTab(tab) {
-      document.querySelectorAll('section[id^="tab-"]').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('border-slate-900', 'text-slate-900', 'bg-slate-100');
-        btn.classList.add('border-transparent', 'text-slate-600');
+    if (tab === 'dashboard') renderCharts();
+    if (tab === 'matches') renderKnockoutBracket();
+  }
+
+  function updateUI() {
+    const elName = document.getElementById('headerClubName');
+    const elSeason = document.getElementById('headerSeason');
+    const elModalClub = document.getElementById('matchModalMyClubName');
+
+    if (elName) elName.innerText = state.clubName;
+    if (elSeason) elSeason.innerText = state.currentSeason;
+    if (elModalClub) elModalClub.innerText = state.clubName;
+
+    updateClubLogo();
+    renderDashboard();
+    renderCharts();
+    renderAthletesContainers();
+    renderChampionshipsSelect();
+    renderKnockoutBracket();
+    renderChampStats();
+    renderMatchesHistory();
+  }
+
+  function renderDashboard() {
+    const dashBudget = document.getElementById('dashBudget');
+    const dashInitBudget = document.getElementById('dashInitialBudget');
+    const dashWage = document.getElementById('dashWage');
+    const dashWageLimit = document.getElementById('dashWageBudget');
+    const dashTotalSquadValue = document.getElementById('dashTotalSquadValue');
+    const dashTotalSquad = document.getElementById('dashTotalSquad');
+
+    if (dashBudget) dashBudget.innerText = '€ ' + formatCurrency(state.budget);
+    if (dashInitBudget) dashInitBudget.innerText = '€ ' + formatCurrency(state.initialBudget);
+    
+    const totalWage = state.athletes.reduce((acc, p) => acc + (Number(p.wage) || 0), 0);
+    if (dashWage) dashWage.innerText = '€ ' + formatCurrency(totalWage);
+    if (dashWageLimit) dashWageLimit.innerText = '€ ' + formatCurrency(state.wageBudget);
+
+    const totalSquadValue = state.athletes.reduce((acc, p) => acc + (Number(p.marketValue) || 0), 0);
+    if (dashTotalSquadValue) dashTotalSquadValue.innerText = '€ ' + formatCurrency(totalSquadValue);
+
+    const totalSquad = state.athletes.length;
+    if (dashTotalSquad) dashTotalSquad.innerText = totalSquad;
+
+    if (totalSquad > 0) {
+      const avgOvrEl = document.getElementById('dashAvgOvr');
+      const avgAgeEl = document.getElementById('dashAvgAge');
+      if (avgOvrEl) avgOvrEl.innerText = (state.athletes.reduce((acc, p) => acc + Number(p.currentOvr), 0) / totalSquad).toFixed(1);
+      if (avgAgeEl) avgAgeEl.innerText = (state.athletes.reduce((acc, p) => acc + Number(p.age), 0) / totalSquad).toFixed(1);
+
+      const sortedScorers = [...state.athletes].sort((a,b) => b.goals - a.goals);
+      const sortedAssisters = [...state.athletes].sort((a,b) => b.assists - a.assists);
+      const sortedSsg = [...state.athletes].sort((a,b) => b.ssg - a.ssg);
+      const sortedRating = [...state.athletes].filter(a => a.matches > 0).sort((a,b) => (b.ratingSum/b.matches) - (a.ratingSum/a.matches));
+
+      const bScorer = document.getElementById('bestScorer');
+      const bScorerG = document.getElementById('bestScorerGols');
+      if (sortedScorers[0] && bScorer && bScorerG) {
+        bScorer.innerText = sortedScorers[0].name;
+        bScorerG.innerText = `${sortedScorers[0].goals} Golos`;
+      }
+      const bAss = document.getElementById('bestAssister');
+      const bAssC = document.getElementById('bestAssisterCount');
+      if (sortedAssisters[0] && bAss && bAssC) {
+        bAss.innerText = sortedAssisters[0].name;
+        bAssC.innerText = `${sortedAssisters[0].assists} Assistências`;
+      }
+      const bSsg = document.getElementById('bestSsgPlayer');
+      const bSsgC = document.getElementById('bestSsgCount');
+      if (sortedSsg[0] && bSsg && bSsgC) {
+        bSsg.innerText = sortedSsg[0].name;
+        bSsgC.innerText = `${sortedSsg[0].ssg} Jogos`;
+      }
+      const bRat = document.getElementById('bestRatingPlayer');
+      const bRatV = document.getElementById('bestRatingVal');
+      if (sortedRating[0] && bRat && bRatV) {
+        bRat.innerText = sortedRating[0].name;
+        bRatV.innerText = (sortedRating[0].ratingSum / sortedRating[0].matches).toFixed(2);
+      }
+    }
+  }
+
+  // ==========================================
+  // GESTÃO DE ATLETAS
+  // ==========================================
+  function setPosFilter(pos) {
+    currentPosFilter = pos;
+    document.querySelectorAll('.pos-filter-btn').forEach(btn => {
+      if(btn.dataset.pos === pos) {
+        btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white';
+      } else {
+        btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200';
+      }
+    });
+    renderAthletesContainers();
+  }
+
+  function renderAthletesContainers() {
+    const container = document.getElementById('athletesSectorContainers');
+    if (!container) return;
+
+    const query = (document.getElementById('playerSearch')?.value || '').toLowerCase();
+
+    const top11Ids = [...state.athletes]
+      .filter(a => Number(a.matches) > 0)
+      .sort((a, b) => b.matches - a.matches)
+      .slice(0, 11)
+      .map(a => a.id);
+
+    const top5ExpensiveIds = [...state.athletes]
+      .filter(a => Number(a.marketValue) > 0)
+      .sort((a, b) => b.marketValue - a.marketValue)
+      .slice(0, 5)
+      .map(a => a.id);
+
+    const sectors = [
+      { key: 'DEF', name: 'Defesa & Guarda-Redes', icon: 'fa-shield-halved', color: 'blue', posList: ['GOL','ZAG','LD','LE','LAT','DEF'] },
+      { key: 'MEI', name: 'Meio-Campo', icon: 'fa-arrows-split-up-and-left', color: 'amber', posList: ['VOL','MC','MEI','ME','MD'] },
+      { key: 'ATA', name: 'Ataque & Pontas', icon: 'fa-bullseye', color: 'rose', posList: ['ATA','SA','ATD','ATE','PE','PD'] }
+    ];
+
+    container.innerHTML = sectors.map(sec => {
+      if (currentPosFilter !== 'TODOS' && currentPosFilter !== sec.key) return '';
+
+      let players = state.athletes.filter(p => {
+        const pos = (p.pos || '').toUpperCase().trim();
+        return sec.posList.includes(pos) && (p.name.toLowerCase().includes(query) || (p.nat || '').toLowerCase().includes(query));
       });
 
-      document.getElementById('tab-' + tab).classList.remove('hidden');
-      const activeBtn = document.getElementById('tabBtn-' + tab);
-      if (activeBtn) {
-        activeBtn.classList.add('border-slate-900', 'text-slate-900', 'bg-slate-100');
-        activeBtn.classList.remove('border-transparent', 'text-slate-600');
-      }
+      const count = players.length;
+      const totalVal = players.reduce((acc, p) => acc + (Number(p.marketValue) || 0), 0);
+      const avgOvr = count > 0 ? (players.reduce((acc, p) => acc + Number(p.currentOvr), 0) / count).toFixed(1) : '0.0';
 
-      if (tab === 'dashboard') renderCharts();
-      if (tab === 'matches') renderKnockoutBracket();
-    }
+      const rowsHtml = players.map(p => {
+        const isTop11 = top11Ids.includes(p.id);
+        const isTopExpensive = top5ExpensiveIds.includes(p.id);
+        const iconHtml = getPlayerShoeOrGloveIcon(p, isTop11);
+        const flagHtml = getCountryFlagImg(p.nat);
+        const roleBadge = getRoleBadge(p.role);
+        const potentialBadge = getPotentialEvaluation(p);
+        const avgRating = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(2) : '-';
 
-    function updateUI() {
-      document.getElementById('headerClubName').innerText = state.clubName;
-      document.getElementById('headerSeason').innerText = state.currentSeason;
-      document.getElementById('matchModalMyClubName').innerText = state.clubName;
-
-      updateClubLogo();
-      renderDashboard();
-      renderCharts();
-      renderAthletesContainers();
-      renderChampionshipsSelect();
-      renderKnockoutBracket();
-      renderChampStats();
-      renderMatchesHistory();
-    }
-
-    function renderDashboard() {
-      document.getElementById('dashBudget').innerText = '€ ' + formatCurrency(state.budget);
-      document.getElementById('dashInitialBudget').innerText = '€ ' + formatCurrency(state.initialBudget);
-      
-      const totalWage = state.athletes.reduce((acc, p) => acc + (Number(p.wage) || 0), 0);
-      document.getElementById('dashWage').innerText = '€ ' + formatCurrency(totalWage);
-      document.getElementById('dashWageBudget').innerText = '€ ' + formatCurrency(state.wageBudget);
-
-      const totalSquadValue = state.athletes.reduce((acc, p) => acc + (Number(p.marketValue) || 0), 0);
-      document.getElementById('dashTotalSquadValue').innerText = '€ ' + formatCurrency(totalSquadValue);
-
-      const totalSquad = state.athletes.length;
-      document.getElementById('dashTotalSquad').innerText = totalSquad;
-
-      if (totalSquad > 0) {
-        document.getElementById('dashAvgOvr').innerText = (state.athletes.reduce((acc, p) => acc + Number(p.currentOvr), 0) / totalSquad).toFixed(1);
-        document.getElementById('dashAvgAge').innerText = (state.athletes.reduce((acc, p) => acc + Number(p.age), 0) / totalSquad).toFixed(1);
-
-        const sortedScorers = [...state.athletes].sort((a,b) => b.goals - a.goals);
-        const sortedAssisters = [...state.athletes].sort((a,b) => b.assists - a.assists);
-        const sortedSsg = [...state.athletes].sort((a,b) => b.ssg - a.ssg);
-        const sortedRating = [...state.athletes].filter(a => a.matches > 0).sort((a,b) => (b.ratingSum/b.matches) - (a.ratingSum/a.matches));
-
-        if (sortedScorers[0]) {
-          document.getElementById('bestScorer').innerText = sortedScorers[0].name;
-          document.getElementById('bestScorerGols').innerText = `${sortedScorers[0].goals} Golos`;
+        let loanBadge = '';
+        if (p.loanStatus === 'LOAN_OUT') {
+          loanBadge = `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300 ml-1">Emp. para ${p.loanClub || 'Outro'}</span>`;
+        } else if (p.loanStatus === 'LOAN_IN') {
+          loanBadge = `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800 border border-blue-300 ml-1">Emp. do ${p.loanClub || 'Origem'}</span>`;
         }
-        if (sortedAssisters[0]) {
-          document.getElementById('bestAssister').innerText = sortedAssisters[0].name;
-          document.getElementById('bestAssisterCount').innerText = `${sortedAssisters[0].assists} Assistências`;
-        }
-        if (sortedSsg[0]) {
-          document.getElementById('bestSsgPlayer').innerText = sortedSsg[0].name;
-          document.getElementById('bestSsgCount').innerText = `${sortedSsg[0].ssg} Jogos sem sofrer`;
-        }
-        if (sortedRating[0]) {
-          document.getElementById('bestRatingPlayer').innerText = sortedRating[0].name;
-          document.getElementById('bestRatingVal').innerText = (sortedRating[0].ratingSum / sortedRating[0].matches).toFixed(2);
-        }
-      }
-    }
-
-    function setPosFilter(pos) {
-      currentPosFilter = pos;
-      document.querySelectorAll('.pos-filter-btn').forEach(btn => {
-        if(btn.dataset.pos === pos) {
-          btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white';
-        } else {
-          btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200';
-        }
-      });
-      renderAthletesContainers();
-    }
-
-    function renderAthletesContainers() {
-      const container = document.getElementById('athletesSectorContainers');
-      const query = (document.getElementById('playerSearch')?.value || '').toLowerCase();
-
-      const top11Ids = [...state.athletes]
-        .filter(a => Number(a.matches) > 0)
-        .sort((a, b) => b.matches - a.matches)
-        .slice(0, 11)
-        .map(a => a.id);
-
-      const top5ExpensiveIds = [...state.athletes]
-        .filter(a => Number(a.marketValue) > 0)
-        .sort((a, b) => b.marketValue - a.marketValue)
-        .slice(0, 5)
-        .map(a => a.id);
-
-      const sectors = [
-        { key: 'DEF', name: 'Defesa & Guarda-Redes', icon: 'fa-shield-halved', color: 'blue', posList: ['GOL','ZAG','LD','LE','LAT','DEF'] },
-        { key: 'MEI', name: 'Meio-Campo', icon: 'fa-arrows-split-up-and-left', color: 'amber', posList: ['VOL','MC','MEI','ME','MD'] },
-        { key: 'ATA', name: 'Ataque & Pontas', icon: 'fa-bullseye', color: 'rose', posList: ['ATA','SA','ATD','ATE','PE','PD'] }
-      ];
-
-      container.innerHTML = sectors.map(sec => {
-        if (currentPosFilter !== 'TODOS' && currentPosFilter !== sec.key) return '';
-
-        let players = state.athletes.filter(p => {
-          const pos = (p.pos || '').toUpperCase().trim();
-          return sec.posList.includes(pos) && (p.name.toLowerCase().includes(query) || (p.nat || '').toLowerCase().includes(query));
-        });
-
-        const count = players.length;
-        const totalVal = players.reduce((acc, p) => acc + (Number(p.marketValue) || 0), 0);
-        const avgOvr = count > 0 ? (players.reduce((acc, p) => acc + Number(p.currentOvr), 0) / count).toFixed(1) : '0.0';
-
-        const rowsHtml = players.map(p => {
-          const isTop11 = top11Ids.includes(p.id);
-          const isTopExpensive = top5ExpensiveIds.includes(p.id);
-          const iconHtml = getPlayerShoeOrGloveIcon(p, isTop11);
-          const flagHtml = getCountryFlagImg(p.nat);
-          const roleBadge = getRoleBadge(p.role);
-          const potentialBadge = getPotentialEvaluation(p);
-          const avgRating = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(2) : '-';
-
-          let loanBadge = '';
-          if (p.loanStatus === 'LOAN_OUT') {
-            loanBadge = `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-300 ml-1">Emp. para ${p.loanClub || 'Outro'}</span>`;
-          } else if (p.loanStatus === 'LOAN_IN') {
-            loanBadge = `<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800 border border-blue-300 ml-1">Emp. do ${p.loanClub || 'Origem'}</span>`;
-          }
-
-          return `
-            <tr class="hover:bg-slate-50 transition ${isTop11 ? 'bg-amber-50/40' : ''}">
-              <td class="p-3 text-center font-mono font-bold text-slate-400">${p.number || '-'}</td>
-              <td class="p-3">
-                <div class="flex items-center gap-2.5">
-                  ${flagHtml}
-                  <div>
-                    <div class="font-bold text-slate-900 text-xs flex items-center gap-1">${p.name} ${loanBadge}</div>
-                    <div class="text-[10px] mt-0.5">${roleBadge}</div>
-                  </div>
-                </div>
-              </td>
-              <td class="p-3">
-                <div class="flex items-center gap-2">
-                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${p.pos}</span>
-                  ${iconHtml}
-                </div>
-              </td>
-              <td class="p-3 text-slate-600 font-medium">${p.age} anos</td>
-              <td class="p-3 font-bold text-slate-900">
-                ${p.currentOvr}
-                ${(p.currentOvr - p.initialOvr) > 0 ? `<span class="text-[10px] text-emerald-600 font-bold">+${p.currentOvr - p.initialOvr}</span>` : ''}
-              </td>
-              <td class="p-3">
-                <span class="font-semibold text-slate-900 px-2 py-1 rounded ${isTopExpensive ? 'gold-value-badge font-bold' : ''}">
-                  € ${formatCurrency(p.marketValue)}
-                </span>
-              </td>
-              <td class="p-3 text-slate-700 font-medium text-center">${p.contractYears || 2} anos</td>
-              <td class="p-3 text-center">${potentialBadge}</td>
-              <td class="p-3 text-center text-slate-700 font-medium">${p.matches}</td>
-              <td class="p-3 text-center font-bold text-amber-700">${p.goals}</td>
-              <td class="p-3 text-center font-bold text-blue-700">${p.assists}</td>
-              <td class="p-3 text-center font-bold text-emerald-700">${p.ssg}</td>
-              <td class="p-3 text-center font-bold text-yellow-600">${p.yellow}</td>
-              <td class="p-3 text-center font-bold text-red-600">${p.red}</td>
-              <td class="p-3 text-center font-bold text-purple-700">${avgRating}</td>
-              <td class="p-3 text-right space-x-1 whitespace-nowrap">
-                <button onclick="openStatsModal(${p.id})" class="p-1.5 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200" title="Corrigir Estatísticas"><i class="fa-solid fa-chart-simple"></i></button>
-                <button onclick="editAthlete(${p.id})" class="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200" title="Editar Atleta"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button onclick="deleteAthlete(${p.id})" class="p-1.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200" title="Remover"><i class="fa-solid fa-trash"></i></button>
-              </td>
-            </tr>
-          `;
-        }).join('');
 
         return `
-          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
-            <div class="bg-slate-50/80 px-4 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+          <tr class="hover:bg-slate-50 transition ${isTop11 ? 'bg-amber-50/40' : ''}">
+            <td class="p-3 text-center font-mono font-bold text-slate-400">${p.number || '-'}</td>
+            <td class="p-3">
               <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-${sec.color}-100 text-${sec.color}-700 flex items-center justify-center text-sm font-bold">
-                  <i class="fa-solid ${sec.icon}"></i>
-                </div>
+                ${flagHtml}
                 <div>
-                  <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">${sec.name}</h3>
-                  <p class="text-xs text-slate-500 font-medium">${count} atleta(s) neste setor</p>
+                  <div class="font-bold text-slate-900 text-xs flex items-center gap-1">${p.name} ${loanBadge}</div>
+                  <div class="text-[10px] mt-0.5">${roleBadge}</div>
                 </div>
               </div>
-
-              <div class="flex items-center gap-3 text-xs font-semibold">
-                <div class="bg-white px-3 py-1 rounded-lg border border-slate-200">
-                  <span class="text-slate-500 text-[10px]">MÉDIA:</span> <span class="text-slate-900 font-bold">${avgOvr}</span>
-                </div>
-                <div class="bg-white px-3 py-1 rounded-lg border border-slate-200">
-                  <span class="text-slate-500 text-[10px]">VALOR:</span> <span class="text-emerald-700 font-bold">€ ${formatCurrency(totalVal)}</span>
-                </div>
+            </td>
+            <td class="p-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">${p.pos}</span>
+                ${iconHtml}
               </div>
-            </div>
-
-            <div class="overflow-x-auto scrollbar-thin">
-              <table class="w-full min-w-[850px] text-left text-xs">
-                <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold border-b border-slate-200">
-                  <tr>
-                    <th class="p-3 w-10 text-center">Nº</th>
-                    <th class="p-3">Atleta & Papel</th>
-                    <th class="p-3">Posição</th>
-                    <th class="p-3">Idade</th>
-                    <th class="p-3">OVR</th>
-                    <th class="p-3">V. Mercado</th>
-                    <th class="p-3 text-center">Contrato</th>
-                    <th class="p-3 text-center">Avaliação</th>
-                    <th class="p-3 text-center">Jogos</th>
-                    <th class="p-3 text-center">Golos</th>
-                    <th class="p-3 text-center">Ass</th>
-                    <th class="p-3 text-center">SSG</th>
-                    <th class="p-3 text-center">CA</th>
-                    <th class="p-3 text-center">CV</th>
-                    <th class="p-3 text-center">Nota</th>
-                    <th class="p-3 text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                  ${count > 0 ? rowsHtml : `<tr><td colspan="16" class="p-6 text-center text-slate-400 font-medium italic">Nenhum jogador registado neste setor.</td></tr>`}
-                </tbody>
-              </table>
-            </div>
-          </div>
+            </td>
+            <td class="p-3 text-slate-600 font-medium">${p.age} anos</td>
+            <td class="p-3 font-bold text-slate-900">
+              ${p.currentOvr}
+              ${(p.currentOvr - p.initialOvr) > 0 ? `<span class="text-[10px] text-emerald-600 font-bold">+${p.currentOvr - p.initialOvr}</span>` : ''}
+            </td>
+            <td class="p-3">
+              <span class="font-semibold text-slate-900 px-2 py-1 rounded ${isTopExpensive ? 'gold-value-badge font-bold' : ''}">
+                € ${formatCurrency(p.marketValue)}
+              </span>
+            </td>
+            <td class="p-3 text-slate-700 font-medium text-center">${p.contractYears || 2} anos</td>
+            <td class="p-3 text-center">${potentialBadge}</td>
+            <td class="p-3 text-center text-slate-700 font-medium">${p.matches}</td>
+            <td class="p-3 text-center font-bold text-amber-700">${p.goals}</td>
+            <td class="p-3 text-center font-bold text-blue-700">${p.assists}</td>
+            <td class="p-3 text-center font-bold text-emerald-700">${p.ssg}</td>
+            <td class="p-3 text-center font-bold text-yellow-600">${p.yellow}</td>
+            <td class="p-3 text-center font-bold text-red-600">${p.red}</td>
+            <td class="p-3 text-center font-bold text-purple-700">${avgRating}</td>
+            <td class="p-3 text-right space-x-1 whitespace-nowrap">
+              <button onclick="openStatsModal(${p.id})" class="p-1.5 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200" title="Corrigir Estatísticas"><i class="fa-solid fa-chart-simple"></i></button>
+              <button onclick="editAthlete(${p.id})" class="p-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200" title="Editar Atleta"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="deleteAthlete(${p.id})" class="p-1.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200" title="Remover"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
         `;
       }).join('');
-    }
 
-    // ================= MODAL ATLETA =================
-    function openAthleteModal() {
-      document.getElementById('athleteForm').reset();
-      document.getElementById('athleteEditId').value = '';
-      document.getElementById('athMarketValue').value = 5000000;
-      document.getElementById('athWage').value = 5000;
-      document.getElementById('athInitialOvr').value = 72;
-      document.getElementById('athOvr').value = 72;
-      document.getElementById('athContract').value = 3;
-      document.getElementById('athLoanStatus').value = 'NONE';
-      document.getElementById('loanClubContainer').classList.add('hidden');
-      document.getElementById('athleteModalTitle').innerText = 'Cadastrar Atleta';
-      document.getElementById('athleteModal').classList.remove('hidden');
-    }
+      return `
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+          <div class="bg-slate-50/80 px-4 py-3 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-lg bg-${sec.color}-100 text-${sec.color}-700 flex items-center justify-center text-sm font-bold">
+                <i class="fa-solid ${sec.icon}"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide">${sec.name}</h3>
+                <p class="text-xs text-slate-500 font-medium">${count} atleta(s) neste setor</p>
+              </div>
+            </div>
 
-    function closeAthleteModal() {
-      document.getElementById('athleteModal').classList.add('hidden');
-    }
+            <div class="flex items-center gap-3 text-xs font-semibold">
+              <div class="bg-white px-3 py-1 rounded-lg border border-slate-200">
+                <span class="text-slate-500 text-[10px]">MÉDIA:</span> <span class="text-slate-900 font-bold">${avgOvr}</span>
+              </div>
+              <div class="bg-white px-3 py-1 rounded-lg border border-slate-200">
+                <span class="text-slate-500 text-[10px]">VALOR:</span> <span class="text-emerald-700 font-bold">€ ${formatCurrency(totalVal)}</span>
+              </div>
+            </div>
+          </div>
 
-    function editAthlete(id) {
-      const p = state.athletes.find(a => a.id === id);
-      if(!p) return;
-      document.getElementById('athleteEditId').value = p.id;
-      document.getElementById('athName').value = p.name;
-      document.getElementById('athNumber').value = p.number;
-      document.getElementById('athPos').value = p.pos;
-      document.getElementById('athAge').value = p.age;
-      document.getElementById('athNat').value = p.nat || 'BRA';
-      document.getElementById('athInitialOvr').value = p.initialOvr || p.currentOvr;
-      document.getElementById('athOvr').value = p.currentOvr;
-      document.getElementById('athContract').value = p.contractYears || 2;
-      document.getElementById('athRole').value = p.role || 'IMPORTANTE';
-      document.getElementById('athMarketValue').value = p.marketValue || 0;
-      document.getElementById('athWage').value = p.wage || 0;
-      document.getElementById('athLoanStatus').value = p.loanStatus || 'NONE';
-      document.getElementById('athLoanClub').value = p.loanClub || '';
-      
-      toggleLoanClubInput();
-      document.getElementById('athleteModalTitle').innerText = 'Editar Atleta';
-      document.getElementById('athleteModal').classList.remove('hidden');
-    }
+          <div class="overflow-x-auto scrollbar-thin">
+            <table class="w-full min-w-[850px] text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold border-b border-slate-200">
+                <tr>
+                  <th class="p-3 w-10 text-center">Nº</th>
+                  <th class="p-3">Atleta & Papel</th>
+                  <th class="p-3">Posição</th>
+                  <th class="p-3">Idade</th>
+                  <th class="p-3">OVR</th>
+                  <th class="p-3">V. Mercado</th>
+                  <th class="p-3 text-center">Contrato</th>
+                  <th class="p-3 text-center">Avaliação</th>
+                  <th class="p-3 text-center">Jogos</th>
+                  <th class="p-3 text-center">Golos</th>
+                  <th class="p-3 text-center">Ass</th>
+                  <th class="p-3 text-center">SSG</th>
+                  <th class="p-3 text-center">CA</th>
+                  <th class="p-3 text-center">CV</th>
+                  <th class="p-3 text-center">Nota</th>
+                  <th class="p-3 text-right">Ações</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                ${count > 0 ? rowsHtml : `<tr><td colspan="16" class="p-6 text-center text-slate-400 font-medium italic">Nenhum jogador registado neste setor.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 
-    function saveAthlete(e) {
-      e.preventDefault();
-      const editId = document.getElementById('athleteEditId').value;
-      const ovr = Number(document.getElementById('athOvr').value);
-      const initialOvr = Number(document.getElementById('athInitialOvr').value) || ovr;
-      const marketValue = Number(document.getElementById('athMarketValue').value) || 0;
-      const wage = Number(document.getElementById('athWage').value) || 0;
-      const contractYears = Number(document.getElementById('athContract').value) || 2;
-      const loanStatus = document.getElementById('athLoanStatus').value;
-      const loanClub = document.getElementById('athLoanClub').value.trim();
-      const nat = document.getElementById('athNat').value.toUpperCase().trim() || 'BRA';
+  function openAthleteModal() {
+    const form = document.getElementById('athleteForm');
+    if (form) form.reset();
+    document.getElementById('athleteEditId').value = '';
+    document.getElementById('athMarketValue').value = 5000000;
+    document.getElementById('athWage').value = 5000;
+    document.getElementById('athInitialOvr').value = 72;
+    document.getElementById('athOvr').value = 72;
+    document.getElementById('athContract').value = 3;
+    document.getElementById('athLoanStatus').value = 'NONE';
+    document.getElementById('loanClubContainer').classList.add('hidden');
+    document.getElementById('athleteModalTitle').innerText = 'Cadastrar Atleta';
+    document.getElementById('athleteModal').classList.remove('hidden');
+  }
 
-      if (editId) {
-        const p = state.athletes.find(a => a.id === Number(editId));
-        p.name = document.getElementById('athName').value;
-        p.number = Number(document.getElementById('athNumber').value);
-        p.pos = document.getElementById('athPos').value;
-        p.age = Number(document.getElementById('athAge').value);
+  function closeAthleteModal() {
+    document.getElementById('athleteModal').classList.add('hidden');
+  }
+
+  function editAthlete(id) {
+    const p = state.athletes.find(a => a.id === id);
+    if (!p) return;
+    document.getElementById('athleteEditId').value = p.id;
+    document.getElementById('athName').value = p.name;
+    document.getElementById('athNumber').value = p.number;
+    document.getElementById('athPos').value = p.pos;
+    document.getElementById('athAge').value = p.age;
+    document.getElementById('athNat').value = p.nat || 'BRA';
+    document.getElementById('athInitialOvr').value = p.initialOvr || p.currentOvr;
+    document.getElementById('athOvr').value = p.currentOvr;
+    document.getElementById('athContract').value = p.contractYears || 2;
+    document.getElementById('athRole').value = p.role || 'IMPORTANTE';
+    document.getElementById('athMarketValue').value = p.marketValue || 0;
+    document.getElementById('athWage').value = p.wage || 0;
+    document.getElementById('athLoanStatus').value = p.loanStatus || 'NONE';
+    document.getElementById('athLoanClub').value = p.loanClub || '';
+    
+    toggleLoanClubInput();
+    document.getElementById('athleteModalTitle').innerText = 'Editar Atleta';
+    document.getElementById('athleteModal').classList.remove('hidden');
+  }
+
+  function saveAthlete(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    
+    const nameVal = document.getElementById('athName').value.trim();
+    if (!nameVal) return alert('Por favor, informe o nome do atleta!');
+
+    const editId = document.getElementById('athleteEditId').value;
+    const ovr = Number(document.getElementById('athOvr').value);
+    const initialOvr = Number(document.getElementById('athInitialOvr').value) || ovr;
+    const marketValue = Number(document.getElementById('athMarketValue').value) || 0;
+    const wage = Number(document.getElementById('athWage').value) || 0;
+    const contractYears = Number(document.getElementById('athContract').value) || 2;
+    const loanStatus = document.getElementById('athLoanStatus').value;
+    const loanClub = document.getElementById('athLoanClub').value.trim();
+    const nat = document.getElementById('athNat').value.toUpperCase().trim() || 'BRA';
+    const number = document.getElementById('athNumber').value !== '' ? Number(document.getElementById('athNumber').value) : '-';
+    const pos = document.getElementById('athPos').value;
+    const age = Number(document.getElementById('athAge').value) || 20;
+    const role = document.getElementById('athRole').value;
+
+    if (editId) {
+      const p = state.athletes.find(a => a.id === Number(editId));
+      if (p) {
+        p.name = nameVal;
+        p.number = number;
+        p.pos = pos;
+        p.age = age;
         p.nat = nat;
         p.initialOvr = initialOvr;
         p.currentOvr = ovr;
         p.contractYears = contractYears;
-        p.role = document.getElementById('athRole').value;
+        p.role = role;
         p.marketValue = marketValue;
         p.wage = wage;
         p.loanStatus = loanStatus;
         p.loanClub = loanClub;
-      } else {
-        const newPlayer = {
-          id: Date.now(),
-          name: document.getElementById('athName').value,
-          number: Number(document.getElementById('athNumber').value),
-          pos: document.getElementById('athPos').value,
-          age: Number(document.getElementById('athAge').value),
-          nat: nat,
-          role: document.getElementById('athRole').value,
-          initialOvr: initialOvr,
-          currentOvr: ovr,
-          contractYears: contractYears,
-          loanStatus: loanStatus,
-          loanClub: loanClub,
-          marketValue: marketValue,
-          wage: wage,
-          matches: 0,
-          goals: 0,
-          assists: 0,
-          ssg: 0,
-          yellow: 0,
-          red: 0,
-          ratingSum: 0
-        };
-        state.athletes.push(newPlayer);
       }
-      closeAthleteModal();
-      saveState();
-      syncAllToCloud();
-    }
-
-    function deleteAthlete(id) {
-      if(confirm('Tem a certeza de que deseja remover este atleta?')) {
-        state.athletes = state.athletes.filter(a => a.id !== id);
-        saveState();
-        syncAllToCloud();
-      }
-    }
-
-    // ================= MODAL ESTATÍSTICAS GERAIS =================
-    function openStatsModal(playerId) {
-      const p = state.athletes.find(a => a.id === playerId);
-      if (!p) return;
-
-      document.getElementById('statsPlayerId').value = p.id;
-      document.getElementById('statsModalPlayerName').innerText = `${p.name} (${p.pos}) - OVR ${p.currentOvr}`;
-      document.getElementById('statsMatches').value = p.matches;
-      document.getElementById('statsGoals').value = p.goals;
-      document.getElementById('statsAssists').value = p.assists;
-      document.getElementById('statsSsg').value = p.ssg;
-      document.getElementById('statsYellow').value = p.yellow;
-      document.getElementById('statsRed').value = p.red;
-      
-      const currentAvg = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(2) : '6.50';
-      document.getElementById('statsAvgRating').value = currentAvg;
-      document.getElementById('statsModal').classList.remove('hidden');
-    }
-
-    function closeStatsModal() {
-      document.getElementById('statsModal').classList.add('hidden');
-    }
-
-    function saveAthleteStats(e) {
-      e.preventDefault();
-      const pId = Number(document.getElementById('statsPlayerId').value);
-      const p = state.athletes.find(a => a.id === pId);
-      if (!p) return;
-
-      const matches = Number(document.getElementById('statsMatches').value) || 0;
-      p.matches = matches;
-      p.goals = Number(document.getElementById('statsGoals').value) || 0;
-      p.assists = Number(document.getElementById('statsAssists').value) || 0;
-      p.ssg = Number(document.getElementById('statsSsg').value) || 0;
-      p.yellow = Number(document.getElementById('statsYellow').value) || 0;
-      p.red = Number(document.getElementById('statsRed').value) || 0;
-      const avg = Number(document.getElementById('statsAvgRating').value) || 0;
-      p.ratingSum = matches > 0 ? (avg * matches) : 0;
-
-      closeStatsModal();
-      saveState();
-      syncAllToCloud();
-    }
-
-    // ================= CAMPEONATOS & FASES ELIMINATÓRIAS =================
-    function getStagesForChampionship(champ) {
-      if (!champ || champ.format !== 'MATA') return [];
-      const count = Number(champ.stagesCount) || 3;
-      return ALL_KNOCKOUT_STAGES.slice(-count);
-    }
-
-    function toggleChampStageInput() {
-      const format = document.getElementById('newChampFormat').value;
-      const container = document.getElementById('newChampStagesContainer');
-      if (format === 'MATA') {
-        container.classList.remove('hidden');
-      } else {
-        container.classList.add('hidden');
-      }
-    }
-
-    function renderChampionshipsSelect() {
-      const select = document.getElementById('champSelect');
-      const modalSelect = document.getElementById('matchModalChamp');
-      
-      let optionsHtml = `<option value="ALL">⭐ Todos os Jogos da Temporada</option>`;
-      optionsHtml += state.championships.map(c => {
-        const typeLabel = c.format === 'MATA' ? `Mata-mata (${c.stagesCount || 3} fases)` : 'Pontos Corridos';
-        return `<option value="${c.id}">${c.name} - ${typeLabel}</option>`;
-      }).join('');
-      
-      select.innerHTML = optionsHtml;
-      modalSelect.innerHTML = state.championships.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-
-      if (!state.currentChampId) state.currentChampId = 'ALL';
-      select.value = state.currentChampId;
-      updateTrophyDisplay();
-      toggleMatchStageSelect();
-    }
-
-    function onChampSelectChange() {
-      state.currentChampId = document.getElementById('champSelect').value;
-      updateTrophyDisplay();
-      renderKnockoutBracket();
-      renderChampStats();
-      renderMatchesHistory();
-    }
-
-    function updateTrophyDisplay() {
-      const img = document.getElementById('trophyImg');
-      const def = document.getElementById('trophyDefaultIcon');
-
-      if (state.currentChampId === 'ALL') {
-        img.classList.add('hidden');
-        def.classList.remove('hidden');
-        def.className = 'fa-solid fa-trophy text-amber-500 text-lg';
-        return;
-      }
-
-      const activeChamp = state.championships.find(c => c.id === state.currentChampId);
-      if (activeChamp && activeChamp.trophyUrl && activeChamp.trophyUrl.trim() !== '') {
-        img.src = activeChamp.trophyUrl;
-        img.classList.remove('hidden');
-        def.classList.add('hidden');
-      } else {
-        img.classList.add('hidden');
-        def.classList.remove('hidden');
-        def.className = 'fa-solid fa-trophy text-amber-500 text-lg';
-      }
-    }
-
-    // EXIBE AS FASES ELIMINATÓRIAS (BRACKET) QUANDO FOR TORNEIO / TAÇA
-    function renderKnockoutBracket() {
-      const bracketContainer = document.getElementById('knockoutBracketContainer');
-      const stagesList = document.getElementById('knockoutStagesList');
-      const label = document.getElementById('knockoutStagesCountLabel');
-
-      if (state.currentChampId === 'ALL') {
-        bracketContainer.classList.add('hidden');
-        return;
-      }
-
-      const champ = state.championships.find(c => c.id === state.currentChampId);
-      if (!champ || champ.format !== 'MATA') {
-        bracketContainer.classList.add('hidden');
-        return;
-      }
-
-      bracketContainer.classList.remove('hidden');
-      const stages = getStagesForChampionship(champ);
-      label.innerText = `${stages.length} fases configuradas`;
-
-      // Partidas já jogadas nesta taça
-      const champMatches = state.matches.filter(m => m.champId === champ.id && m.season === state.currentSeason);
-
-      stagesList.innerHTML = stages.map((st, idx) => {
-        const matchesInStage = champMatches.filter(m => m.stage === st);
-        const hasPlayed = matchesInStage.length > 0;
-        const isFinal = st === 'Final';
-
-        let badgeStyle = "bg-slate-100 border-slate-200 text-slate-600";
-        if (hasPlayed) badgeStyle = "bg-emerald-50 border-emerald-300 text-emerald-800 font-bold";
-        if (isFinal) badgeStyle += " ring-2 ring-amber-400";
-
-        return `
-          <div class="flex items-center gap-2 shrink-0">
-            <div class="px-3.5 py-2 rounded-xl border text-xs flex flex-col items-center justify-center min-w-[130px] ${badgeStyle} shadow-xs">
-              <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Etapa ${idx + 1}</span>
-              <span class="font-extrabold flex items-center gap-1.5 mt-0.5">
-                ${isFinal ? '<i class="fa-solid fa-crown text-amber-500"></i>' : '<i class="fa-solid fa-shield text-slate-400 text-[10px]"></i>'}
-                ${st}
-              </span>
-              <span class="text-[10px] mt-1 text-slate-500 font-medium">
-                ${hasPlayed ? `${matchesInStage.length} jogo(s) registado(s)` : 'Pendente'}
-              </span>
-            </div>
-            ${idx < stages.length - 1 ? '<i class="fa-solid fa-arrow-right text-slate-300 text-xs shrink-0"></i>' : ''}
-          </div>
-        `;
-      }).join('');
-    }
-
-    function openNewChampModal() {
-      document.getElementById('newChampName').value = '';
-      document.getElementById('newChampTrophyUrl').value = '';
-      document.getElementById('newChampFormat').value = 'PONTOS';
-      document.getElementById('newChampStagesCount').value = '3';
-      toggleChampStageInput();
-      document.getElementById('champModal').classList.remove('hidden');
-    }
-
-    function closeNewChampModal() {
-      document.getElementById('champModal').classList.add('hidden');
-    }
-
-    // CRIAÇÃO E SALVAMENTO DEFINITIVO DO TORNEIO NO BANCO E LOCALMENTE
-    function saveNewChamp() {
-      const name = document.getElementById('newChampName').value.trim();
-      const trophyUrl = document.getElementById('newChampTrophyUrl').value.trim();
-      const format = document.getElementById('newChampFormat').value;
-      const stagesCount = format === 'MATA' ? Number(document.getElementById('newChampStagesCount').value) : 0;
-
-      if (!name) return alert('Por favor, informe o nome do campeonato!');
-
-      const newC = {
-        id: 'c_' + Date.now(),
-        name: name,
-        nome: name,
-        format: format,
-        formato: format,
-        stagesCount: stagesCount,
-        fases: stagesCount,
-        trophyUrl: trophyUrl
+    } else {
+      const newPlayer = {
+        id: Date.now(),
+        name: nameVal,
+        number: number,
+        pos: pos,
+        age: age,
+        nat: nat,
+        role: role,
+        initialOvr: initialOvr,
+        currentOvr: ovr,
+        contractYears: contractYears,
+        loanStatus: loanStatus,
+        loanClub: loanClub,
+        marketValue: marketValue,
+        wage: wage,
+        matches: 0,
+        goals: 0,
+        assists: 0,
+        ssg: 0,
+        yellow: 0,
+        red: 0,
+        ratingSum: 0
       };
-
-      state.championships.push(newC);
-      state.currentChampId = newC.id;
-      
-      closeNewChampModal();
-      saveState();
-      updateUI();
-      syncAllToCloud();
-      alert(`Competição "${name}" criada e gravada com sucesso!`);
+      state.athletes.push(newPlayer);
     }
 
-    function renderChampStats() {
-      const container = document.getElementById('champStatsCards');
-      
-      const filteredMatches = state.matches.filter(m => {
-        const seasonMatch = m.season === state.currentSeason;
-        if (state.currentChampId === 'ALL') return seasonMatch;
-        return seasonMatch && m.champId === state.currentChampId;
-      });
+    closeAthleteModal();
+    saveState();
+    syncAllToCloud();
+  }
 
-      let games = filteredMatches.length;
-      let wins = 0, draws = 0, losses = 0, gp = 0, gc = 0;
+  function deleteAthlete(id) {
+    if(confirm('Tem a certeza de que deseja remover este atleta?')) {
+      state.athletes = state.athletes.filter(a => a.id !== id);
+      saveState();
+      syncAllToCloud();
+    }
+  }
 
-      filteredMatches.forEach(m => {
-        gp += m.myScore;
-        gc += m.oppScore;
-        if (m.myScore > m.oppScore) wins++;
-        else if (m.myScore === m.oppScore) draws++;
-        else losses++;
-      });
+  // ==========================================
+  // MODAL ESTATÍSTICAS DO ATLETA
+  // ==========================================
+  function openStatsModal(playerId) {
+    const p = state.athletes.find(a => a.id === playerId);
+    if (!p) return;
 
-      const points = (wins * 3) + (draws * 1);
-      const gd = gp - gc;
-      const aproveitamento = games > 0 ? ((points / (games * 3)) * 100).toFixed(0) : 0;
+    document.getElementById('statsPlayerId').value = p.id;
+    document.getElementById('statsModalPlayerName').innerText = `${p.name} (${p.pos}) - OVR ${p.currentOvr}`;
+    document.getElementById('statsMatches').value = p.matches;
+    document.getElementById('statsGoals').value = p.goals;
+    document.getElementById('statsAssists').value = p.assists;
+    document.getElementById('statsSsg').value = p.ssg;
+    document.getElementById('statsYellow').value = p.yellow;
+    document.getElementById('statsRed').value = p.red;
+    
+    const currentAvg = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(2) : '6.50';
+    document.getElementById('statsAvgRating').value = currentAvg;
+    document.getElementById('statsModal').classList.remove('hidden');
+  }
 
-      container.innerHTML = `
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
-          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Pontos</div>
-          <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${points}</div>
-        </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
-          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Jogos</div>
-          <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${games}</div>
-        </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
-          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">V / E / D</div>
-          <div class="text-base sm:text-lg font-bold text-slate-800 font-heading mt-1">${wins}/${draws}/${losses}</div>
-        </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
-          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Golos Pró</div>
-          <div class="text-xl sm:text-2xl font-black text-amber-700 font-heading">${gp}</div>
-        </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
-          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Golos Contra</div>
-          <div class="text-xl sm:text-2xl font-black text-red-600 font-heading">${gc}</div>
-        </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
-          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Saldo</div>
-          <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${gd > 0 ? '+'+gd : gd}</div>
-        </div>
-        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
-          <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Aproveitamento</div>
-          <div class="text-xl sm:text-2xl font-black text-purple-700 font-heading">${aproveitamento}%</div>
+  function closeStatsModal() {
+    document.getElementById('statsModal').classList.add('hidden');
+  }
+
+  function saveAthleteStats(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const pId = Number(document.getElementById('statsPlayerId').value);
+    const p = state.athletes.find(a => a.id === pId);
+    if (!p) return;
+
+    const matches = Number(document.getElementById('statsMatches').value) || 0;
+    p.matches = matches;
+    p.goals = Number(document.getElementById('statsGoals').value) || 0;
+    p.assists = Number(document.getElementById('statsAssists').value) || 0;
+    p.ssg = Number(document.getElementById('statsSsg').value) || 0;
+    p.yellow = Number(document.getElementById('statsYellow').value) || 0;
+    p.red = Number(document.getElementById('statsRed').value) || 0;
+    const avg = Number(document.getElementById('statsAvgRating').value) || 0;
+    p.ratingSum = matches > 0 ? (avg * matches) : 0;
+
+    closeStatsModal();
+    saveState();
+    syncAllToCloud();
+  }
+
+  // ==========================================
+  // CAMPEONATOS & ELIMINATÓRIAS
+  // ==========================================
+  function getStagesForChampionship(champ) {
+    if (!champ || champ.format !== 'MATA') return [];
+    const count = Number(champ.stagesCount) || 3;
+    return ALL_KNOCKOUT_STAGES.slice(-count);
+  }
+
+  function toggleChampStageInput() {
+    const format = document.getElementById('newChampFormat').value;
+    const container = document.getElementById('newChampStagesContainer');
+    if (format === 'MATA') {
+      container.classList.remove('hidden');
+    } else {
+      container.classList.add('hidden');
+    }
+  }
+
+  function renderChampionshipsSelect() {
+    const select = document.getElementById('champSelect');
+    const modalSelect = document.getElementById('matchModalChamp');
+    if (!select || !modalSelect) return;
+    
+    let optionsHtml = `<option value="ALL">⭐ Todos os Jogos da Temporada</option>`;
+    optionsHtml += state.championships.map(c => {
+      const typeLabel = c.format === 'MATA' ? `Mata-mata (${c.stagesCount || 3} fases)` : 'Pontos Corridos';
+      return `<option value="${c.id}">${c.name} - ${typeLabel}</option>`;
+    }).join('');
+    
+    select.innerHTML = optionsHtml;
+    modalSelect.innerHTML = state.championships.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+    if (!state.currentChampId) state.currentChampId = 'ALL';
+    select.value = state.currentChampId;
+    updateTrophyDisplay();
+    toggleMatchStageSelect();
+  }
+
+  function onChampSelectChange() {
+    state.currentChampId = document.getElementById('champSelect').value;
+    updateTrophyDisplay();
+    renderKnockoutBracket();
+    renderChampStats();
+    renderMatchesHistory();
+  }
+
+  function updateTrophyDisplay() {
+    const img = document.getElementById('trophyImg');
+    const def = document.getElementById('trophyDefaultIcon');
+    if (!img || !def) return;
+
+    if (state.currentChampId === 'ALL') {
+      img.classList.add('hidden');
+      def.classList.remove('hidden');
+      def.className = 'fa-solid fa-trophy text-amber-500 text-lg';
+      return;
+    }
+
+    const activeChamp = state.championships.find(c => c.id === state.currentChampId);
+    const activeUrl = activeChamp ? (activeChamp.trophyUrl || activeChamp.trophy_url || activeChamp.taca_url || '').trim() : '';
+
+    if (activeUrl !== '') {
+      img.src = activeUrl;
+      img.classList.remove('hidden');
+      def.classList.add('hidden');
+    } else {
+      img.classList.add('hidden');
+      def.classList.remove('hidden');
+      def.className = 'fa-solid fa-trophy text-amber-500 text-lg';
+    }
+  }
+
+  function renderKnockoutBracket() {
+    const bracketContainer = document.getElementById('knockoutBracketContainer');
+    const stagesList = document.getElementById('knockoutStagesList');
+    const label = document.getElementById('knockoutStagesCountLabel');
+    if (!bracketContainer || !stagesList) return;
+
+    if (state.currentChampId === 'ALL') {
+      bracketContainer.classList.add('hidden');
+      return;
+    }
+
+    const champ = state.championships.find(c => c.id === state.currentChampId);
+    if (!champ || champ.format !== 'MATA') {
+      bracketContainer.classList.add('hidden');
+      return;
+    }
+
+    bracketContainer.classList.remove('hidden');
+    const stages = getStagesForChampionship(champ);
+    if (label) label.innerText = `${stages.length} fases configuradas`;
+
+    const champMatches = state.matches.filter(m => m.champId === champ.id && m.season === state.currentSeason);
+
+    stagesList.innerHTML = stages.map((st, idx) => {
+      const matchesInStage = champMatches.filter(m => m.stage === st);
+      const hasPlayed = matchesInStage.length > 0;
+      const isFinal = st === 'Final';
+
+      let badgeStyle = "bg-slate-100 border-slate-200 text-slate-600";
+      if (hasPlayed) badgeStyle = "bg-emerald-50 border-emerald-300 text-emerald-800 font-bold";
+      if (isFinal) badgeStyle += " ring-2 ring-amber-400";
+
+      return `
+        <div class="flex items-center gap-2 shrink-0">
+          <div class="px-3.5 py-2 rounded-xl border text-xs flex flex-col items-center justify-center min-w-[130px] ${badgeStyle} shadow-xs">
+            <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Etapa ${idx + 1}</span>
+            <span class="font-extrabold flex items-center gap-1.5 mt-0.5">
+              ${isFinal ? '<i class="fa-solid fa-crown text-amber-500"></i>' : '<i class="fa-solid fa-shield text-slate-400 text-[10px]"></i>'}
+              ${st}
+            </span>
+            <span class="text-[10px] mt-1 text-slate-500 font-medium">
+              ${hasPlayed ? `${matchesInStage.length} jogo(s) registado(s)` : 'Pendente'}
+            </span>
+          </div>
+          ${idx < stages.length - 1 ? '<i class="fa-solid fa-arrow-right text-slate-300 text-xs shrink-0"></i>' : ''}
         </div>
       `;
+    }).join('');
+  }
+
+  function openNewChampModal() {
+    document.getElementById('newChampName').value = '';
+    document.getElementById('newChampTrophyUrl').value = '';
+    document.getElementById('newChampFormat').value = 'PONTOS';
+    document.getElementById('newChampStagesCount').value = '3';
+    toggleChampStageInput();
+    document.getElementById('champModal').classList.remove('hidden');
+  }
+
+  function closeNewChampModal() {
+    document.getElementById('champModal').classList.add('hidden');
+  }
+
+  function saveNewChamp() {
+    const name = document.getElementById('newChampName').value.trim();
+    const trophyUrl = document.getElementById('newChampTrophyUrl') ? document.getElementById('newChampTrophyUrl').value.trim() : '';
+    const format = document.getElementById('newChampFormat').value;
+    const stagesCount = format === 'MATA' ? Number(document.getElementById('newChampStagesCount').value) : 0;
+
+    if (!name) return alert('Por favor, informe o nome do campeonato!');
+
+    const newC = {
+      id: 'c_' + Date.now(),
+      name: name,
+      nome: name,
+      format: format,
+      formato: format,
+      stagesCount: stagesCount,
+      fases: stagesCount,
+      trophyUrl: trophyUrl,
+      trophy_url: trophyUrl,
+      taca_url: trophyUrl
+    };
+
+    state.championships.push(newC);
+    state.currentChampId = newC.id;
+    
+    closeNewChampModal();
+    saveState();
+    syncAllToCloud();
+    alert(`Competição "${name}" criada e gravada com sucesso!`);
+  }
+
+  function renderChampStats() {
+    const container = document.getElementById('champStatsCards');
+    if (!container) return;
+    
+    const filteredMatches = state.matches.filter(m => {
+      const seasonMatch = m.season === state.currentSeason;
+      if (state.currentChampId === 'ALL') return seasonMatch;
+      return seasonMatch && m.champId === state.currentChampId;
+    });
+
+    let games = filteredMatches.length;
+    let wins = 0, draws = 0, losses = 0, gp = 0, gc = 0;
+
+    filteredMatches.forEach(m => {
+      gp += m.myScore;
+      gc += m.oppScore;
+      if (m.myScore > m.oppScore) wins++;
+      else if (m.myScore === m.oppScore) draws++;
+      else losses++;
+    });
+
+    const points = (wins * 3) + (draws * 1);
+    const gd = gp - gc;
+    const aproveitamento = games > 0 ? ((points / (games * 3)) * 100).toFixed(0) : 0;
+
+    container.innerHTML = `
+      <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+        <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Pontos</div>
+        <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${points}</div>
+      </div>
+      <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+        <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Jogos</div>
+        <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${games}</div>
+      </div>
+      <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+        <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">V / E / D</div>
+        <div class="text-base sm:text-lg font-bold text-slate-800 font-heading mt-1">${wins}/${draws}/${losses}</div>
+      </div>
+      <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+        <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Golos Pró</div>
+        <div class="text-xl sm:text-2xl font-black text-amber-700 font-heading">${gp}</div>
+      </div>
+      <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+        <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Golos Contra</div>
+        <div class="text-xl sm:text-2xl font-black text-red-600 font-heading">${gc}</div>
+      </div>
+      <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+        <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Saldo</div>
+        <div class="text-xl sm:text-2xl font-black text-slate-900 font-heading">${gd > 0 ? '+'+gd : gd}</div>
+      </div>
+      <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+        <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Aproveitamento</div>
+        <div class="text-xl sm:text-2xl font-black text-purple-700 font-heading">${aproveitamento}%</div>
+      </div>
+    `;
+  }
+
+  // ==========================================
+  // MODAL PARTIDA & HISTÓRICO
+  // ==========================================
+  function toggleMatchStageSelect(selectedStage = '') {
+    const champId = document.getElementById('matchModalChamp')?.value;
+    const champ = state.championships.find(c => c.id === champId);
+    const stageContainer = document.getElementById('matchStageContainer');
+    const stageSelect = document.getElementById('matchStageSelect');
+
+    if (!stageContainer || !stageSelect) return;
+
+    if (champ && champ.format === 'MATA') {
+      stageContainer.classList.remove('hidden');
+      const stages = getStagesForChampionship(champ);
+      stageSelect.innerHTML = stages.map(st => `<option value="${st}">${st}</option>`).join('');
+      if (selectedStage) stageSelect.value = selectedStage;
+    } else {
+      stageContainer.classList.add('hidden');
+      stageSelect.innerHTML = '';
     }
+  }
 
-    // ================= MODAL PARTIDA & SELEÇÃO DE FASES =================
-    function toggleMatchStageSelect(selectedStage = '') {
-      const champId = document.getElementById('matchModalChamp').value;
-      const champ = state.championships.find(c => c.id === champId);
-      const stageContainer = document.getElementById('matchStageContainer');
-      const stageSelect = document.getElementById('matchStageSelect');
+  function openMatchModal() {
+    document.getElementById('matchEditId').value = '';
+    document.getElementById('matchModalTitle').innerHTML = '<i class="fa-solid fa-futbol text-emerald-600"></i> Registar Partida';
+    document.getElementById('saveMatchBtn').innerText = 'Guardar Partida';
 
-      if (champ && champ.format === 'MATA') {
-        stageContainer.classList.remove('hidden');
-        const stages = getStagesForChampionship(champ);
-        stageSelect.innerHTML = stages.map(st => `<option value="${st}">${st}</option>`).join('');
-        if (selectedStage) stageSelect.value = selectedStage;
+    document.getElementById('matchOpponent').value = '';
+    document.getElementById('matchMyScore').value = 0;
+    document.getElementById('matchOppScore').value = 0;
+    document.getElementById('matchLocation').value = 'CASA';
+    
+    const modalChamp = document.getElementById('matchModalChamp');
+    if (modalChamp && modalChamp.options.length > 0) {
+      if (state.currentChampId !== 'ALL') {
+        modalChamp.value = state.currentChampId;
       } else {
-        stageContainer.classList.add('hidden');
-        stageSelect.innerHTML = '';
+        modalChamp.selectedIndex = 0;
       }
     }
 
-    function openMatchModal() {
-      document.getElementById('matchEditId').value = '';
-      document.getElementById('matchModalTitle').innerHTML = '<i class="fa-solid fa-futbol text-emerald-600"></i> Registar Partida';
-      document.getElementById('saveMatchBtn').innerText = 'Guardar Partida';
+    toggleMatchStageSelect();
+    document.getElementById('goalDetailsContainer').innerHTML = `
+      <p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>
+    `;
+    renderMatchAthletesPerformanceInputs();
+    document.getElementById('matchModal').classList.remove('hidden');
+  }
 
-      document.getElementById('matchOpponent').value = '';
-      document.getElementById('matchMyScore').value = 0;
-      document.getElementById('matchOppScore').value = 0;
-      document.getElementById('matchLocation').value = 'CASA';
-      
-      const modalChamp = document.getElementById('matchModalChamp');
-      if (modalChamp && modalChamp.options.length > 0) {
-        if (state.currentChampId !== 'ALL') {
-          modalChamp.value = state.currentChampId;
-        } else {
-          modalChamp.selectedIndex = 0;
-        }
-      }
+  function closeMatchModal() {
+    document.getElementById('matchModal').classList.add('hidden');
+    document.getElementById('matchEditId').value = '';
+  }
 
-      toggleMatchStageSelect();
+  function addGoalDetailRow(initialScorerId = null, initialAssistId = null) {
+    const msg = document.getElementById('emptyGoalsMsg');
+    if (msg) msg.remove();
+
+    const container = document.getElementById('goalDetailsContainer');
+    const rowId = 'goal_' + Date.now() + '_' + Math.random().toString(36).substring(7);
+    const playerOptions = state.athletes.map(a => `<option value="${a.id}">${a.name} (${a.pos})</option>`).join('');
+
+    const div = document.createElement('div');
+    div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs';
+    div.id = rowId;
+    div.innerHTML = `
+      <div class="sm:col-span-5">
+        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Autor do Golo:</span>
+        <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs font-medium text-slate-900">${playerOptions}</select>
+      </div>
+      <div class="sm:col-span-5">
+        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Assistência:</span>
+        <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs font-medium text-slate-900">
+          <option value="">Nenhuma / Jogada Individual</option>
+          ${playerOptions}
+        </select>
+      </div>
+      <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-3 sm:mt-0">
+        <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-red-50 hover:bg-red-100 text-xs text-red-600 border border-red-200">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
+    `;
+    container.appendChild(div);
+
+    if (initialScorerId) div.querySelector('.goal-scorer-select').value = initialScorerId;
+    if (initialAssistId) div.querySelector('.goal-assist-select').value = initialAssistId;
+
+    document.getElementById('matchMyScore').value = document.querySelectorAll('.goal-detail-row').length;
+  }
+
+  function removeGoalDetailRow(rowId) {
+    document.getElementById(rowId)?.remove();
+    const remaining = document.querySelectorAll('.goal-detail-row').length;
+    document.getElementById('matchMyScore').value = remaining;
+    if (remaining === 0) {
       document.getElementById('goalDetailsContainer').innerHTML = `
         <p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>
       `;
-      renderMatchAthletesPerformanceInputs();
-      document.getElementById('matchModal').classList.remove('hidden');
     }
+  }
 
-    function closeMatchModal() {
-      document.getElementById('matchModal').classList.add('hidden');
-      document.getElementById('matchEditId').value = '';
-    }
+  function renderMatchAthletesPerformanceInputs() {
+    const tbody = document.getElementById('matchAthletesPerformanceBody');
+    if (!tbody) return;
 
-    function addGoalDetailRow(initialScorerId = null, initialAssistId = null) {
-      const msg = document.getElementById('emptyGoalsMsg');
-      if (msg) msg.remove();
+    tbody.innerHTML = state.athletes.map(a => `
+      <tr class="hover:bg-slate-50">
+        <td class="p-2 text-center">
+          <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-slate-900 w-4 h-4 cursor-pointer" onchange="toggleRatingField(${a.id})">
+        </td>
+        <td class="p-2">
+          <div class="font-bold text-slate-900 text-xs">${a.name}</div>
+          <div class="text-[10px] text-slate-400">${a.pos} • OVR ${a.currentOvr}</div>
+        </td>
+        <td class="p-2 text-center">
+          <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
+        </td>
+        <td class="p-2 text-center">
+          <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
+        </td>
+        <td class="p-2 text-center">
+          <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
+        </td>
+      </tr>
+    `).join('');
+  }
 
-      const container = document.getElementById('goalDetailsContainer');
-      const rowId = 'goal_' + Date.now() + '_' + Math.random().toString(36).substring(7);
-      const playerOptions = state.athletes.map(a => `<option value="${a.id}">${a.name} (${a.pos})</option>`).join('');
+  function toggleRatingField(playerId) {
+    const isChecked = document.getElementById(`played_${playerId}`).checked;
+    const ratingIn = document.getElementById(`rating_${playerId}`);
+    const yellowIn = document.getElementById(`yellow_${playerId}`);
+    const redIn = document.getElementById(`red_${playerId}`);
 
-      const div = document.createElement('div');
-      div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs';
-      div.id = rowId;
-      div.innerHTML = `
-        <div class="sm:col-span-5">
-          <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Autor do Golo:</span>
-          <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs font-medium text-slate-900">${playerOptions}</select>
-        </div>
-        <div class="sm:col-span-5">
-          <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Assistência:</span>
-          <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs font-medium text-slate-900">
-            <option value="">Nenhuma / Jogada Individual</option>
-            ${playerOptions}
-          </select>
-        </div>
-        <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-3 sm:mt-0">
-          <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-red-50 hover:bg-red-100 text-xs text-red-600 border border-red-200">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-      `;
-      container.appendChild(div);
+    ratingIn.disabled = !isChecked;
+    yellowIn.disabled = !isChecked;
+    redIn.disabled = !isChecked;
+    if (isChecked && !ratingIn.value) ratingIn.value = '6.5';
+  }
 
-      if (initialScorerId) div.querySelector('.goal-scorer-select').value = initialScorerId;
-      if (initialAssistId) div.querySelector('.goal-assist-select').value = initialAssistId;
+  function revertMatchStatsFromAthletes(match) {
+    if (!match) return;
 
-      document.getElementById('matchMyScore').value = document.querySelectorAll('.goal-detail-row').length;
-    }
+    if (Array.isArray(match.performances)) {
+      match.performances.forEach(perf => {
+        const athlete = state.athletes.find(a => a.id === perf.playerId);
+        if (athlete) {
+          athlete.matches = Math.max(0, (athlete.matches || 0) - 1);
+          athlete.ratingSum = Math.max(0, (athlete.ratingSum || 0) - (Number(perf.rating) || 0));
+          athlete.yellow = Math.max(0, (athlete.yellow || 0) - (Number(perf.yellow) || 0));
+          athlete.red = Math.max(0, (athlete.red || 0) - (Number(perf.red) || 0));
 
-    function removeGoalDetailRow(rowId) {
-      document.getElementById(rowId)?.remove();
-      const remaining = document.querySelectorAll('.goal-detail-row').length;
-      document.getElementById('matchMyScore').value = remaining;
-      if (remaining === 0) {
-        document.getElementById('goalDetailsContainer').innerHTML = `
-          <p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>
-        `;
-      }
-    }
-
-    function renderMatchAthletesPerformanceInputs() {
-      const tbody = document.getElementById('matchAthletesPerformanceBody');
-      tbody.innerHTML = state.athletes.map(a => `
-        <tr class="hover:bg-slate-50">
-          <td class="p-2 text-center">
-            <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-slate-900 w-4 h-4 cursor-pointer" onchange="toggleRatingField(${a.id})">
-          </td>
-          <td class="p-2">
-            <div class="font-bold text-slate-900 text-xs">${a.name}</div>
-            <div class="text-[10px] text-slate-400">${a.pos} • OVR ${a.currentOvr}</div>
-          </td>
-          <td class="p-2 text-center">
-            <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
-          </td>
-          <td class="p-2 text-center">
-            <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
-          </td>
-          <td class="p-2 text-center">
-            <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs font-semibold text-slate-900 disabled:opacity-30">
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function toggleRatingField(playerId) {
-      const isChecked = document.getElementById(`played_${playerId}`).checked;
-      const ratingIn = document.getElementById(`rating_${playerId}`);
-      const yellowIn = document.getElementById(`yellow_${playerId}`);
-      const redIn = document.getElementById(`red_${playerId}`);
-
-      ratingIn.disabled = !isChecked;
-      yellowIn.disabled = !isChecked;
-      redIn.disabled = !isChecked;
-      if (isChecked && !ratingIn.value) ratingIn.value = '6.5';
-    }
-
-    // ================= REVERSÃO E RECÁLCULO =================
-    function revertMatchStatsFromAthletes(match) {
-      if (!match) return;
-
-      if (Array.isArray(match.performances)) {
-        match.performances.forEach(perf => {
-          const athlete = state.athletes.find(a => a.id === perf.playerId);
-          if (athlete) {
-            athlete.matches = Math.max(0, (athlete.matches || 0) - 1);
-            athlete.ratingSum = Math.max(0, (athlete.ratingSum || 0) - (Number(perf.rating) || 0));
-            athlete.yellow = Math.max(0, (athlete.yellow || 0) - (Number(perf.yellow) || 0));
-            athlete.red = Math.max(0, (athlete.red || 0) - (Number(perf.red) || 0));
-
-            if (Number(match.oppScore) === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes((athlete.pos || '').toUpperCase().trim())) {
-              athlete.ssg = Math.max(0, (athlete.ssg || 0) - 1);
-            }
-          }
-        });
-      }
-
-      if (Array.isArray(match.goals)) {
-        match.goals.forEach(g => {
-          if (g.scorerId) {
-            const scorer = state.athletes.find(a => a.id === g.scorerId);
-            if (scorer) scorer.goals = Math.max(0, (scorer.goals || 0) - 1);
-          }
-          if (g.assistId) {
-            const assister = state.athletes.find(a => a.id === g.assistId);
-            if (assister) assister.assists = Math.max(0, (assister.assists || 0) - 1);
-          }
-        });
-      }
-    }
-
-    // ================= EDITAR PARTIDA =================
-    function editMatch(matchId) {
-      const match = state.matches.find(m => m.id === matchId);
-      if (!match) return alert('Partida não encontrada!');
-
-      document.getElementById('matchEditId').value = match.id;
-      document.getElementById('matchModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-600"></i> Editar Partida';
-      document.getElementById('saveMatchBtn').innerText = 'Atualizar Partida';
-
-      document.getElementById('matchModalChamp').value = match.champId;
-      toggleMatchStageSelect(match.stage || '');
-      document.getElementById('matchOpponent').value = match.opponent;
-      document.getElementById('matchLocation').value = match.location || 'CASA';
-      document.getElementById('matchMyScore').value = match.myScore;
-      document.getElementById('matchOppScore').value = match.oppScore;
-
-      const goalContainer = document.getElementById('goalDetailsContainer');
-      goalContainer.innerHTML = '';
-      if (match.goals && match.goals.length > 0) {
-        match.goals.forEach(g => addGoalDetailRow(g.scorerId, g.assistId));
-      } else {
-        goalContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>`;
-      }
-
-      renderMatchAthletesPerformanceInputs();
-      if (match.performances && match.performances.length > 0) {
-        match.performances.forEach(perf => {
-          const chk = document.getElementById(`played_${perf.playerId}`);
-          const rat = document.getElementById(`rating_${perf.playerId}`);
-          const yel = document.getElementById(`yellow_${perf.playerId}`);
-          const red = document.getElementById(`red_${perf.playerId}`);
-
-          if (chk) {
-            chk.checked = true;
-            if (rat) { rat.disabled = false; rat.value = perf.rating; }
-            if (yel) { yel.disabled = false; yel.value = perf.yellow || 0; }
-            if (red) { red.disabled = false; red.value = perf.red || 0; }
-          }
-        });
-      }
-
-      document.getElementById('matchModal').classList.remove('hidden');
-    }
-
-    async function saveMatchData() {
-      const opponent = document.getElementById('matchOpponent').value.trim();
-      if (!opponent) return alert('Informe o time adversário!');
-
-      const editIdStr = document.getElementById('matchEditId').value;
-      const isEditing = Boolean(editIdStr);
-      const editMatchId = isEditing ? Number(editIdStr) : null;
-
-      if (isEditing) {
-        const oldMatch = state.matches.find(m => m.id === editMatchId);
-        if (oldMatch) revertMatchStatsFromAthletes(oldMatch);
-      }
-
-      const champId = document.getElementById('matchModalChamp').value;
-      const champObj = state.championships.find(c => c.id === champId);
-      const champName = champObj ? champObj.name : 'Torneio';
-      const stage = (champObj && champObj.format === 'MATA') ? document.getElementById('matchStageSelect').value : '';
-
-      const location = document.getElementById('matchLocation').value;
-      const myScore = Number(document.getElementById('matchMyScore').value);
-      const oppScore = Number(document.getElementById('matchOppScore').value);
-
-      const goalDetails = [];
-      document.querySelectorAll('.goal-detail-row').forEach(row => {
-        const scorerId = Number(row.querySelector('.goal-scorer-select').value);
-        const assistVal = row.querySelector('.goal-assist-select').value;
-        const assistId = assistVal ? Number(assistVal) : null;
-        goalDetails.push({ scorerId, assistId });
-      });
-
-      const performances = [];
-      state.athletes.forEach(a => {
-        const played = document.getElementById(`played_${a.id}`)?.checked;
-        if (played) {
-          const rating = Number(document.getElementById(`rating_${a.id}`).value) || 6.0;
-          const yellow = Number(document.getElementById(`yellow_${a.id}`).value) || 0;
-          const red = Number(document.getElementById(`red_${a.id}`).value) || 0;
-
-          performances.push({ playerId: a.id, rating, yellow, red });
-
-          a.matches = (a.matches || 0) + 1;
-          a.ratingSum = (a.ratingSum || 0) + rating;
-          a.yellow = (a.yellow || 0) + yellow;
-          a.red = (a.red || 0) + red;
-
-          if (oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes((a.pos || '').toUpperCase().trim())) {
-            a.ssg = (a.ssg || 0) + 1;
+          if (Number(match.oppScore) === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes((athlete.pos || '').toUpperCase().trim())) {
+            athlete.ssg = Math.max(0, (athlete.ssg || 0) - 1);
           }
         }
       });
+    }
 
-      goalDetails.forEach(g => {
-        const scorer = state.athletes.find(a => a.id === g.scorerId);
-        if (scorer) scorer.goals = (scorer.goals || 0) + 1;
+    if (Array.isArray(match.goals)) {
+      match.goals.forEach(g => {
+        if (g.scorerId) {
+          const scorer = state.athletes.find(a => a.id === g.scorerId);
+          if (scorer) scorer.goals = Math.max(0, (scorer.goals || 0) - 1);
+        }
         if (g.assistId) {
           const assister = state.athletes.find(a => a.id === g.assistId);
-          if (assister) assister.assists = (assister.assists || 0) + 1;
+          if (assister) assister.assists = Math.max(0, (assister.assists || 0) - 1);
         }
       });
+    }
+  }
 
-      let matchRecord;
-      if (isEditing) {
-        matchRecord = state.matches.find(m => m.id === editMatchId);
-        if (matchRecord) {
-          matchRecord.champId = champId;
-          matchRecord.champName = champName;
-          matchRecord.stage = stage;
-          matchRecord.opponent = opponent;
-          matchRecord.location = location;
-          matchRecord.myScore = myScore;
-          matchRecord.oppScore = oppScore;
-          matchRecord.goals = goalDetails;
-          matchRecord.performances = performances;
+  function editMatch(matchId) {
+    const match = state.matches.find(m => m.id === matchId);
+    if (!match) return alert('Partida não encontrada!');
+
+    document.getElementById('matchEditId').value = match.id;
+    document.getElementById('matchModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-600"></i> Editar Partida';
+    document.getElementById('saveMatchBtn').innerText = 'Atualizar Partida';
+
+    document.getElementById('matchModalChamp').value = match.champId;
+    toggleMatchStageSelect(match.stage || '');
+    document.getElementById('matchOpponent').value = match.opponent;
+    document.getElementById('matchLocation').value = match.location || 'CASA';
+    document.getElementById('matchMyScore').value = match.myScore;
+    document.getElementById('matchOppScore').value = match.oppScore;
+
+    const goalContainer = document.getElementById('goalDetailsContainer');
+    goalContainer.innerHTML = '';
+    if (match.goals && match.goals.length > 0) {
+      match.goals.forEach(g => addGoalDetailRow(g.scorerId, g.assistId));
+    } else {
+      goalContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>`;
+    }
+
+    renderMatchAthletesPerformanceInputs();
+    if (match.performances && match.performances.length > 0) {
+      match.performances.forEach(perf => {
+        const chk = document.getElementById(`played_${perf.playerId}`);
+        const rat = document.getElementById(`rating_${perf.playerId}`);
+        const yel = document.getElementById(`yellow_${perf.playerId}`);
+        const red = document.getElementById(`red_${perf.playerId}`);
+
+        if (chk) {
+          chk.checked = true;
+          if (rat) { rat.disabled = false; rat.value = perf.rating; }
+          if (yel) { yel.disabled = false; yel.value = perf.yellow || 0; }
+          if (red) { red.disabled = false; red.value = perf.red || 0; }
         }
-      } else {
-        matchRecord = {
-          id: Date.now(),
-          season: state.currentSeason,
-          champId,
-          champName,
-          stage,
-          opponent,
-          location,
-          myScore,
-          oppScore,
-          goals: goalDetails,
-          performances,
-          date: new Date().toLocaleDateString('pt-PT')
-        };
-        state.matches.unshift(matchRecord);
-      }
-
-      closeMatchModal();
-      saveState();
-
-      try {
-        await fetch(API_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: isEditing ? 'updateMatch' : 'saveMatch',
-            data: {
-              id: matchRecord.id,
-              temporada: matchRecord.season,
-              campeonato: matchRecord.champId,
-              nome_campeonato: matchRecord.champName,
-              fase: matchRecord.stage,
-              adversario: matchRecord.opponent,
-              mando: matchRecord.location,
-              gols_pro: matchRecord.myScore,
-              gols_contra: matchRecord.oppScore,
-              data: matchRecord.date,
-              detalhes_gols: JSON.stringify(matchRecord.goals || []),
-              detalhes_notas: JSON.stringify(matchRecord.performances || []),
-              gols: JSON.stringify(matchRecord.goals || []),
-              performances: JSON.stringify(matchRecord.performances || [])
-            }
-          })
-        });
-        alert(isEditing ? 'Partida e estatísticas atualizadas com sucesso!' : 'Partida guardada com sucesso!');
-      } catch (e) {
-        alert('Partida guardada localmente.');
-      }
-    }
-
-    // ================= HISTÓRICO DE PARTIDAS =================
-    function renderMatchesHistory() {
-      const container = document.getElementById('matchesList');
-      const countLabel = document.getElementById('matchesCountLabel');
-      
-      const filteredMatches = state.matches.filter(m => {
-        const seasonMatch = m.season === state.currentSeason;
-        if (state.currentChampId === 'ALL') return seasonMatch;
-        return seasonMatch && m.champId === state.currentChampId;
       });
-
-      countLabel.innerText = `${filteredMatches.length} jogos nesta seleção`;
-
-      if (filteredMatches.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 font-medium italic">Nenhum jogo registado com o filtro selecionado.</div>`;
-        return;
-      }
-
-      container.innerHTML = filteredMatches.map(m => {
-        const isWin = m.myScore > m.oppScore;
-        const isDraw = m.myScore === m.oppScore;
-        const badgeColor = isWin ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (isDraw ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200');
-        const badgeText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
-
-        const scorersText = (m.goals || []).map(g => {
-          const sc = state.athletes.find(a => a.id === g.scorerId)?.name || 'Autor';
-          const as = g.assistId ? `(Ass: ${state.athletes.find(a => a.id === g.assistId)?.name || 'Passe'})` : '';
-          return `${sc} ⚽ ${as}`;
-        }).join(' • ');
-
-        let totalYellows = 0, totalReds = 0, matchRatingsSum = 0;
-        const playersCount = (m.performances || []).length;
-        (m.performances || []).forEach(p => {
-          totalYellows += p.yellow || 0;
-          totalReds += p.red || 0;
-          matchRatingsSum += Number(p.rating) || 0;
-        });
-        const matchAvgRating = playersCount > 0 ? (matchRatingsSum / playersCount).toFixed(2) : '-';
-
-        return `
-          <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-xs space-y-2">
-            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
-              <div class="flex items-center gap-2 flex-wrap">
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${badgeText}</span>
-                <span class="text-xs font-semibold text-slate-700">${m.champName || 'Torneio'}</span>
-                ${m.stage ? `<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold">${m.stage}</span>` : ''}
-                <span class="text-xs text-slate-400">• ${m.location} • ${m.date}</span>
-              </div>
-              
-              <div class="flex items-center gap-2">
-                <button onclick="editMatch(${m.id})" class="text-xs text-slate-500 hover:text-indigo-600 p-1 transition" title="Editar Partida">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-                <button onclick="deleteMatch(${m.id})" class="text-xs text-slate-400 hover:text-red-600 p-1 transition" title="Remover">
-                  <i class="fa-solid fa-trash-can"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="flex flex-wrap items-center justify-between gap-4">
-              <div class="text-base font-bold text-slate-900 flex items-center gap-3 font-heading">
-                <span>${state.clubName}</span>
-                <span class="px-3 py-0.5 bg-white border border-slate-300 rounded-lg text-slate-900 shadow-xs">${m.myScore} - ${m.oppScore}</span>
-                <span>${m.opponent}</span>
-              </div>
-
-              <div class="flex items-center gap-3 text-xs text-slate-600">
-                <span title="Nota Média do Time"><i class="fa-solid fa-star text-amber-500 mr-1"></i> ${matchAvgRating}</span>
-                <span title="Cartões Amarelos"><i class="fa-solid fa-square text-yellow-500 mr-1"></i> ${totalYellows}</span>
-                <span title="Cartões Vermelhos"><i class="fa-solid fa-square text-red-500 mr-1"></i> ${totalReds}</span>
-              </div>
-            </div>
-
-            ${scorersText ? `<div class="text-xs text-slate-600 font-medium pt-1"><i class="fa-solid fa-futbol text-slate-400 mr-1"></i> ${scorersText}</div>` : ''}
-          </div>
-        `;
-      }).join('');
     }
 
-    function deleteMatch(matchId) {
-      if (confirm('Tem a certeza de que deseja eliminar esta partida do histórico?')) {
-        const match = state.matches.find(m => m.id === matchId);
-        if (match) revertMatchStatsFromAthletes(match);
-        state.matches = state.matches.filter(m => m.id !== matchId);
-        saveState();
-        syncAllToCloud();
-      }
+    document.getElementById('matchModal').classList.remove('hidden');
+  }
+
+  async function saveMatchData() {
+    const opponent = document.getElementById('matchOpponent').value.trim();
+    if (!opponent) return alert('Informe o time adversário!');
+
+    const editIdStr = document.getElementById('matchEditId').value;
+    const isEditing = Boolean(editIdStr);
+    const editMatchId = isEditing ? Number(editIdStr) : null;
+
+    if (isEditing) {
+      const oldMatch = state.matches.find(m => m.id === editMatchId);
+      if (oldMatch) revertMatchStatsFromAthletes(oldMatch);
     }
 
-    // ================= CLUBE E VIRADA DE ÉPOCA =================
-    function openChangeClubModal() {
-      document.getElementById('newClubNameInput').value = state.clubName;
-      document.getElementById('newClubLogoUrlInput').value = state.clubLogoUrl || '';
-      document.getElementById('newClubBudgetInput').value = state.budget;
-      document.getElementById('newClubWageInput').value = state.wageBudget;
-      document.getElementById('changeClubModal').classList.remove('hidden');
-    }
-    function closeChangeClubModal() {
-      document.getElementById('changeClubModal').classList.add('hidden');
-    }
-    function confirmChangeClub() {
-      const newName = document.getElementById('newClubNameInput').value.trim();
-      if (!newName) return alert('Introduza o nome do clube!');
-      state.clubName = newName;
-      state.clubLogoUrl = document.getElementById('newClubLogoUrlInput').value.trim();
-      state.budget = Number(document.getElementById('newClubBudgetInput').value);
-      state.initialBudget = state.budget;
-      state.wageBudget = Number(document.getElementById('newClubWageInput').value);
+    const champId = document.getElementById('matchModalChamp').value;
+    const champObj = state.championships.find(c => c.id === champId);
+    const champName = champObj ? champObj.name : 'Torneio';
+    const stage = (champObj && champObj.format === 'MATA') ? document.getElementById('matchStageSelect').value : '';
 
-      closeChangeClubModal();
-      saveState();
-      syncAllToCloud();
-      alert(`Dados do clube e símbolo atualizados!`);
-    }
+    const location = document.getElementById('matchLocation').value;
+    const myScore = Number(document.getElementById('matchMyScore').value);
+    const oppScore = Number(document.getElementById('matchOppScore').value);
 
-    function openSeasonAdvanceModal() {
-      const parts = state.currentSeason.split('/');
-      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-        document.getElementById('nextSeasonNameInput').value = `${Number(parts[0])+1}/${Number(parts[1])+1}`;
-      } else {
-        document.getElementById('nextSeasonNameInput').value = '2026/2027';
-      }
-      document.getElementById('seasonAdvanceModal').classList.remove('hidden');
-    }
-    function closeSeasonAdvanceModal() {
-      document.getElementById('seasonAdvanceModal').classList.add('hidden');
-    }
-    function confirmAdvanceSeason() {
-      const nextSeason = document.getElementById('nextSeasonNameInput').value.trim();
-      if (!nextSeason) return alert('Defina o nome da nova época');
-      state.currentSeason = nextSeason;
-
-      state.athletes.forEach(a => {
-        a.age += 1;
-        a.initialOvr = a.currentOvr;
-        a.contractYears = Math.max(0, (Number(a.contractYears) || 2) - 1);
-        a.matches = 0;
-        a.goals = 0;
-        a.assists = 0;
-        a.ssg = 0;
-        a.yellow = 0;
-        a.red = 0;
-        a.ratingSum = 0;
-      });
-
-      closeSeasonAdvanceModal();
-      saveState();
-      syncAllToCloud();
-      alert(`Época confirmada: ${nextSeason}!`);
-    }
-
-    function exportData() {
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `ModoCarreira_${state.clubName}_${state.currentSeason.replace('/', '-')}.json`;
-      a.click();
-    }
-
-    // INICIALIZAÇÃO
-    window.addEventListener('DOMContentLoaded', () => {
-      updateUI();
-      loadFromGoogleSheets();
+    const goalDetails = [];
+    document.querySelectorAll('.goal-detail-row').forEach(row => {
+      const scorerId = Number(row.querySelector('.goal-scorer-select').value);
+      const assistVal = row.querySelector('.goal-assist-select').value;
+      const assistId = assistVal ? Number(assistVal) : null;
+      goalDetails.push({ scorerId, assistId });
     });
-  </script>
+
+    const performances = [];
+    state.athletes.forEach(a => {
+      const played = document.getElementById(`played_${a.id}`)?.checked;
+      if (played) {
+        const rating = Number(document.getElementById(`rating_${a.id}`).value) || 6.0;
+        const yellow = Number(document.getElementById(`yellow_${a.id}`).value) || 0;
+        const red = Number(document.getElementById(`red_${a.id}`).value) || 0;
+
+        performances.push({ playerId: a.id, rating, yellow, red });
+
+        a.matches = (a.matches || 0) + 1;
+        a.ratingSum = (a.ratingSum || 0) + rating;
+        a.yellow = (a.yellow || 0) + yellow;
+        a.red = (a.red || 0) + red;
+
+        if (oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes((a.pos || '').toUpperCase().trim())) {
+          a.ssg = (a.ssg || 0) + 1;
+        }
+      }
+    });
+
+    goalDetails.forEach(g => {
+      const scorer = state.athletes.find(a => a.id === g.scorerId);
+      if (scorer) scorer.goals = (scorer.goals || 0) + 1;
+      if (g.assistId) {
+        const assister = state.athletes.find(a => a.id === g.assistId);
+        if (assister) assister.assists = (assister.assists || 0) + 1;
+      }
+    });
+
+    let matchRecord;
+    if (isEditing) {
+      matchRecord = state.matches.find(m => m.id === editMatchId);
+      if (matchRecord) {
+        matchRecord.champId = champId;
+        matchRecord.champName = champName;
+        matchRecord.stage = stage;
+        matchRecord.opponent = opponent;
+        matchRecord.location = location;
+        matchRecord.myScore = myScore;
+        matchRecord.oppScore = oppScore;
+        matchRecord.goals = goalDetails;
+        matchRecord.performances = performances;
+      }
+    } else {
+      matchRecord = {
+        id: Date.now(),
+        season: state.currentSeason,
+        champId,
+        champName,
+        stage,
+        opponent,
+        location,
+        myScore,
+        oppScore,
+        goals: goalDetails,
+        performances,
+        date: new Date().toLocaleDateString('pt-PT')
+      };
+      state.matches.unshift(matchRecord);
+    }
+
+    closeMatchModal();
+    saveState();
+    syncAllToCloud();
+  }
+
+  function renderMatchesHistory() {
+    const container = document.getElementById('matchesList');
+    const countLabel = document.getElementById('matchesCountLabel');
+    if (!container) return;
+    
+    const filteredMatches = state.matches.filter(m => {
+      const seasonMatch = m.season === state.currentSeason;
+      if (state.currentChampId === 'ALL') return seasonMatch;
+      return seasonMatch && m.champId === state.currentChampId;
+    });
+
+    if (countLabel) countLabel.innerText = `${filteredMatches.length} jogos nesta seleção`;
+
+    if (filteredMatches.length === 0) {
+      container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 font-medium italic">Nenhum jogo registado com o filtro selecionado.</div>`;
+      return;
+    }
+
+    container.innerHTML = filteredMatches.map(m => {
+      const isWin = m.myScore > m.oppScore;
+      const isDraw = m.myScore === m.oppScore;
+      const badgeColor = isWin ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (isDraw ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-red-50 text-red-700 border-red-200');
+      const badgeText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
+
+      const scorersText = (m.goals || []).map(g => {
+        const sc = state.athletes.find(a => a.id === g.scorerId)?.name || 'Autor';
+        const as = g.assistId ? `(Ass: ${state.athletes.find(a => a.id === g.assistId)?.name || 'Passe'})` : '';
+        return `${sc} ⚽ ${as}`;
+      }).join(' • ');
+
+      let totalYellows = 0, totalReds = 0, matchRatingsSum = 0;
+      const playersCount = (m.performances || []).length;
+      (m.performances || []).forEach(p => {
+        totalYellows += p.yellow || 0;
+        totalReds += p.red || 0;
+        matchRatingsSum += Number(p.rating) || 0;
+      });
+      const matchAvgRating = playersCount > 0 ? (matchRatingsSum / playersCount).toFixed(2) : '-';
+
+      return `
+        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl shadow-xs space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/60 pb-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${badgeText}</span>
+              <span class="text-xs font-semibold text-slate-700">${m.champName || 'Torneio'}</span>
+              ${m.stage ? `<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-bold">${m.stage}</span>` : ''}
+              <span class="text-xs text-slate-400">• ${m.location} • ${m.date}</span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <button onclick="editMatch(${m.id})" class="text-xs text-slate-500 hover:text-indigo-600 p-1 transition" title="Editar Partida">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button onclick="deleteMatch(${m.id})" class="text-xs text-slate-400 hover:text-red-600 p-1 transition" title="Remover">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="text-base font-bold text-slate-900 flex items-center gap-3 font-heading">
+              <span>${state.clubName}</span>
+              <span class="px-3 py-0.5 bg-white border border-slate-300 rounded-lg text-slate-900 shadow-xs">${m.myScore} - ${m.oppScore}</span>
+              <span>${m.opponent}</span>
+            </div>
+
+            <div class="flex items-center gap-3 text-xs text-slate-600">
+              <span title="Nota Média do Time"><i class="fa-solid fa-star text-amber-500 mr-1"></i> ${matchAvgRating}</span>
+              <span title="Cartões Amarelos"><i class="fa-solid fa-square text-yellow-500 mr-1"></i> ${totalYellows}</span>
+              <span title="Cartões Vermelhos"><i class="fa-solid fa-square text-red-500 mr-1"></i> ${totalReds}</span>
+            </div>
+          </div>
+
+          ${scorersText ? `<div class="text-xs text-slate-600 font-medium pt-1"><i class="fa-solid fa-futbol text-slate-400 mr-1"></i> ${scorersText}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function deleteMatch(matchId) {
+    if (confirm('Tem a certeza de que deseja eliminar esta partida do histórico?')) {
+      const match = state.matches.find(m => m.id === matchId);
+      if (match) revertMatchStatsFromAthletes(match);
+      state.matches = state.matches.filter(m => m.id !== matchId);
+      saveState();
+      syncAllToCloud();
+    }
+  }
+
+  // ==========================================
+  // CONFIGURAÇÕES DO CLUBE & VIRADA DE ÉPOCA
+  // ==========================================
+  function openChangeClubModal() {
+    document.getElementById('newClubNameInput').value = state.clubName;
+    document.getElementById('newClubLogoUrlInput').value = state.clubLogoUrl || '';
+    document.getElementById('newClubBudgetInput').value = state.budget;
+    document.getElementById('newClubWageInput').value = state.wageBudget;
+    document.getElementById('changeClubModal').classList.remove('hidden');
+  }
+  function closeChangeClubModal() {
+    document.getElementById('changeClubModal').classList.add('hidden');
+  }
+  function confirmChangeClub() {
+    const newName = document.getElementById('newClubNameInput').value.trim();
+    if (!newName) return alert('Introduza o nome do clube!');
+    state.clubName = newName;
+    state.clubLogoUrl = document.getElementById('newClubLogoUrlInput').value.trim();
+    state.budget = Number(document.getElementById('newClubBudgetInput').value);
+    state.initialBudget = state.budget;
+    state.wageBudget = Number(document.getElementById('newClubWageInput').value);
+
+    closeChangeClubModal();
+    saveState();
+    syncAllToCloud();
+    alert(`Dados do clube e símbolo atualizados!`);
+  }
+
+  function openSeasonAdvanceModal() {
+    const parts = state.currentSeason.split('/');
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      document.getElementById('nextSeasonNameInput').value = `${Number(parts[0])+1}/${Number(parts[1])+1}`;
+    } else {
+      document.getElementById('nextSeasonNameInput').value = '2026/2027';
+    }
+    document.getElementById('seasonAdvanceModal').classList.remove('hidden');
+  }
+  function closeSeasonAdvanceModal() {
+    document.getElementById('seasonAdvanceModal').classList.add('hidden');
+  }
+  function confirmAdvanceSeason() {
+    const nextSeason = document.getElementById('nextSeasonNameInput').value.trim();
+    if (!nextSeason) return alert('Defina o nome da nova época');
+    state.currentSeason = nextSeason;
+
+    state.athletes.forEach(a => {
+      a.age += 1;
+      a.initialOvr = a.currentOvr;
+      a.contractYears = Math.max(0, (Number(a.contractYears) || 2) - 1);
+      a.matches = 0;
+      a.goals = 0;
+      a.assists = 0;
+      a.ssg = 0;
+      a.yellow = 0;
+      a.red = 0;
+      a.ratingSum = 0;
+    });
+
+    closeSeasonAdvanceModal();
+    saveState();
+    syncAllToCloud();
+    alert(`Época confirmada: ${nextSeason}!`);
+  }
+
+  function exportData() {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ModoCarreira_${state.clubName}_${state.currentSeason.replace('/', '-')}.json`;
+    a.click();
+  }
+
+  // ==========================================
+  // INICIALIZAÇÃO CONTROLADA
+  // ==========================================
+  window.addEventListener('DOMContentLoaded', () => {
+    // Liga o formulário de atletas ao manipulador evitando o recarregamento de página
+    const athForm = document.getElementById('athleteForm');
+    if (athForm) {
+      athForm.onsubmit = function(event) {
+        saveAthlete(event);
+      };
+    }
+
+    // Carrega a interface com os dados em cache e sincroniza com a folha sem apagá-los
+    updateUI();
+    loadFromGoogleSheets();
+  });
+</script>
 </body>
 </html>
