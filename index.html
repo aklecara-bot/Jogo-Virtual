@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modo Carreira Manager - Light Theme & Ícones de Posição</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brandGreen: '#10b981',
+            brandEmerald: '#059669',
+            brandDark: '#0f172a',
+            surfaceBg: '#f8fafc',
+            surfaceCard: '#ffffff'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+    /* Estilização dos ícones de chuteiras e luvas */
+    .icon-glove-yellow { color: #eab308; filter: drop-shadow(0 2px 4px rgba(234, 179, 8, 0.4)); }
+    .icon-boot-orange { color: #f97316; filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.35)); }
+    .icon-boot-blue { color: #2563eb; filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.35)); }
+    .icon-boot-red { color: #dc2626; filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.35)); }
+    .icon-boot-black { color: #1e293b; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3)); }
+    .icon-boot-gray { color: #64748b; filter: drop-shadow(0 2px 3px rgba(100, 116, 139, 0.3)); }
+    /* Chuteira Dourada para o TOP 11 */
+    .icon-boot-gold {
+      color: #eab308;
+      background: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.7));
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- CABEÇALHO CLARO E ELEGANTE -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-3 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Símbolo do Clube + Nome + Temporada -->
+      <div class="flex items-center gap-3.5">
+        <div id="clubLogoContainer" class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shadow-sm">
+          <img id="clubBadgeImg" src="" alt="Escudo" class="w-full h-full object-contain hidden" onerror="showDefaultLogo()">
+          <span id="clubDefaultBadge" class="text-xl font-black text-emerald-600">⚽</span>
+        </div>
+        <div>
+          <h1 class="text-lg font-black tracking-wide text-slate-900 uppercase flex items-center gap-2">
+            <span id="headerClubName">A carregar...</span>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold" id="headerSeason">---</span>
+          </h1>
+          <p class="text-xs text-slate-500 flex items-center gap-1.5" id="syncStatus">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+            Ligado à folha do Google Sheets
+          </p>
+        </div>
+      </div>
+
+      <!-- Barra de Ações -->
+      <div class="flex items-center flex-wrap gap-2">
+        <button onclick="loadFromGoogleSheets()" title="Puxar dados atualizados do Drive" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 text-xs font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-cloud-arrow-down"></i> Sincronizar Nuvem
+        </button>
+
+        <button onclick="syncAllToCloud()" title="Guardar atletas e clube na folha de cálculo" class="px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-300 text-xs font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Guardar no Sheets
+        </button>
+
+        <button onclick="openChangeClubModal()" class="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-shield-halved"></i> Trocar Clube / Escudo
+        </button>
+
+        <button onclick="openSeasonAdvanceModal()" class="px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 text-xs font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-calendar-plus"></i> Avançar Época
+        </button>
+
+        <button onclick="exportData()" title="Descarregar Backup em JSON" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 text-xs">
+          <i class="fa-solid fa-download"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABAS DE NAVEGAÇÃO -->
+  <nav class="bg-white/90 border-b border-slate-200 px-4">
+    <div class="max-w-7xl mx-auto flex gap-4 overflow-x-auto py-2">
+      <button onclick="switchTab('dashboard')" id="tabBtn-dashboard" class="tab-btn px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 border-b-2 border-emerald-600 text-emerald-700 bg-emerald-50">
+        <i class="fa-solid fa-chart-pie"></i> Visão Geral & Finanças
+      </button>
+      <button onclick="switchTab('athletes')" id="tabBtn-athletes" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+        <i class="fa-solid fa-users"></i> Atletas & Estatísticas
+      </button>
+      <button onclick="switchTab('matches')" id="tabBtn-matches" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 border-b-2 border-transparent text-slate-600 hover:text-slate-900">
+        <i class="fa-solid fa-trophy"></i> Campeonatos & Resultados
+      </button>
+    </div>
+  </nav>
+
+  <!-- ÁREA DE CONTEÚDO -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
+
+    <!-- ABA 1: VISÃO GERAL & FINANÇAS -->
+    <section id="tab-dashboard" class="space-y-6">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm relative overflow-hidden">
+          <div class="text-xs text-slate-500 font-semibold">Verba de Transferências</div>
+          <div class="text-xl sm:text-2xl font-black text-emerald-600 mt-1" id="dashBudget">€ 0</div>
+          <div class="text-xs text-slate-400 mt-1">Inicial: <span id="dashInitialBudget">€ 0</span></div>
+          <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-vault"></i></div>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm relative overflow-hidden">
+          <div class="text-xs text-slate-500 font-semibold">Folha Salarial / Semanal</div>
+          <div class="text-xl sm:text-2xl font-black text-blue-600 mt-1" id="dashWage">€ 0</div>
+          <div class="text-xs text-slate-400 mt-1">Limite: <span id="dashWageBudget">€ 0</span></div>
+          <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-money-bill-wave"></i></div>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm relative overflow-hidden">
+          <div class="text-xs text-slate-500 font-semibold">Média de Força (OVR)</div>
+          <div class="text-xl sm:text-2xl font-black text-amber-500 mt-1" id="dashAvgOvr">0.0</div>
+          <div class="text-xs text-slate-400 mt-1">Maior OVR: <span id="dashMaxOvr">0</span></div>
+          <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-bolt"></i></div>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm relative overflow-hidden">
+          <div class="text-xs text-slate-500 font-semibold">Média de Idade</div>
+          <div class="text-xl sm:text-2xl font-black text-indigo-600 mt-1" id="dashAvgAge">0.0</div>
+          <div class="text-xs text-slate-400 mt-1">Plantel Total: <span id="dashTotalSquad">0</span> atletas</div>
+          <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-user-group"></i></div>
+        </div>
+      </div>
+
+      <!-- Destaques Individuais -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-futbol"></i></div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">Melhor Marcador</div>
+            <div class="font-bold text-slate-800 text-sm" id="bestScorer">-</div>
+            <div class="text-xs text-amber-600 font-bold" id="bestScorerGols">0 Golos</div>
+          </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-handshake-angle"></i></div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">Líder de Assistências</div>
+            <div class="font-bold text-slate-800 text-sm" id="bestAssister">-</div>
+            <div class="text-xs text-blue-600 font-bold" id="bestAssisterCount">0 Ass.</div>
+          </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-shield-halved"></i></div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">Jogos Sem Sofrer (SSG)</div>
+            <div class="font-bold text-slate-800 text-sm" id="bestSsgPlayer">-</div>
+            <div class="text-xs text-emerald-600 font-bold" id="bestSsgCount">0 Jogos</div>
+          </div>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-star"></i></div>
+          <div>
+            <div class="text-xs text-slate-400 font-medium">Melhor Nota Média</div>
+            <div class="font-bold text-slate-800 text-sm" id="bestRatingPlayer">-</div>
+            <div class="text-xs text-purple-600 font-bold" id="bestRatingVal">0.00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 2: ATLETAS & ESTATÍSTICAS COM CHUTEIRAS COLORIDAS -->
+    <section id="tab-athletes" class="hidden space-y-4">
+      
+      <!-- Legenda Visual dos Ícones -->
+      <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-sm flex flex-wrap items-center gap-4 text-xs font-medium text-slate-600">
+        <span class="font-bold text-slate-800 uppercase text-[11px]"><i class="fa-solid fa-circle-info mr-1 text-emerald-600"></i> Legenda de Calçado:</span>
+        <span class="flex items-center gap-1"><i class="fa-solid fa-mitten icon-glove-yellow"></i> Goleiro (Luvas Amarelas)</span>
+        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-orange"></i> LD / LE / ME / MD / MEI (Laranja)</span>
+        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-blue"></i> Zagueiros (Azul)</span>
+        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-red"></i> MC / VOL (Vermelho)</span>
+        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-black"></i> ATA / SA (Preto)</span>
+        <span class="flex items-center gap-1"><i class="fa-solid fa-shoe-prints icon-boot-gray"></i> PD / PE (Cinza)</span>
+        <span class="flex items-center gap-1 font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+          <i class="fa-solid fa-shoe-prints icon-boot-gold"></i> Top 11 Mais Jogos (Chuteira Dourada)
+        </span>
+      </div>
+
+      <!-- Filtros e Busca -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="setPosFilter('TODOS')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white" data-pos="TODOS">Todos</button>
+          <button onclick="setPosFilter('GOL')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-pos="GOL">Goleiros</button>
+          <button onclick="setPosFilter('DEF')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-pos="DEF">Defesa</button>
+          <button onclick="setPosFilter('MEI')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-pos="MEI">Meio-Campo</button>
+          <button onclick="setPosFilter('ATA')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-pos="ATA">Ataque</button>
+          <input type="text" id="playerSearch" oninput="renderAthletesTable()" placeholder="Pesquisar atleta..." class="bg-slate-50 border border-slate-300 text-xs px-3 py-1.5 rounded-lg text-slate-800 focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <button onclick="openAthleteModal()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition">
+          <i class="fa-solid fa-user-plus"></i> Novo Atleta
+        </button>
+      </div>
+
+      <!-- Tabela de Jogadores com Fundo Branco -->
+      <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-200">
+              <tr>
+                <th class="p-3">Nº</th>
+                <th class="p-3">Atleta / Nacionalidade</th>
+                <th class="p-3">Posição & Chuteira</th>
+                <th class="p-3">Idade</th>
+                <th class="p-3">OVR</th>
+                <th class="p-3 text-center">Jogos</th>
+                <th class="p-3 text-center text-amber-600 font-bold">Golos</th>
+                <th class="p-3 text-center text-blue-600 font-bold">Ass</th>
+                <th class="p-3 text-center text-emerald-600 font-bold">SSG</th>
+                <th class="p-3 text-center text-yellow-600 font-bold">CA</th>
+                <th class="p-3 text-center text-red-600 font-bold">CV</th>
+                <th class="p-3 text-center text-purple-600 font-bold">Nota Média</th>
+                <th class="p-3 text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="athletesTableBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Preenchido via Google Sheets -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA 3: CAMPEONATOS & RESULTADOS -->
+    <section id="tab-matches" class="hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center gap-3">
+          <label class="text-xs text-slate-500 font-bold uppercase">Campeonato:</label>
+          <select id="champSelect" onchange="onChampSelectChange()" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 font-bold focus:border-emerald-500"></select>
+          <button onclick="openNewChampModal()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs border border-slate-300">
+            <i class="fa-solid fa-plus"></i> Novo Torneio
+          </button>
+        </div>
+
+        <button onclick="openMatchModal()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition">
+          <i class="fa-solid fa-clipboard-check"></i> Registar Resultado do Jogo
+        </button>
+      </div>
+
+      <!-- Cards de Estatísticas do Torneio -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-3 text-center" id="champStatsCards"></div>
+
+      <!-- Lista de Jogos -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+        <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center justify-between">
+          <span><i class="fa-solid fa-clock-rotate-left text-emerald-600 mr-2"></i> Jogos Registados</span>
+          <span class="text-xs font-normal text-slate-400" id="matchesCountLabel">0 partidas</span>
+        </h3>
+        <div id="matchesList" class="space-y-3"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: REGISTAR PARTIDA -->
+  <div id="matchModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-3">
+    <div class="bg-white border border-slate-200 w-full max-w-3xl rounded-2xl shadow-xl max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="text-sm font-black uppercase text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-futbol text-emerald-600"></i> Registar Nova Partida
+        </h3>
+        <button onclick="closeMatchModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div class="p-5 overflow-y-auto space-y-6 flex-1">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div>
+            <label class="text-[11px] text-slate-500 font-bold block mb-1">Campeonato</label>
+            <select id="matchModalChamp" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800 font-semibold"></select>
+          </div>
+          <div>
+            <label class="text-[11px] text-slate-500 font-bold block mb-1">Adversário</label>
+            <input type="text" id="matchOpponent" placeholder="Ex: Real Madrid, Porto..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800">
+          </div>
+          <div>
+            <label class="text-[11px] text-slate-500 font-bold block mb-1">Mando de Campo</label>
+            <select id="matchLocation" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800">
+              <option value="CASA">Casa (Mandante)</option>
+              <option value="FORA">Fora (Visitante)</option>
+              <option value="NEUTRO">Campo Neutro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-around">
+          <div class="text-center">
+            <span class="text-xs text-slate-500 block font-bold mb-1" id="matchModalMyClubName">O Meu Clube</span>
+            <input type="number" id="matchMyScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-emerald-400 rounded-xl text-emerald-700 focus:outline-none">
+          </div>
+          <div class="text-xl font-black text-slate-400">X</div>
+          <div class="text-center">
+            <span class="text-xs text-slate-500 block font-bold mb-1">Adversário</span>
+            <input type="number" id="matchOppScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-slate-300 rounded-xl text-slate-800 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Golos Detalhados -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase text-emerald-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-bullseye"></i> Golos Marcados
+            </label>
+            <button type="button" onclick="addGoalDetailRow()" class="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 hover:bg-emerald-200 text-xs font-bold border border-emerald-300 flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> Adicionar Golo
+            </button>
+          </div>
+          <div id="goalDetailsContainer" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <p class="text-xs text-slate-400 text-center py-2 italic" id="emptyGoalsMsg">Nenhum golo registado.</p>
+          </div>
+        </div>
+
+        <!-- Atuação Individual -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold uppercase text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-star text-amber-500"></i> Desempenho dos Atletas
+            </label>
+            <span class="text-[11px] text-slate-400">Marque quem jogou</span>
+          </div>
+          <div class="border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 sticky top-0 text-[10px] uppercase text-slate-500">
+                <tr>
+                  <th class="p-2 w-10 text-center">Jogou?</th>
+                  <th class="p-2">Atleta</th>
+                  <th class="p-2 w-20 text-center">Nota (0-10)</th>
+                  <th class="p-2 w-16 text-center">C. Amarelo</th>
+                  <th class="p-2 w-16 text-center">C. Vermelho</th>
+                </tr>
+              </thead>
+              <tbody id="matchAthletesPerformanceBody" class="divide-y divide-slate-100 bg-white"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-end gap-2">
+        <button onclick="closeMatchModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-300">Cancelar</button>
+        <button onclick="saveMatchData()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm">Guardar Partida no Sheets</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: TROCAR CLUBE E DEFINIR URL DO ESCUDO -->
+  <div id="changeClubModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 uppercase flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-indigo-600"></i> Dados do Clube & Símbolo
+        </h3>
+        <button onclick="closeChangeClubModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-600 mb-1 font-bold">Nome do Clube</label>
+          <input type="text" id="newClubNameInput" placeholder="Ex: FC Porto, Real Madrid, Benfica..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-slate-600 mb-1 font-bold">URL do Símbolo / Escudo da Equipa</label>
+          <input type="url" id="newClubLogoUrlInput" placeholder="https://exemplo.com/escudo.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 focus:border-indigo-500">
+          <span class="text-[10px] text-slate-400">Cole o link direto da imagem (PNG, JPG ou SVG)</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">Verba de Transf. (€)</label>
+            <input type="number" id="newClubBudgetInput" value="15000000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800">
+          </div>
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">Teto Salarial Semanal (€)</label>
+            <input type="number" id="newClubWageInput" value="180000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800">
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+        <button onclick="closeChangeClubModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-bold">Cancelar</button>
+        <button onclick="confirmChangeClub()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-sm">Confirmar Alteração</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CADASTRAR / EDITAR ATLETA -->
+  <div id="athleteModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-lg rounded-2xl shadow-xl p-5 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <h3 class="text-sm font-bold text-slate-900 uppercase" id="athleteModalTitle">Cadastrar Atleta</h3>
+        <button onclick="closeAthleteModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="athleteForm" onsubmit="saveAthlete(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="athleteEditId">
+        <div class="grid grid-cols-3 gap-2">
+          <div class="col-span-2">
+            <label class="block text-slate-600 mb-1 font-bold">Nome do Atleta</label>
+            <input type="text" id="athName" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+          </div>
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">Nº Camisola</label>
+            <input type="number" id="athNumber" min="1" max="99" value="10" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">Posição</label>
+            <select id="athPos" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+              <option value="GOL">GOL (Goleiro)</option>
+              <option value="ZAG">ZAG (Zagueiro)</option>
+              <option value="LD">LD (Lateral Dir.)</option>
+              <option value="LE">LE (Lateral Esq.)</option>
+              <option value="VOL">VOL (Volante)</option>
+              <option value="MC">MC (Meia Central)</option>
+              <option value="MEI">MEI (Meia Atacante)</option>
+              <option value="MD">MD (Meia Direita)</option>
+              <option value="ME">ME (Meia Esquerda)</option>
+              <option value="PD">PD (Ponta Direita)</option>
+              <option value="PE">PE (Ponta Esquerda)</option>
+              <option value="ATA">ATA (Centroavante)</option>
+              <option value="SA">SA (Segundo Atacante)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">Idade</label>
+            <input type="number" id="athAge" value="23" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+          </div>
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">País (Sigla)</label>
+            <input type="text" id="athNat" value="POR" maxlength="3" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800 uppercase">
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">Força (OVR)</label>
+            <input type="number" id="athOvr" min="40" max="99" value="72" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800 font-bold text-amber-600">
+          </div>
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">Função</label>
+            <select id="athRole" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+              <option value="CRUCIAL">Crucial</option>
+              <option value="IMPORTANTE" selected>Importante</option>
+              <option value="RODIZIO">Rodízio</option>
+              <option value="PROMESSA">Promessa</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-slate-600 mb-1 font-bold">Salário (€/sem)</label>
+            <input type="number" id="athWage" value="5000" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+          </div>
+        </div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+          <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 font-bold">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-sm">Guardar Atleta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: NOVO TORNEIO -->
+  <div id="champModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-sm rounded-2xl shadow-xl p-5 space-y-4">
+      <h3 class="text-sm font-bold text-slate-900 uppercase">Novo Campeonato</h3>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-600 mb-1 font-bold">Nome do Torneio</label>
+          <input type="text" id="newChampName" placeholder="Ex: Liga Portugal, Taça" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+        </div>
+        <div>
+          <label class="block text-slate-600 mb-1 font-bold">Formato</label>
+          <select id="newChampFormat" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800">
+            <option value="PONTOS">Pontos Corridos</option>
+            <option value="MATA">Eliminatória / Taça</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button onclick="closeNewChampModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-bold">Cancelar</button>
+        <button onclick="saveNewChamp()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs">Cadastrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AVANÇAR ÉPOCA -->
+  <div id="seasonAdvanceModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
+      <h3 class="text-sm font-bold text-amber-700 uppercase flex items-center gap-2">
+        <i class="fa-solid fa-calendar-check"></i> Virada de Época
+      </h3>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        • A idade de todos os atletas aumenta em <strong>+1 ano</strong>.<br>
+        • Os golos, assistências e notas médias são reiniciados para a nova época.<br>
+        • O OVR atual torna-se a força inicial do novo ano.
+      </p>
+      <div class="text-xs">
+        <label class="block text-slate-600 mb-1 font-bold">Nome da Nova Época</label>
+        <input type="text" id="nextSeasonNameInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-slate-800 font-bold">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeSeasonAdvanceModal()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-bold">Cancelar</button>
+        <button onclick="confirmAdvanceSeason()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT: LÓGICA DE ÍCONES, CHUTEIRAS E GOOGLE SHEETS -->
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzefT1l9-in-oDcAAmsVm-4yWUboMYoDwAjfqTqi0LGTlHYlu9OmhTcPku1Ver-uPMC/exec";
+    const STORAGE_KEY = 'MODO_CARREIRA_FIFA_APP_LIGHT_V1';
+
+    const defaultState = {
+      clubName: 'O Meu Clube',
+      clubLogoUrl: '', // URL do símbolo
+      currentSeason: '2025/2026',
+      budget: 0,
+      initialBudget: 0,
+      wageBudget: 0,
+      currentChampId: 'c1',
+      championships: [
+        { id: 'c1', name: 'Liga Principal', format: 'PONTOS' }
+      ],
+      athletes: [], // Vazio: apenas os dados reais da planilha
+      matches: []
+    };
+
+    let state = loadState();
+    let currentPosFilter = 'TODOS';
+
+    function loadState() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      return data ? JSON.parse(data) : JSON.parse(JSON.stringify(defaultState));
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      updateUI();
+    }
+
+    // ================= SÍMBOLO DO CLUBE =================
+    function updateClubLogo() {
+      const img = document.getElementById('clubBadgeImg');
+      const def = document.getElementById('clubDefaultBadge');
+
+      if (state.clubLogoUrl && state.clubLogoUrl.trim() !== '') {
+        img.src = state.clubLogoUrl;
+        img.classList.remove('hidden');
+        def.classList.add('hidden');
+      } else {
+        showDefaultLogo();
+      }
+    }
+
+    function showDefaultLogo() {
+      const img = document.getElementById('clubBadgeImg');
+      const def = document.getElementById('clubDefaultBadge');
+      img.classList.add('hidden');
+      def.classList.remove('hidden');
+      def.innerText = state.clubName ? state.clubName.charAt(0).toUpperCase() : '⚽';
+    }
+
+    // ================= REGRAS DE ÍCONES DE POSIÇÃO E CHUTEIRAS =================
+    function getPlayerShoeOrGloveIcon(player, isTop11) {
+      const pos = (player.pos || '').toUpperCase().trim();
+
+      // Regra de Ouro: os 11 com mais jogos recebem Chuteira Dourada (ou Luva Dourada se for GOL)
+      if (isTop11 && Number(player.matches) > 0) {
+        if (pos === 'GOL') {
+          return `<span title="Top 11 Mais Jogos (Titular)" class="inline-flex items-center gap-1.5 font-bold"><i class="fa-solid fa-mitten text-amber-500 drop-shadow"></i> <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded border border-amber-300 font-bold">Top 11</span></span>`;
+        }
+        return `<span title="Top 11 Mais Jogos (Titular)" class="inline-flex items-center gap-1.5 font-bold"><i class="fa-solid fa-shoe-prints icon-boot-gold"></i> <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded border border-amber-300 font-bold">Top 11</span></span>`;
+      }
+
+      // 1. Luvas Amarelas para Goleiros
+      if (pos === 'GOL') {
+        return `<i class="fa-solid fa-mitten icon-glove-yellow text-sm" title="Guarda-Redes (Luva Amarela)"></i>`;
+      }
+
+      // 2. Chuteira Laranja para Laterais (LD, LE)
+      if (pos === 'LD' || pos === 'LE') {
+        return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Lateral (Chuteira Laranja)"></i>`;
+      }
+
+      // 3. Chuteira Azul para Zagueiros (ZAG, DEF)
+      if (pos === 'ZAG' || pos === 'DEF') {
+        return `<i class="fa-solid fa-shoe-prints icon-boot-blue text-sm" title="Zagueiro (Chuteira Azul)"></i>`;
+      }
+
+      // 4. Chuteiras Laranjas para ME, MD e MEI
+      if (['ME', 'MD', 'MEI'].includes(pos)) {
+        return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Meia (Chuteira Laranja)"></i>`;
+      }
+
+      // 5. Chuteiras Vermelhas para MC e VOL
+      if (['MC', 'VOL'].includes(pos)) {
+        return `<i class="fa-solid fa-shoe-prints icon-boot-red text-sm" title="Volante / Central (Chuteira Vermelha)"></i>`;
+      }
+
+      // 6. Chuteiras Pretas para Atacantes (ATA, SA, ATD, ATE)
+      if (['ATA', 'SA', 'ATD', 'ATE'].includes(pos)) {
+        return `<i class="fa-solid fa-shoe-prints icon-boot-black text-sm" title="Avançado (Chuteira Preta)"></i>`;
+      }
+
+      // 7. Chuteiras Cinzas para Pontas (PD, PE)
+      if (['PD', 'PE'].includes(pos)) {
+        return `<i class="fa-solid fa-shoe-prints icon-boot-gray text-sm" title="Ponta (Chuteira Cinza)"></i>`;
+      }
+
+      // Padrão genérico
+      return `<i class="fa-solid fa-shoe-prints text-slate-400 text-sm"></i>`;
+    }
+
+    // ================= SINCRONIZAÇÃO GOOGLE SHEETS =================
+    async function loadFromGoogleSheets() {
+      const statusEl = document.getElementById('syncStatus');
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A ler a folha de cálculo...`;
+
+      try {
+        const response = await fetch(`${API_URL}?action=getAll`);
+        const result = await response.json();
+
+        if (result.status === 'success' && result.data) {
+          const remote = result.data;
+          
+          if (remote.clube && remote.clube.length > 0) {
+            state.clubName = remote.clube[0].nome || state.clubName;
+            state.clubLogoUrl = remote.clube[0].logo_url || state.clubLogoUrl || '';
+            state.currentSeason = remote.clube[0].temporada || state.currentSeason;
+            state.budget = Number(remote.clube[0].verba) || 0;
+            state.wageBudget = Number(remote.clube[0].teto_salarial) || 0;
+          }
+
+          if (Array.isArray(remote.atletas)) {
+            state.athletes = remote.atletas.map(a => ({
+              id: Number(a.id) || Date.now(),
+              number: a.numero !== undefined && a.numero !== '' ? a.numero : '-',
+              name: a.nome || 'Sem Nome',
+              pos: a.pos || 'MEI',
+              age: Number(a.idade) || 0,
+              nat: a.nat || '---',
+              role: a.role || 'RODIZIO',
+              initialOvr: Number(a.ovr) || 70,
+              currentOvr: Number(a.ovr) || 70,
+              wage: Number(a.salario) || 0,
+              matches: Number(a.jogos) || 0,
+              goals: Number(a.gols) || 0,
+              assists: Number(a.assists) || 0,
+              ssg: Number(a.ssg) || 0,
+              yellow: Number(a.ca) || 0,
+              red: Number(a.cv) || 0,
+              ratingSum: Number(a.nota_soma) || 0
+            }));
+          } else {
+            state.athletes = [];
+          }
+
+          if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
+          saveState();
+        }
+      } catch (err) {
+        console.warn('Erro ao ligar ao Google Sheets:', err);
+        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Sem ligação à folha`;
+      }
+    }
+
+    async function syncAllToCloud() {
+      const payload = {
+        action: 'syncAll',
+        data: {
+          clube: {
+            nome: state.clubName,
+            logo_url: state.clubLogoUrl,
+            temporada: state.currentSeason,
+            verba: state.budget,
+            teto_salarial: state.wageBudget
+          },
+          atletas: state.athletes
+        }
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        alert('Dados guardados com sucesso no Google Sheets!');
+      } catch (err) {
+        alert('Erro ao enviar dados para a folha de cálculo.');
+      }
+    }
+
+    // ================= INTERFACE & ATUALIZAÇÕES =================
+    function switchTab(tab) {
+      document.querySelectorAll('section[id^="tab-"]').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-emerald-600', 'text-emerald-700', 'bg-emerald-50');
+        btn.classList.add('border-transparent', 'text-slate-600');
+      });
+
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+      const activeBtn = document.getElementById('tabBtn-' + tab);
+      activeBtn.classList.add('border-emerald-600', 'text-emerald-700', 'bg-emerald-50');
+      activeBtn.classList.remove('border-transparent', 'text-slate-600');
+    }
+
+    function updateUI() {
+      document.getElementById('headerClubName').innerText = state.clubName;
+      document.getElementById('headerSeason').innerText = state.currentSeason;
+      document.getElementById('matchModalMyClubName').innerText = state.clubName;
+
+      updateClubLogo();
+      renderDashboard();
+      renderAthletesTable();
+      renderChampionshipsSelect();
+      renderChampStats();
+      renderMatchesHistory();
+    }
+
+    function renderDashboard() {
+      document.getElementById('dashBudget').innerText = '€ ' + Number(state.budget).toLocaleString('pt-PT');
+      document.getElementById('dashInitialBudget').innerText = '€ ' + Number(state.initialBudget).toLocaleString('pt-PT');
+      
+      const totalWage = state.athletes.reduce((acc, p) => acc + (Number(p.wage) || 0), 0);
+      document.getElementById('dashWage').innerText = '€ ' + totalWage.toLocaleString('pt-PT');
+      document.getElementById('dashWageBudget').innerText = '€ ' + Number(state.wageBudget).toLocaleString('pt-PT');
+
+      const totalSquad = state.athletes.length;
+      document.getElementById('dashTotalSquad').innerText = totalSquad;
+
+      if (totalSquad > 0) {
+        const avgOvr = (state.athletes.reduce((acc, p) => acc + Number(p.currentOvr), 0) / totalSquad).toFixed(1);
+        const maxOvr = Math.max(...state.athletes.map(p => Number(p.currentOvr)));
+        const avgAge = (state.athletes.reduce((acc, p) => acc + Number(p.age), 0) / totalSquad).toFixed(1);
+
+        document.getElementById('dashAvgOvr').innerText = avgOvr;
+        document.getElementById('dashMaxOvr').innerText = maxOvr;
+        document.getElementById('dashAvgAge').innerText = avgAge;
+
+        const sortedScorers = [...state.athletes].sort((a,b) => b.goals - a.goals);
+        const sortedAssisters = [...state.athletes].sort((a,b) => b.assists - a.assists);
+        const sortedSsg = [...state.athletes].sort((a,b) => b.ssg - a.ssg);
+        const sortedRating = [...state.athletes].filter(a => a.matches > 0).sort((a,b) => (b.ratingSum/b.matches) - (a.ratingSum/a.matches));
+
+        if (sortedScorers[0]) {
+          document.getElementById('bestScorer').innerText = sortedScorers[0].name;
+          document.getElementById('bestScorerGols').innerText = `${sortedScorers[0].goals} Golos`;
+        }
+        if (sortedAssisters[0]) {
+          document.getElementById('bestAssister').innerText = sortedAssisters[0].name;
+          document.getElementById('bestAssisterCount').innerText = `${sortedAssisters[0].assists} Assistências`;
+        }
+        if (sortedSsg[0]) {
+          document.getElementById('bestSsgPlayer').innerText = sortedSsg[0].name;
+          document.getElementById('bestSsgCount').innerText = `${sortedSsg[0].ssg} Jogos sem sofrer`;
+        }
+        if (sortedRating[0]) {
+          document.getElementById('bestRatingPlayer').innerText = sortedRating[0].name;
+          document.getElementById('bestRatingVal').innerText = (sortedRating[0].ratingSum / sortedRating[0].matches).toFixed(2);
+        }
+      } else {
+        document.getElementById('dashAvgOvr').innerText = '0.0';
+        document.getElementById('dashMaxOvr').innerText = '0';
+        document.getElementById('dashAvgAge').innerText = '0.0';
+        document.getElementById('bestScorer').innerText = '-';
+        document.getElementById('bestScorerGols').innerText = '0 Golos';
+        document.getElementById('bestAssister').innerText = '-';
+        document.getElementById('bestAssisterCount').innerText = '0 Ass.';
+        document.getElementById('bestSsgPlayer').innerText = '-';
+        document.getElementById('bestSsgCount').innerText = '0 Jogos';
+        document.getElementById('bestRatingPlayer').innerText = '-';
+        document.getElementById('bestRatingVal').innerText = '0.00';
+      }
+    }
+
+    function setPosFilter(pos) {
+      currentPosFilter = pos;
+      document.querySelectorAll('.pos-filter-btn').forEach(btn => {
+        if(btn.dataset.pos === pos) {
+          btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 text-white';
+        } else {
+          btn.className = 'pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200';
+        }
+      });
+      renderAthletesTable();
+    }
+
+    function renderAthletesTable() {
+      const tbody = document.getElementById('athletesTableBody');
+      const query = (document.getElementById('playerSearch')?.value || '').toLowerCase();
+
+      // Identifica os IDs dos 11 atletas com mais jogos
+      const top11Ids = [...state.athletes]
+        .filter(a => Number(a.matches) > 0)
+        .sort((a, b) => b.matches - a.matches)
+        .slice(0, 11)
+        .map(a => a.id);
+
+      let list = state.athletes.filter(p => {
+        const matchesQuery = p.name.toLowerCase().includes(query) || p.nat.toLowerCase().includes(query);
+        if (currentPosFilter === 'TODOS') return matchesQuery;
+        if (currentPosFilter === 'GOL') return matchesQuery && p.pos === 'GOL';
+        if (currentPosFilter === 'DEF') return matchesQuery && ['ZAG','LD','LE','DEF'].includes(p.pos);
+        if (currentPosFilter === 'MEI') return matchesQuery && ['VOL','MC','MEI','ME','MD'].includes(p.pos);
+        if (currentPosFilter === 'ATA') return matchesQuery && ['ATA','PE','PD','SA'].includes(p.pos);
+        return matchesQuery;
+      });
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="13" class="p-8 text-center text-slate-400 italic">Nenhum atleta encontrado na folha de cálculo.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => {
+        const isTop11 = top11Ids.includes(p.id);
+        const iconHtml = getPlayerShoeOrGloveIcon(p, isTop11);
+        const avgRating = p.matches > 0 ? (p.ratingSum / p.matches).toFixed(2) : '-';
+
+        return `
+          <tr class="hover:bg-slate-50 transition ${isTop11 ? 'bg-amber-50/40' : ''}">
+            <td class="p-3 text-slate-400 font-mono font-bold">${p.number || '-'}</td>
+            <td class="p-3">
+              <div class="font-bold text-slate-900 text-xs">${p.name}</div>
+              <div class="text-[10px] text-slate-400 uppercase tracking-wider">${p.nat} • ${p.role}</div>
+            </td>
+            <td class="p-3">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">${p.pos}</span>
+                ${iconHtml}
+              </div>
+            </td>
+            <td class="p-3 text-slate-600">${p.age} anos</td>
+            <td class="p-3 font-bold text-slate-900">${p.currentOvr}</td>
+            <td class="p-3 text-center text-slate-700 font-semibold">${p.matches}</td>
+            <td class="p-3 text-center font-bold text-amber-600">${p.goals}</td>
+            <td class="p-3 text-center font-bold text-blue-600">${p.assists}</td>
+            <td class="p-3 text-center text-emerald-600 font-bold">${p.ssg}</td>
+            <td class="p-3 text-center text-yellow-600 font-bold">${p.yellow}</td>
+            <td class="p-3 text-center text-red-600 font-bold">${p.red}</td>
+            <td class="p-3 text-center font-bold text-purple-600">${avgRating}</td>
+            <td class="p-3 text-right space-x-1">
+              <button onclick="editAthlete(${p.id})" class="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="deleteAthlete(${p.id})" class="p-1.5 rounded bg-red-50 hover:bg-red-100 text-red-600 border border-red-200" title="Remover"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openAthleteModal() {
+      document.getElementById('athleteForm').reset();
+      document.getElementById('athleteEditId').value = '';
+      document.getElementById('athleteModalTitle').innerText = 'Cadastrar Atleta';
+      document.getElementById('athleteModal').classList.remove('hidden');
+    }
+
+    function closeAthleteModal() {
+      document.getElementById('athleteModal').classList.add('hidden');
+    }
+
+    function editAthlete(id) {
+      const p = state.athletes.find(a => a.id === id);
+      if(!p) return;
+      document.getElementById('athleteEditId').value = p.id;
+      document.getElementById('athName').value = p.name;
+      document.getElementById('athNumber').value = p.number;
+      document.getElementById('athPos').value = p.pos;
+      document.getElementById('athAge').value = p.age;
+      document.getElementById('athNat').value = p.nat;
+      document.getElementById('athOvr').value = p.currentOvr;
+      document.getElementById('athRole').value = p.role;
+      document.getElementById('athWage').value = p.wage;
+      document.getElementById('athleteModalTitle').innerText = 'Editar Atleta';
+      document.getElementById('athleteModal').classList.remove('hidden');
+    }
+
+    function saveAthlete(e) {
+      e.preventDefault();
+      const editId = document.getElementById('athleteEditId').value;
+      const ovr = Number(document.getElementById('athOvr').value);
+
+      if (editId) {
+        const p = state.athletes.find(a => a.id === Number(editId));
+        p.name = document.getElementById('athName').value;
+        p.number = Number(document.getElementById('athNumber').value);
+        p.pos = document.getElementById('athPos').value;
+        p.age = Number(document.getElementById('athAge').value);
+        p.nat = document.getElementById('athNat').value.toUpperCase();
+        p.currentOvr = ovr;
+        p.role = document.getElementById('athRole').value;
+        p.wage = Number(document.getElementById('athWage').value);
+      } else {
+        const newPlayer = {
+          id: Date.now(),
+          name: document.getElementById('athName').value,
+          number: Number(document.getElementById('athNumber').value),
+          pos: document.getElementById('athPos').value,
+          age: Number(document.getElementById('athAge').value),
+          nat: document.getElementById('athNat').value.toUpperCase(),
+          role: document.getElementById('athRole').value,
+          initialOvr: ovr,
+          currentOvr: ovr,
+          wage: Number(document.getElementById('athWage').value),
+          matches: 0,
+          goals: 0,
+          assists: 0,
+          ssg: 0,
+          yellow: 0,
+          red: 0,
+          ratingSum: 0
+        };
+        state.athletes.push(newPlayer);
+      }
+      closeAthleteModal();
+      saveState();
+      syncAllToCloud();
+    }
+
+    function deleteAthlete(id) {
+      if(confirm('Tem a certeza de que deseja remover este atleta?')) {
+        state.athletes = state.athletes.filter(a => a.id !== id);
+        saveState();
+        syncAllToCloud();
+      }
+    }
+
+    // ================= CAMPEONATOS & PONTOS =================
+    function renderChampionshipsSelect() {
+      const select = document.getElementById('champSelect');
+      const modalSelect = document.getElementById('matchModalChamp');
+      const optionsHtml = state.championships.map(c => `<option value="${c.id}">${c.name} (${c.format})</option>`).join('');
+      
+      select.innerHTML = optionsHtml;
+      modalSelect.innerHTML = optionsHtml;
+
+      if (!state.currentChampId && state.championships[0]) {
+        state.currentChampId = state.championships[0].id;
+      }
+      select.value = state.currentChampId;
+    }
+
+    function onChampSelectChange() {
+      state.currentChampId = document.getElementById('champSelect').value;
+      renderChampStats();
+      renderMatchesHistory();
+    }
+
+    function openNewChampModal() {
+      document.getElementById('newChampName').value = '';
+      document.getElementById('champModal').classList.remove('hidden');
+    }
+    function closeNewChampModal() {
+      document.getElementById('champModal').classList.add('hidden');
+    }
+    function saveNewChamp() {
+      const name = document.getElementById('newChampName').value.trim();
+      const format = document.getElementById('newChampFormat').value;
+      if (!name) return alert('Insira o nome do campeonato');
+      const newC = { id: 'c_' + Date.now(), name, format };
+      state.championships.push(newC);
+      state.currentChampId = newC.id;
+      closeNewChampModal();
+      saveState();
+    }
+
+    function renderChampStats() {
+      const container = document.getElementById('champStatsCards');
+      const champMatches = state.matches.filter(m => m.champId === state.currentChampId && m.season === state.currentSeason);
+
+      let games = champMatches.length;
+      let wins = 0, draws = 0, losses = 0, gp = 0, gc = 0;
+
+      champMatches.forEach(m => {
+        gp += m.myScore;
+        gc += m.oppScore;
+        if (m.myScore > m.oppScore) wins++;
+        else if (m.myScore === m.oppScore) draws++;
+        else losses++;
+      });
+
+      const points = (wins * 3) + (draws * 1);
+      const gd = gp - gc;
+      const aproveitamento = games > 0 ? ((points / (games * 3)) * 100).toFixed(0) : 0;
+
+      container.innerHTML = `
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Pontos</div>
+          <div class="text-2xl font-black text-emerald-600">${points}</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Jogos</div>
+          <div class="text-2xl font-black text-slate-800">${games}</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">V / E / D</div>
+          <div class="text-xl font-bold text-slate-700">${wins} / ${draws} / ${losses}</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Golos Pró</div>
+          <div class="text-2xl font-black text-amber-600">${gp}</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Golos Contra</div>
+          <div class="text-2xl font-black text-red-600">${gc}</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Saldo</div>
+          <div class="text-2xl font-black ${gd >= 0 ? 'text-emerald-600' : 'text-red-600'}">${gd > 0 ? '+'+gd : gd}</div>
+        </div>
+        <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm">
+          <div class="text-[10px] text-slate-400 font-bold uppercase">Aprov.</div>
+          <div class="text-2xl font-black text-purple-600">${aproveitamento}%</div>
+        </div>
+      `;
+    }
+
+    // ================= MODAL DE PARTIDA =================
+    function openMatchModal() {
+      document.getElementById('matchOpponent').value = '';
+      document.getElementById('matchMyScore').value = 0;
+      document.getElementById('matchOppScore').value = 0;
+      document.getElementById('goalDetailsContainer').innerHTML = `
+        <p class="text-xs text-slate-400 text-center py-2 italic" id="emptyGoalsMsg">Nenhum golo registado.</p>
+      `;
+      renderMatchAthletesPerformanceInputs();
+      document.getElementById('matchModal').classList.remove('hidden');
+    }
+
+    function closeMatchModal() {
+      document.getElementById('matchModal').classList.add('hidden');
+    }
+
+    function addGoalDetailRow() {
+      const msg = document.getElementById('emptyGoalsMsg');
+      if (msg) msg.remove();
+
+      const container = document.getElementById('goalDetailsContainer');
+      const rowId = Date.now() + Math.random().toString(36).substring(7);
+      const playerOptions = state.athletes.map(a => `<option value="${a.id}">${a.name} (${a.pos})</option>`).join('');
+
+      const div = document.createElement('div');
+      div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm';
+      div.id = rowId;
+      div.innerHTML = `
+        <div class="sm:col-span-5">
+          <span class="text-[10px] text-slate-500 font-bold block">Autor do Golo:</span>
+          <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-800">
+            ${playerOptions}
+          </select>
+        </div>
+        <div class="sm:col-span-5">
+          <span class="text-[10px] text-slate-500 font-bold block">Assistência:</span>
+          <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-800">
+            <option value="">Nenhuma / Jogada Individual</option>
+            ${playerOptions}
+          </select>
+        </div>
+        <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-3 sm:mt-0">
+          <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-red-50 text-red-600 hover:bg-red-100 text-xs border border-red-200">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      `;
+      container.appendChild(div);
+
+      const myScoreInput = document.getElementById('matchMyScore');
+      myScoreInput.value = document.querySelectorAll('.goal-detail-row').length;
+    }
+
+    function removeGoalDetailRow(rowId) {
+      document.getElementById(rowId)?.remove();
+      const remaining = document.querySelectorAll('.goal-detail-row').length;
+      document.getElementById('matchMyScore').value = remaining;
+      if (remaining === 0) {
+        document.getElementById('goalDetailsContainer').innerHTML = `
+          <p class="text-xs text-slate-400 text-center py-2 italic" id="emptyGoalsMsg">Nenhum golo registado.</p>
+        `;
+      }
+    }
+
+    function renderMatchAthletesPerformanceInputs() {
+      const tbody = document.getElementById('matchAthletesPerformanceBody');
+      tbody.innerHTML = state.athletes.map(a => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-2 text-center">
+            <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-emerald-600 w-4 h-4 cursor-pointer" onchange="toggleRatingField(${a.id})">
+          </td>
+          <td class="p-2">
+            <div class="font-bold text-slate-900 text-xs">${a.name}</div>
+            <div class="text-[10px] text-slate-500">${a.pos} • OVR ${a.currentOvr}</div>
+          </td>
+          <td class="p-2 text-center">
+            <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-amber-600 font-bold disabled:opacity-30">
+          </td>
+          <td class="p-2 text-center">
+            <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-yellow-600 font-bold disabled:opacity-30">
+          </td>
+          <td class="p-2 text-center">
+            <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-red-600 font-bold disabled:opacity-30">
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function toggleRatingField(playerId) {
+      const isChecked = document.getElementById(`played_${playerId}`).checked;
+      const ratingIn = document.getElementById(`rating_${playerId}`);
+      const yellowIn = document.getElementById(`yellow_${playerId}`);
+      const redIn = document.getElementById(`red_${playerId}`);
+
+      ratingIn.disabled = !isChecked;
+      yellowIn.disabled = !isChecked;
+      redIn.disabled = !isChecked;
+
+      if(isChecked && !ratingIn.value) {
+        ratingIn.value = '6.5';
+      }
+    }
+
+    async function saveMatchData() {
+      const opponent = document.getElementById('matchOpponent').value.trim();
+      if (!opponent) return alert('Informe o time adversário!');
+
+      const champId = document.getElementById('matchModalChamp').value;
+      const location = document.getElementById('matchLocation').value;
+      const myScore = Number(document.getElementById('matchMyScore').value);
+      const oppScore = Number(document.getElementById('matchOppScore').value);
+
+      const goalDetails = [];
+      document.querySelectorAll('.goal-detail-row').forEach(row => {
+        const scorerId = Number(row.querySelector('.goal-scorer-select').value);
+        const assistId = row.querySelector('.goal-assist-select').value ? Number(row.querySelector('.goal-assist-select').value) : null;
+        goalDetails.push({ scorerId, assistId });
+      });
+
+      const performances = [];
+      state.athletes.forEach(a => {
+        const played = document.getElementById(`played_${a.id}`)?.checked;
+        if (played) {
+          const rating = Number(document.getElementById(`rating_${a.id}`).value) || 6.0;
+          const yellow = Number(document.getElementById(`yellow_${a.id}`).value) || 0;
+          const red = Number(document.getElementById(`red_${a.id}`).value) || 0;
+
+          performances.push({ playerId: a.id, rating, yellow, red });
+
+          a.matches += 1;
+          a.ratingSum += rating;
+          a.yellow += yellow;
+          a.red += red;
+
+          if (oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'DEF'].includes(a.pos)) {
+            a.ssg += 1;
+          }
+        }
+      });
+
+      goalDetails.forEach(g => {
+        const scorer = state.athletes.find(a => a.id === g.scorerId);
+        if (scorer) scorer.goals += 1;
+        if (g.assistId) {
+          const assister = state.athletes.find(a => a.id === g.assistId);
+          if (assister) assister.assists += 1;
+        }
+      });
+
+      const matchRecord = {
+        id: Date.now(),
+        season: state.currentSeason,
+        champId,
+        opponent,
+        location,
+        myScore,
+        oppScore,
+        goals: goalDetails,
+        performances,
+        date: new Date().toLocaleDateString('pt-PT')
+      };
+
+      state.matches.unshift(matchRecord);
+      closeMatchModal();
+      saveState();
+
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'saveMatch',
+            data: {
+              id: matchRecord.id,
+              temporada: matchRecord.season,
+              campeonato: matchRecord.champId,
+              adversario: matchRecord.opponent,
+              mando: matchRecord.location,
+              gols_pro: matchRecord.myScore,
+              gols_contra: matchRecord.oppScore,
+              data: matchRecord.date,
+              gols: matchRecord.goals,
+              performances: matchRecord.performances
+            }
+          })
+        });
+        alert('Partida guardada localmente e enviada para o Google Sheets!');
+      } catch (e) {
+        alert('Partida salva localmente. Falha no envio para o Sheets.');
+      }
+    }
+
+    function renderMatchesHistory() {
+      const container = document.getElementById('matchesList');
+      const countLabel = document.getElementById('matchesCountLabel');
+      const champMatches = state.matches.filter(m => m.champId === state.currentChampId && m.season === state.currentSeason);
+
+      countLabel.innerText = `${champMatches.length} jogos nesta época`;
+
+      if (champMatches.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 italic">Nenhum jogo registado neste campeonato.</div>`;
+        return;
+      }
+
+      container.innerHTML = champMatches.map(m => {
+        const isWin = m.myScore > m.oppScore;
+        const isDraw = m.myScore === m.oppScore;
+        const badgeColor = isWin ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : (isDraw ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-red-100 text-red-800 border-red-300');
+        const badgeText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
+
+        const scorersText = (m.goals || []).map(g => {
+          const sc = state.athletes.find(a => a.id === g.scorerId)?.name || 'Autor';
+          const as = g.assistId ? `(Ass: ${state.athletes.find(a => a.id === g.assistId)?.name || 'Passe'})` : '';
+          return `${sc} ⚽ ${as}`;
+        }).join(' • ');
+
+        return `
+          <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${badgeText}</span>
+                <span class="text-xs font-semibold text-slate-500">${m.location} • ${m.date}</span>
+              </div>
+              <div class="text-base font-black text-slate-900 flex items-center gap-3">
+                <span>${state.clubName}</span>
+                <span class="px-2 py-0.5 bg-white border border-slate-300 rounded text-emerald-700 shadow-sm">${m.myScore} - ${m.oppScore}</span>
+                <span class="text-slate-600">${m.opponent}</span>
+              </div>
+              ${scorersText ? `<div class="text-xs text-amber-700 font-bold">${scorersText}</div>` : ''}
+            </div>
+            <button onclick="deleteMatch(${m.id})" class="text-xs text-red-500 hover:text-red-700 p-2 self-end sm:self-center" title="Remover"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function deleteMatch(matchId) {
+      if (confirm('Tem a certeza de que deseja eliminar esta partida do histórico?')) {
+        state.matches = state.matches.filter(m => m.id !== matchId);
+        saveState();
+      }
+    }
+
+    // ================= TROCAR CLUBE COM LOGO =================
+    function openChangeClubModal() {
+      document.getElementById('newClubNameInput').value = state.clubName;
+      document.getElementById('newClubLogoUrlInput').value = state.clubLogoUrl || '';
+      document.getElementById('newClubBudgetInput').value = state.budget;
+      document.getElementById('newClubWageInput').value = state.wageBudget;
+      document.getElementById('changeClubModal').classList.remove('hidden');
+    }
+    function closeChangeClubModal() {
+      document.getElementById('changeClubModal').classList.add('hidden');
+    }
+    function confirmChangeClub() {
+      const newName = document.getElementById('newClubNameInput').value.trim();
+      if (!newName) return alert('Introduza o nome do clube!');
+      state.clubName = newName;
+      state.clubLogoUrl = document.getElementById('newClubLogoUrlInput').value.trim();
+      state.budget = Number(document.getElementById('newClubBudgetInput').value);
+      state.initialBudget = state.budget;
+      state.wageBudget = Number(document.getElementById('newClubWageInput').value);
+
+      closeChangeClubModal();
+      saveState();
+      syncAllToCloud();
+      alert(`Dados do clube e símbolo atualizados!`);
+    }
+
+    // ================= VIRADA DE ÉPOCA =================
+    function openSeasonAdvanceModal() {
+      const parts = state.currentSeason.split('/');
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        document.getElementById('nextSeasonNameInput').value = `${Number(parts[0])+1}/${Number(parts[1])+1}`;
+      } else {
+        document.getElementById('nextSeasonNameInput').value = '2026/2027';
+      }
+      document.getElementById('seasonAdvanceModal').classList.remove('hidden');
+    }
+    function closeSeasonAdvanceModal() {
+      document.getElementById('seasonAdvanceModal').classList.add('hidden');
+    }
+    function confirmAdvanceSeason() {
+      const nextSeason = document.getElementById('nextSeasonNameInput').value.trim();
+      if (!nextSeason) return alert('Defina o nome da nova época');
+      state.currentSeason = nextSeason;
+
+      state.athletes.forEach(a => {
+        a.age += 1;
+        a.initialOvr = a.currentOvr;
+        a.matches = 0;
+        a.goals = 0;
+        a.assists = 0;
+        a.ssg = 0;
+        a.yellow = 0;
+        a.red = 0;
+        a.ratingSum = 0;
+      });
+
+      closeSeasonAdvanceModal();
+      saveState();
+      syncAllToCloud();
+      alert(`Época confirmada: ${nextSeason}!`);
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ModoCarreira_${state.clubName}_${state.currentSeason.replace('/', '-')}.json`;
+      a.click();
+    }
+
+    // INICIALIZAÇÃO
+    window.addEventListener('DOMContentLoaded', () => {
+      updateUI();
+      loadFromGoogleSheets();
+    });
+  </script>
+</body>
+</html>
