@@ -75,12 +75,15 @@
 <body class="min-h-screen flex flex-col">
 
   <!-- CABEÇALHO -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 py-3 shadow-xs">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+  <header id="appHeader" class="relative border-b border-slate-200 sticky top-0 z-40 px-4 py-3 shadow-xs transition-colors duration-300 overflow-hidden bg-white">
+    <!-- 1. Imagem de Fundo do Estádio (com opacidade suave) -->
+    <div id="headerStadiumBg" class="absolute inset-0 bg-cover bg-center opacity-15 pointer-events-none transition-all duration-500"></div>
+
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 relative z-10">
       
-      <!-- Símbolo do Clube + Nome + Temporada -->
+      <!-- Símbolo do Clube + Nome + Alcunha + Lema + Temporada -->
       <div class="flex items-center gap-3.5">
-        <div id="clubLogoContainer" class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-xs">
+        <div id="clubLogoContainer" class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-xs shrink-0">
           <img id="clubBadgeImg" src="" alt="Escudo" class="w-full h-full object-contain hidden" onerror="showDefaultLogo()">
           <span id="clubDefaultBadge" class="text-xl font-bold text-slate-800">⚽</span>
         </div>
@@ -89,9 +92,15 @@
             <span id="headerClubName">A carregar...</span>
             <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-300 font-semibold" id="headerSeason">---</span>
           </h1>
-          <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5" id="syncStatus">
+          <!-- 4. Alcunha e Lema do Clube -->
+          <div class="flex items-center gap-2 text-xs font-semibold">
+            <span id="headerClubNickname" class="text-slate-800 font-bold"></span>
+            <span id="headerMottoDivider" class="text-slate-400 hidden">•</span>
+            <span id="headerClubMotto" class="italic text-slate-500 font-medium"></span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5 mt-0.5" id="syncStatus">
             <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-            Ligado ao Google Sheets
+            Ligado
           </p>
         </div>
       </div>
@@ -203,7 +212,10 @@
           <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-bolt"></i></div>
         </div>
       </div>
-
+      <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs">
+        <div class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Verba Adquirida (Vendas)</div>
+        <div class="text-xl font-black text-emerald-600" id="dashTransferAcquired">€ 0,00</div>
+      </div>
       <!-- CARDS DE MÉDIA DE FORÇA POR SETOR -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-blue-50/60 border border-blue-200 p-4 rounded-xl shadow-xs flex items-center justify-between">
@@ -241,6 +253,7 @@
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
               <i class="fa-solid fa-earth-americas text-emerald-600"></i> Nacionalidades (Cores dos Países)
             </h3>
+            
             <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full" id="natCountLabel">0 países</span>
           </div>
           <div class="relative h-64 flex items-center justify-center">
@@ -250,7 +263,7 @@
             </div>
           </div>
         </div>
-
+        <div id="nationalityCustomLegend" class="flex flex-wrap justify-center items-center gap-3 pt-3"></div>
         <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
@@ -403,6 +416,11 @@
           <button onclick="setPosFilter('ATA')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="ATA">Ataque</button>
           <input type="text" id="playerSearch" oninput="renderAthletesContainers()" placeholder="Pesquisar por nome ou país..." class="bg-slate-50 border border-slate-300 text-xs px-3 py-1.5 rounded-lg text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-800">
         </div>
+
+        <button onclick="openTransferModal()" class="px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          <span>Transferências</span>
+        </button>
 
         <button onclick="openAthleteModal()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition">
           <i class="fa-solid fa-user-plus"></i> Novo Atleta
@@ -745,6 +763,130 @@
     </div>
   </div>
 
+  <!-- MODAL: MERCADO DE TRANSFERÊNCIAS (COMPRA E VENDA) -->
+<div id="transferModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 hidden">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+    
+    <!-- Cabeçalho do Modal -->
+    <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold tracking-wide">Mercado de Transferências</h3>
+          <p class="text-[11px] text-slate-300">Registo de compras, vendas e atualização orçamental</p>
+        </div>
+      </div>
+      <button onclick="closeTransferModal()" type="button" class="text-slate-400 hover:text-white transition text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Abas / Tipo de Operação -->
+    <div class="flex border-b border-slate-200 bg-slate-50 text-xs font-bold">
+      <button type="button" id="tabBtnBuy" onclick="setTransferType('BUY')" class="flex-1 py-3 text-center border-b-2 border-emerald-600 text-emerald-700 bg-white transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-user-plus text-emerald-600"></i> Comprar / Contratar Atleta
+      </button>
+      <button type="button" id="tabBtnSell" onclick="setTransferType('SELL')" class="flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-user-minus text-rose-600"></i> Vender Atleta
+      </button>
+    </div>
+
+    <form id="transferForm" onsubmit="handleTransferSubmit(event)" class="p-5 space-y-4">
+      <input type="hidden" id="transType" value="BUY">
+
+      <!-- ================= ÁREA DE COMPRA ================= -->
+      <div id="transferBuySection" class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Nome do Jogador</label>
+            <input type="text" id="buyName" placeholder="Ex: Erling Haaland" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 focus:bg-white focus:border-slate-800">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Posição</label>
+            <select id="buyPos" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+              <option value="GOL">GOL (Guarda-Redes)</option>
+              <option value="ZAG">ZAG (Zagueiro Central)</option>
+              <option value="LD">LD (Lateral Direito)</option>
+              <option value="LE">LE (Lateral Esquerdo)</option>
+              <option value="VOL">VOL (Volante)</option>
+              <option value="MC">MC (Médio Centro)</option>
+              <option value="MEI">MEI (Médio Ofensivo)</option>
+              <option value="MD">MD (Médio Direito)</option>
+              <option value="ME">ME (Médio Esquerdo)</option>
+              <option value="PD">PD (Ponta Direita)</option>
+              <option value="PE">PE (Ponta Esquerda)</option>
+              <option value="ATA" selected>ATA (Avançado / Centroavante)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Idade</label>
+            <input type="number" id="buyAge" value="23" min="15" max="45" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Overall (OVR)</label>
+            <input type="number" id="buyOvr" value="75" min="45" max="99" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Nacionalidade (ISO 3)</label>
+            <input type="text" id="buyNat" value="POR" maxlength="3" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 uppercase">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Salário Semanal (€)</label>
+            <input type="number" id="buyWage" value="12000" step="500" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Contrato (Anos)</label>
+            <input type="number" id="buyContract" value="3" min="1" max="5" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+          </div>
+          <div class="col-span-2">
+            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Equipa / Clube de Origem</label>
+            <input type="text" id="buyOriginClub" placeholder="Ex: Sporting CP, Benfica, Manchester City..." class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= ÁREA DE VENDA ================= -->
+      <div id="transferSellSection" class="space-y-3 hidden">
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Selecionar Atleta a Vender</label>
+          <select id="sellAthleteId" onchange="onAthleteSellSelectChange()" class="mt-1 w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900"></select>
+        </div>
+
+        <div id="sellAthletePreview" class="p-3 bg-amber-50/60 border border-amber-200 rounded-xl text-xs space-y-1 hidden">
+          <div class="font-bold text-slate-900" id="sellPreviewName">-</div>
+          <div class="text-slate-600 text-[11px]" id="sellPreviewDetails">-</div>
+          <div class="text-[11px] font-bold text-amber-800" id="sellPreviewMarketValue">Valor de Mercado Atual: € 0,00</div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Equipa / Clube de Destino</label>
+          <input type="text" id="sellDestClub" placeholder="Ex: Real Madrid, Juventus, Al Hilal..." class="mt-1 w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+        </div>
+      </div>
+
+      <!-- VALOR DA TRANSFERÊNCIA (COMUM A AMBOS) -->
+      <div class="pt-2 border-t border-slate-200">
+        <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-800 flex items-center justify-between">
+          <span>Valor da Transferência (€)</span>
+          <span id="transHelperLabel" class="text-emerald-700 font-semibold text-[10px] lowercase"></span>
+        </label>
+        <div class="relative mt-1">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-bold text-slate-400">€</span>
+          <input type="number" id="transAmount" min="0" step="10000" placeholder="0" required class="w-full pl-8 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-black text-slate-900 focus:bg-white focus:border-slate-800">
+        </div>
+      </div>
+
+      <!-- Rodapé / Botões de Ação -->
+      <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+        <button type="button" onclick="closeTransferModal()" class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition">Cancelar</button>
+        <button type="submit" id="transSubmitBtn" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition">Confirmar Compra</button>
+      </div>
+    </form>
+  </div>
+</div>
+
   <!-- MODAL: EDITAR ESTATÍSTICAS GERAIS DO ATLETA -->
   <div id="statsModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
@@ -853,41 +995,94 @@
 
   <!-- MODAL: TROCAR CLUBE E ESCUDO -->
   <div id="changeClubModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
+    <div class="bg-white border border-slate-200 w-full max-w-lg rounded-2xl shadow-xl p-5 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
         <h3 class="text-sm font-bold uppercase tracking-wide text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-indigo-600"></i> Clube & Escudo
+          <i class="fa-solid fa-shield-halved text-indigo-600"></i> Clube, Identidade & Estádio
         </h3>
         <button onclick="closeChangeClubModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block mb-1 font-semibold text-slate-700">Nome do Clube</label>
-          <input type="text" id="newClubNameInput" placeholder="Ex: FC Porto, Benfica, Real Madrid..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-medium text-slate-900">
-        </div>
-        <div>
-          <label class="block mb-1 font-semibold text-slate-700">URL do Escudo da Equipa</label>
-          <input type="url" id="newClubLogoUrlInput" placeholder="https://exemplo.com/escudo.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-medium text-slate-900">
-          <span class="text-[10px] text-slate-400 block mt-0.5">Link direto da imagem do emblema</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
+
+      <div class="space-y-3.5 text-xs font-medium max-h-[75vh] overflow-y-auto pr-1">
+        
+        <!-- 4. Nome do Clube e Alcunha -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
-            <label class="block mb-1 font-semibold text-slate-700">Verba Transf. (€)</label>
-            <input type="number" id="newClubBudgetInput" value="15000000" step="any" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-semibold text-slate-900">
+            <label class="block mb-1 font-semibold text-slate-700">Nome do Clube</label>
+            <input type="text" id="newClubNameInput" placeholder="Ex: Deportivo La Coruña" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
           </div>
           <div>
-            <label class="block mb-1 font-semibold text-slate-700">Teto Salarial (€/sem)</label>
-            <input type="number" id="newClubWageInput" value="180000" step="any" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 font-semibold text-slate-900">
+            <label class="block mb-1 font-semibold text-slate-700">Alcunha / Apelido</label>
+            <input type="text" id="newClubNicknameInput" placeholder="Ex: Os Branquiazuis" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
           </div>
         </div>
+
+        <!-- 4. Lema / Grito de Guerra -->
+        <div>
+          <label class="block mb-1 font-semibold text-slate-700">Lema do Clube</label>
+          <input type="text" id="newClubMottoInput" placeholder="Ex: Forza Dépor! Sempre contigo." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+        </div>
+
+        <!-- 1. Escudo e Foto do Estádio (Banner) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">URL do Escudo</label>
+            <input type="url" id="newClubLogoUrlInput" placeholder="https://.../escudo.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">URL Foto do Estádio (Banner)</label>
+            <input type="url" id="newClubStadiumUrlInput" placeholder="https://.../riazor.jpg" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+          </div>
+        </div>
+
+        <!-- 2. Moeda Oficial + Finanças -->
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Moeda Oficial</label>
+            <select id="newClubCurrencyInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+              <option value="€">€ (Euro)</option>
+              <option value="£">£ (Libra Esterlina)</option>
+              <option value="$">$ (Dólar)</option>
+              <option value="R$">R$ (Real)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Verba Transf.</label>
+            <input type="number" id="newClubBudgetInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700">Teto Salarial</label>
+            <input type="number" id="newClubWageInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+          </div>
+        </div>
+
+        <!-- 3. Paleta de Cores Expandida -->
+        <div class="pt-2 border-t border-slate-200">
+          <label class="block font-bold text-slate-800 mb-2">Identidade Visual do Clube</label>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 flex flex-col items-center">
+              <span class="text-[10px] font-semibold text-slate-600 mb-1">Fundo Header</span>
+              <input type="color" id="clubColorBg" value="#ffffff" class="w-10 h-7 rounded border border-slate-300 cursor-pointer">
+            </div>
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 flex flex-col items-center">
+              <span class="text-[10px] font-semibold text-slate-600 mb-1">Cor Primária</span>
+              <input type="color" id="clubColorPrimary" value="#0f172a" class="w-10 h-7 rounded border border-slate-300 cursor-pointer">
+            </div>
+            <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 flex flex-col items-center">
+              <span class="text-[10px] font-semibold text-slate-600 mb-1">Cor Secundária</span>
+              <input type="color" id="clubColorSecondary" value="#3b82f6" class="w-10 h-7 rounded border border-slate-300 cursor-pointer">
+            </div>
+          </div>
+        </div>
+
       </div>
+
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
         <button onclick="closeChangeClubModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
         <button onclick="confirmChangeClub()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-xs">Confirmar</button>
       </div>
     </div>
   </div>
-
   <!-- MODAL: AVANÇAR ÉPOCA -->
   <div id="seasonAdvanceModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
@@ -929,19 +1124,24 @@
   ];
 
   const defaultState = {
-    clubName: 'La Coruña',
-    clubLogoUrl: '',
-    currentSeason: '2025/2026',
-    budget: 0,
-    initialBudget: 0,
-    wageBudget: 0,
-    currentChampId: 'ALL',
-    championships: [
-      { id: 'c1', name: 'Liga Principal', format: 'PONTOS', stagesCount: 0, trophyUrl: '', trophy_url: '', taca_url: '' }
-    ],
-    athletes: [],
-    matches: []
-  };
+  clubName: 'La Coruña',
+  clubNickname: 'Os Branquiazuis',
+  clubMotto: 'Forza Dépor!',
+  clubLogoUrl: '',
+  clubStadiumUrl: '',
+  currency: '€',
+  headerBgColor: '#ffffff',
+  clubPrimaryColor: '#0055a5',
+  clubSecondaryColor: '#ffffff',
+  currentSeason: '2025/2026',
+  budget: 0,
+  initialBudget: 0,
+  wageBudget: 0,
+  currentChampId: 'c1',
+  championships: [{ id: 'c1', name: 'Liga Principal', format: 'PONTOS', trophyUrl: '' }],
+  athletes: [],
+  matches: []
+};
 
   let state = loadState();
   let currentPosFilter = 'TODOS';
@@ -953,24 +1153,72 @@
 
   // Dicionário de Códigos de Países FIFA/ISO-3 para ISO-2
   const countryIsoMap = {
-    'BRA': 'br', 'ESP': 'es', 'POR': 'pt', 'ARG': 'ar', 'FRA': 'fr', 'GER': 'de', 'ALE': 'de',
-    'ENG': 'gb-eng', 'ING': 'gb-eng', 'ITA': 'it', 'NED': 'nl', 'HOL': 'nl', 'BEL': 'be', 'URU': 'uy',
-    'COL': 'co', 'CHI': 'cl', 'PAR': 'py', 'ECU': 'ec', 'PER': 'pe', 'VEN': 've', 'BOL': 'bo',
-    'MEX': 'mx', 'USA': 'us', 'EUA': 'us', 'CAN': 'ca', 'CRO': 'hr', 'SRB': 'rs', 'SUI': 'ch',
-    'AUT': 'at', 'SWE': 'se', 'NOR': 'no', 'DEN': 'dk', 'DIN': 'dk', 'POL': 'pl', 'CZE': 'cz',
-    'TUR': 'tr', 'GRE': 'gr', 'UKR': 'ua', 'RUS': 'ru', 'SCO': 'gb-sct', 'WAL': 'gb-wls',
-    'IRL': 'ie', 'NIR': 'gb-nir', 'MAR': 'ma', 'SEN': 'sn', 'NGA': 'ng', 'GHA': 'gh', 'CIV': 'ci',
-    'CMR': 'cm', 'CAM': 'cm', 'EGY': 'eg', 'ALG': 'dz', 'TUN': 'tn', 'RSA': 'za', 'JPN': 'jp',
-    'KOR': 'kr', 'AUS': 'au', 'NZL': 'nz', 'KSA': 'sa', 'QAT': 'qa', 'UAE': 'ae', 'IRN': 'ir', 'CHN': 'cn'
+    // --- AMÉRICA DO SUL (CONMEBOL) ---
+    'BRA': 'br', 'ARG': 'ar', 'URU': 'uy', 'COL': 'co', 'CHI': 'cl',
+    'PAR': 'py', 'ECU': 'ec', 'PER': 'pe', 'VEN': 've', 'BOL': 'bo',
+    'SUR': 'sr', 'GUY': 'gy',
+
+    // --- EUROPA (UEFA) ---
+    'POR': 'pt', 'ESP': 'es', 'FRA': 'fr', 'GER': 'de', 'ALE': 'de',
+    'ENG': 'gb-eng', 'ING': 'gb-eng', 'ITA': 'it', 'NED': 'nl', 'HOL': 'nl',
+    'BEL': 'be', 'CRO': 'hr', 'SRB': 'rs', 'SUI': 'ch', 'AUT': 'at',
+    'SWE': 'se', 'NOR': 'no', 'DEN': 'dk', 'DIN': 'dk', 'POL': 'pl',
+    'CZE': 'cz', 'TUR': 'tr', 'GRE': 'gr', 'UKR': 'ua', 'RUS': 'ru',
+    'SCO': 'gb-sct', 'WAL': 'gb-wls', 'GAL': 'gb-wls', 'IRL': 'ie', 'NIR': 'gb-nir',
+    'ROU': 'ro', 'HUN': 'hu', 'SVK': 'sk', 'SLO': 'si', 'BUL': 'bg',
+    'FIN': 'fi', 'ISL': 'is', 'BIH': 'ba', 'ALB': 'al', 'MKD': 'mk',
+    'MNE': 'me', 'KOS': 'xk', 'GEO': 'ge', 'ARM': 'am', 'AZE': 'az',
+    'CYP': 'cy', 'ISR': 'il', 'BLR': 'by', 'EST': 'ee', 'LVA': 'lv',
+    'LTU': 'lt', 'LUX': 'lu', 'MDA': 'md', 'KAZ': 'kz', 'FRO': 'fo',
+    'MLT': 'mt', 'AND': 'ad', 'SMR': 'sm', 'GIB': 'gi', 'LIE': 'li',
+
+    // --- AMÉRICA DO NORTE, CENTRAL E CARIBE (CONCACAF) ---
+    'USA': 'us', 'EUA': 'us', 'MEX': 'mx', 'CAN': 'ca', 'CRC': 'cr',
+    'PAN': 'pa', 'JAM': 'jm', 'HON': 'hn', 'SLV': 'sv', 'GUA': 'gt',
+    'TRI': 'tt', 'HAI': 'ht', 'CUB': 'cu', 'DOM': 'do', 'CUW': 'cw',
+    'SUR': 'sr', 'BER': 'bm', 'GRN': 'gd', 'SKN': 'kn', 'ATG': 'ag',
+
+    // --- ÁFRICA (CAF) ---
+    'MAR': 'ma', 'SEN': 'sn', 'NGA': 'ng', 'GHA': 'gh', 'CIV': 'ci',
+    'CMR': 'cm', 'CAM': 'cm', 'EGY': 'eg', 'ALG': 'dz', 'TUN': 'tn',
+    'RSA': 'za', 'MLI': 'ml', 'BFA': 'bf', 'GUI': 'gn', 'COD': 'cd',
+    'CGO': 'cg', 'GAB': 'ga', 'ANG': 'ao', 'CPV': 'cv', 'MOZ': 'mz',
+    'GNB': 'gw', 'EQG': 'gq', 'BEN': 'bj', 'TOG': 'tg', 'SLE': 'sl',
+    'LBR': 'lr', 'GAM': 'gm', 'ZAM': 'zm', 'ZIM': 'zw', 'KEN': 'ke',
+    'UGA': 'ug', 'TAN': 'tz', 'ETH': 'et', 'MAD': 'mg', 'COM': 'km',
+    'MTN': 'mr', 'LBY': 'ly', 'SDN': 'sd', 'NAM': 'na', 'MWI': 'mw',
+
+    // --- ÁSIA E ORIENTE MÉDIO (AFC) ---
+    'JPN': 'jp', 'KOR': 'kr', 'AUS': 'au', 'KSA': 'sa', 'IRN': 'ir',
+    'QAT': 'qa', 'UAE': 'ae', 'IRQ': 'iq', 'UZB': 'uz', 'CHN': 'cn',
+    'SYR': 'sy', 'JOR': 'jo', 'OMN': 'om', 'BHR': 'bh', 'KUW': 'kw',
+    'LBN': 'lb', 'IND': 'in', 'THA': 'th', 'VIE': 'vn', 'IDN': 'id',
+    'MAS': 'my', 'PHI': 'ph', 'PRK': 'kp', 'TJK': 'tj', 'KGZ': 'kg',
+
+    // --- OCEANIA (OFC) ---
+    'NZL': 'nz', 'FIJ': 'fj', 'NCL': 'nc', 'PNG': 'pg', 'TAH': 'pf',
+    'SOL': 'sb', 'VAN': 'vu'
   };
 
-  const countryColorsMap = {
-    'BRA': '#009b3a', 'ESP': '#c60b1e', 'POR': '#046a38', 'ARG': '#75aadb', 'FRA': '#002395',
-    'GER': '#000000', 'ALE': '#000000', 'ENG': '#cf081f', 'ING': '#cf081f', 'ITA': '#0064aa',
-    'NED': '#ff4f00', 'HOL': '#ff4f00', 'BEL': '#ed2939', 'URU': '#5b92e5', 'COL': '#fcd116',
-    'CHI': '#d52b1e', 'PAR': '#d52b1e', 'ECU': '#ffdd00', 'PER': '#d91023', 'MEX': '#006847',
-    'USA': '#3c3b6e', 'EUA': '#3c3b6e', 'CRO': '#ff0000', 'CAM': '#007a5e', 'CMR': '#007a5e',
-    'SEN': '#00853f', 'MAR': '#c1272d', 'NGA': '#008751', 'JPN': '#00205b'
+const countryColorsMap = {
+    // América do Sul
+    'BRA': '#009b3a', 'ARG': '#75aadb', 'URU': '#5b92e5', 'COL': '#fcd116',
+    'CHI': '#d52b1e', 'PAR': '#d52b1e', 'ECU': '#ffdd00', 'PER': '#d91023',
+    'VEN': '#800000', 'BOL': '#007934',
+    // Europa
+    'POR': '#046a38', 'ESP': '#c60b1e', 'FRA': '#002395', 'GER': '#000000',
+    'ALE': '#000000', 'ENG': '#cf081f', 'ING': '#cf081f', 'ITA': '#0064aa',
+    'NED': '#ff4f00', 'HOL': '#ff4f00', 'BEL': '#ed2939', 'CRO': '#ff0000',
+    'SRB': '#c6363c', 'SUI': '#ff0000', 'AUT': '#ed2939', 'SWE': '#006aa7',
+    'NOR': '#ba0c2f', 'DEN': '#c60c30', 'DIN': '#c60c30', 'POL': '#dc143c',
+    'SCO': '#005eb8', 'WAL': '#c8102e', 'GAL': '#c8102e', 'IRL': '#169b62',
+    'TUR': '#e30a17', 'GRE': '#0d5eaf', 'UKR': '#005bbb', 'CZE': '#11457e',
+    // África & Ásia & Américas
+    'MAR': '#c1272d', 'SEN': '#00853f', 'NGA': '#008751', 'GHA': '#006b3f',
+    'CIV': '#f77f00', 'CMR': '#007a5e', 'CAM': '#007a5e', 'EGY': '#c09300',
+    'ALG': '#006233', 'USA': '#3c3b6e', 'EUA': '#3c3b6e', 'MEX': '#006847',
+    'CAN': '#ff0000', 'JPN': '#00205b', 'KOR': '#003478', 'AUS': '#00843d',
+    'KSA': '#006c35'
   };
 
   // ==========================================
@@ -982,11 +1230,17 @@
   }
 
   function getCountryFlagImg(natCode) {
-    if (!natCode) return `<span class="text-xs">🌐</span>`;
-    const clean = natCode.toUpperCase().trim();
-    const iso2 = countryIsoMap[clean] || clean.toLowerCase();
-    return `<img src="https://flagcdn.com/24x18/${iso2}.png" alt="${clean}" title="${clean}" class="country-flag" onerror="this.onerror=null; this.outerHTML='<span class=\\'font-semibold text-[11px] text-slate-500\\'>${clean}</span>';">`;
-  }
+  if (!natCode) return `<span class="text-xs">🌐</span>`;
+  const clean = natCode.toUpperCase().trim();
+  const iso2 = countryIsoMap[clean] || clean.toLowerCase();
+  
+  // flagcdn carrega a bandeira svg/png de alta resolução com borda e sombra leve
+  return `<img src="https://flagcdn.com/24x18/${iso2}.png" 
+              alt="${clean}" 
+              title="${clean}" 
+              class="w-5 h-3.5 object-cover rounded-[2px] shadow-xs inline-block align-middle border border-slate-200" 
+              onerror="this.onerror=null; this.outerHTML='<span class=\\'font-bold text-[10px] text-slate-700 uppercase\\'>${clean}</span>';">`;
+}
 
   function getRoleBadge(role) {
     const r = (role || 'IMPORTANTE').toUpperCase().trim();
@@ -1233,6 +1487,57 @@
     });
   }
 
+  function formatCurrency(val) {
+    const symbol = state.currency || '€';
+    const num = Number(val) || 0;
+    return `${symbol} ${num.toLocaleString('pt-PT')}`;
+  }
+  
+  function applyClubTheme() {
+    const bg = state.headerBgColor || '#ffffff';
+    const primary = state.clubPrimaryColor || '#0f172a';
+    const secondary = state.clubSecondaryColor || '#3b82f6';
+    
+    const header = document.getElementById('appHeader');
+    const stadiumBg = document.getElementById('headerStadiumBg');
+    const nicknameEl = document.getElementById('headerClubNickname');
+    const mottoEl = document.getElementById('headerClubMotto');
+    const dividerEl = document.getElementById('headerMottoDivider');
+    
+    // 1. Aplica fundo do header e imagem do estádio
+    if (header) header.style.backgroundColor = bg;
+    if (stadiumBg) {
+      if (state.clubStadiumUrl && state.clubStadiumUrl.trim() !== '') {
+        stadiumBg.style.backgroundImage = `url('${state.clubStadiumUrl}')`;
+        stadiumBg.classList.remove('hidden');
+      } else {
+        stadiumBg.style.backgroundImage = 'none';
+        stadiumBg.classList.add('hidden');
+      }
+    }
+    
+    // 4. Alcunha e Lema
+    if (nicknameEl) nicknameEl.innerText = state.clubNickname || '';
+    if (mottoEl) mottoEl.innerText = state.clubMotto ? `"${state.clubMotto}"` : '';
+    if (dividerEl) {
+      if (state.clubNickname && state.clubMotto) dividerEl.classList.remove('hidden');
+      else dividerEl.classList.add('hidden');
+    }
+    
+    // 3. Aplica cor primária nos elementos-chave do app
+    // Cabeçalho das tabelas
+    document.querySelectorAll('thead').forEach(th => {
+      th.style.backgroundColor = primary + '18'; // leve transparência com a cor oficial
+      th.style.borderBottomColor = primary;
+    });
+    
+    // Abas ativas
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      if (btn.classList.contains('bg-slate-200') || btn.classList.contains('border-black')) {
+        btn.style.borderBottomColor = primary;
+      }
+    });
+  } 
   // ==========================================
   // GRÁFICOS DETALHADOS DA TEMPORADA
   // ==========================================
@@ -1791,6 +2096,11 @@
     const totalSquad = state.athletes.length;
     if (dashTotalSquad) dashTotalSquad.innerText = totalSquad;
 
+    const dashAcquired = document.getElementById('dashTransferAcquired');
+    if (dashAcquired) {
+      dashAcquired.innerText = '€ ' + formatCurrency(state.transferAcquired || 0);
+    }
+
     // Atualiza MVP
     const mvp = calculateSeasonMVP();
     const elMvpName = document.getElementById('mvpName');
@@ -2138,6 +2448,7 @@
       syncAllToCloud();
     }
   }
+
 
   // ==========================================
   // MODAL ESTATÍSTICAS DO ATLETA
@@ -2581,6 +2892,190 @@
     }
   }
 
+  // ==========================================
+// MÓDULO DE TRANSFERÊNCIAS (COMPRA & VENDA)
+// ==========================================
+
+function openTransferModal(defaultType = 'BUY') {
+  setTransferType(defaultType);
+  document.getElementById('transAmount').value = '';
+  document.getElementById('transferModal').classList.remove('hidden');
+}
+
+function closeTransferModal() {
+  document.getElementById('transferModal').classList.add('hidden');
+}
+
+function setTransferType(type) {
+  document.getElementById('transType').value = type;
+  const tabBuy = document.getElementById('tabBtnBuy');
+  const tabSell = document.getElementById('tabBtnSell');
+  const buySec = document.getElementById('transferBuySection');
+  const sellSec = document.getElementById('transferSellSection');
+  const submitBtn = document.getElementById('transSubmitBtn');
+  const helper = document.getElementById('transHelperLabel');
+
+  if (type === 'BUY') {
+    tabBuy.className = 'flex-1 py-3 text-center border-b-2 border-emerald-600 text-emerald-700 bg-white transition flex items-center justify-center gap-2';
+    tabSell.className = 'flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2';
+    buySec.classList.remove('hidden');
+    sellSec.classList.add('hidden');
+    submitBtn.className = 'px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition';
+    submitBtn.innerText = 'Confirmar Compra';
+    helper.innerText = 'virará o valor de mercado na 1ª época';
+  } else {
+    tabSell.className = 'flex-1 py-3 text-center border-b-2 border-rose-600 text-rose-700 bg-white transition flex items-center justify-center gap-2';
+    tabBuy.className = 'flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2';
+    buySec.classList.add('hidden');
+    sellSec.classList.remove('hidden');
+    submitBtn.className = 'px-5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition';
+    submitBtn.innerText = 'Confirmar Venda';
+    helper.innerText = 'acrescentará à verba de transferências';
+    populateSellAthletesSelect();
+  }
+}
+
+function populateSellAthletesSelect() {
+  const select = document.getElementById('sellAthleteId');
+  if (!select) return;
+
+  if (state.athletes.length === 0) {
+    select.innerHTML = '<option value="">Nenhum atleta no plantel</option>';
+    document.getElementById('sellAthletePreview').classList.add('hidden');
+    return;
+  }
+
+  select.innerHTML = state.athletes.map(a => `
+    <option value="${a.id}">${a.name} (${a.pos}) - OVR ${a.currentOvr}</option>
+  `).join('');
+
+  onAthleteSellSelectChange();
+}
+
+function onAthleteSellSelectChange() {
+  const athleteId = Number(document.getElementById('sellAthleteId').value);
+  const athlete = state.athletes.find(a => a.id === athleteId);
+  const preview = document.getElementById('sellAthletePreview');
+
+  if (!athlete) {
+    preview.classList.add('hidden');
+    return;
+  }
+
+  preview.classList.remove('hidden');
+  document.getElementById('sellPreviewName').innerText = `${athlete.name} • #${athlete.number || '-'}`;
+  document.getElementById('sellPreviewDetails').innerText = `${athlete.pos} | ${athlete.age} anos | OVR ${athlete.currentOvr} | ${athlete.contractYears || 2} anos de contrato`;
+  document.getElementById('sellPreviewMarketValue').innerText = `Valor de Mercado Atual: € ${formatCurrency(athlete.marketValue)}`;
+
+  // Sugere o valor de mercado atual como preço inicial da venda
+  if (!document.getElementById('transAmount').value) {
+    document.getElementById('transAmount').value = athlete.marketValue || '';
+  }
+}
+
+function handleTransferSubmit(e) {
+  if (e && e.preventDefault) e.preventDefault();
+
+  const type = document.getElementById('transType').value;
+  const amount = Number(document.getElementById('transAmount').value) || 0;
+
+  if (amount <= 0) {
+    return alert('Por favor, informe um valor de transferência válido!');
+  }
+
+  // Certificar propriedades de saldo no state
+  if (state.budget === undefined) state.budget = 0;
+  if (state.transferAcquired === undefined) state.transferAcquired = 0; // Somatório de vendas
+  if (!Array.isArray(state.transfersHistory)) state.transfersHistory = [];
+
+  if (type === 'BUY') {
+    // ================= EXECUÇÃO DE COMPRA =================
+    const name = document.getElementById('buyName').value.trim();
+    const originClub = document.getElementById('buyOriginClub').value.trim() || 'Mercado Externo';
+
+    if (!name) return alert('Por favor, indique o nome do atleta!');
+
+    // Deduz do orçamento
+    state.budget -= amount;
+
+    // Regra: O valor da compra vira automaticamente o seu valor de mercado na primeira temporada
+    const newAthlete = {
+      id: Date.now(),
+      name: name,
+      number: 0,
+      pos: document.getElementById('buyPos').value,
+      age: Number(document.getElementById('buyAge').value) || 22,
+      nat: (document.getElementById('buyNat').value || 'BRA').toUpperCase().trim(),
+      role: 'IMPORTANTE',
+      initialOvr: Number(document.getElementById('buyOvr').value) || 75,
+      currentOvr: Number(document.getElementById('buyOvr').value) || 75,
+      contractYears: Number(document.getElementById('buyContract').value) || 3,
+      loanStatus: 'NONE',
+      loanClub: '',
+      marketValue: amount, // AUTOMÁTICO: vira o valor de mercado inicial
+      wage: Number(document.getElementById('buyWage').value) || 5000,
+      matches: 0,
+      goals: 0,
+      assists: 0,
+      ssg: 0,
+      yellow: 0,
+      red: 0,
+      ratingSum: 0
+    };
+
+    state.athletes.push(newAthlete);
+
+    // Registo de histórico
+    state.transfersHistory.unshift({
+      id: Date.now(),
+      type: 'COMPRA',
+      playerName: name,
+      club: originClub,
+      amount: amount,
+      season: state.currentSeason,
+      date: new Date().toLocaleDateString('pt-PT')
+    });
+
+    alert(`Contratação confirmada! ${name} foi integrado ao plantel com valor de mercado inicial de € ${formatCurrency(amount)}.`);
+
+  } else {
+    // ================= EXECUÇÃO DE VENDA =================
+    const athleteId = Number(document.getElementById('sellAthleteId').value);
+    const destClub = document.getElementById('sellDestClub').value.trim() || 'Outro Clube';
+    const athleteIndex = state.athletes.findIndex(a => a.id === athleteId);
+
+    if (athleteIndex === -1) {
+      return alert('Atleta não selecionado ou inexistente!');
+    }
+
+    const soldAthlete = state.athletes[athleteIndex];
+
+    // Regra: A venda gera um somatório de valores para transferências
+    state.budget += amount;                       // Adiciona ao saldo atual disponível
+    state.transferAcquired += amount;             // Somatório acumulado de vendas (Verba Adquirida)
+
+    // Registo de histórico
+    state.transfersHistory.unshift({
+      id: Date.now(),
+      type: 'VENDA',
+      playerName: soldAthlete.name,
+      club: destClub,
+      amount: amount,
+      season: state.currentSeason,
+      date: new Date().toLocaleDateString('pt-PT')
+    });
+
+    // Remove o jogador vendido do plantel do clube
+    state.athletes.splice(athleteIndex, 1);
+
+    alert(`Venda efetuada com sucesso! ${soldAthlete.name} transferido para ${destClub} por € ${formatCurrency(amount)}. Valor adicionado ao saldo de transferências!`);
+  }
+
+  closeTransferModal();
+  saveState();
+  syncAllToCloud();
+}
+
   function editMatch(matchId) {
     const match = state.matches.find(m => m.id === matchId);
     if (!match) return alert('Partida não encontrada!');
@@ -2814,31 +3309,49 @@
   // CONFIGURAÇÕES DO CLUBE & VIRADA DE ÉPOCA
   // ==========================================
   function openChangeClubModal() {
-    document.getElementById('newClubNameInput').value = state.clubName;
-    document.getElementById('newClubLogoUrlInput').value = state.clubLogoUrl || '';
-    document.getElementById('newClubBudgetInput').value = state.budget;
-    document.getElementById('newClubWageInput').value = state.wageBudget;
-    document.getElementById('changeClubModal').classList.remove('hidden');
-  }
+  document.getElementById('newClubNameInput').value = state.clubName || '';
+  document.getElementById('newClubNicknameInput').value = state.clubNickname || '';
+  document.getElementById('newClubMottoInput').value = state.clubMotto || '';
+  document.getElementById('newClubLogoUrlInput').value = state.clubLogoUrl || '';
+  document.getElementById('newClubStadiumUrlInput').value = state.clubStadiumUrl || '';
+  document.getElementById('newClubCurrencyInput').value = state.currency || '€';
+  document.getElementById('newClubBudgetInput').value = state.budget || 0;
+  document.getElementById('newClubWageInput').value = state.wageBudget || 0;
+
+  document.getElementById('clubColorBg').value = state.headerBgColor || '#ffffff';
+  document.getElementById('clubColorPrimary').value = state.clubPrimaryColor || '#0f172a';
+  document.getElementById('clubColorSecondary').value = state.clubSecondaryColor || '#3b82f6';
+
+  document.getElementById('changeClubModal').classList.remove('hidden');
+}
 
   function closeChangeClubModal() {
     document.getElementById('changeClubModal').classList.add('hidden');
   }
 
   function confirmChangeClub() {
-    const newName = document.getElementById('newClubNameInput').value.trim();
-    if (!newName) return alert('Introduza o nome do clube!');
-    state.clubName = newName;
-    state.clubLogoUrl = document.getElementById('newClubLogoUrlInput').value.trim();
-    state.budget = Number(document.getElementById('newClubBudgetInput').value);
-    state.initialBudget = state.budget;
-    state.wageBudget = Number(document.getElementById('newClubWageInput').value);
+  const newName = document.getElementById('newClubNameInput').value.trim();
+  if (!newName) return alert('Introduza o nome do clube!');
 
-    closeChangeClubModal();
-    saveState();
-    syncAllToCloud();
-    alert(`Dados do clube e símbolo atualizados!`);
-  }
+  state.clubName = newName;
+  state.clubNickname = document.getElementById('newClubNicknameInput').value.trim();
+  state.clubMotto = document.getElementById('newClubMottoInput').value.trim();
+  state.clubLogoUrl = document.getElementById('newClubLogoUrlInput').value.trim();
+  state.clubStadiumUrl = document.getElementById('newClubStadiumUrlInput').value.trim();
+  state.currency = document.getElementById('newClubCurrencyInput').value;
+  state.budget = Number(document.getElementById('newClubBudgetInput').value) || 0;
+  state.initialBudget = state.budget;
+  state.wageBudget = Number(document.getElementById('newClubWageInput').value) || 0;
+
+  state.headerBgColor = document.getElementById('clubColorBg').value;
+  state.clubPrimaryColor = document.getElementById('clubColorPrimary').value;
+  state.clubSecondaryColor = document.getElementById('clubColorSecondary').value;
+
+  closeChangeClubModal();
+  saveState();
+  syncAllToCloud();
+  alert(`Identidade de ${state.clubName} personalizada com sucesso!`);
+}
 
   function openSeasonAdvanceModal() {
     const parts = state.currentSeason.split('/');
