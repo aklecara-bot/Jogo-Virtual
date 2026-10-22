@@ -1,3151 +1,4838 @@
 <!DOCTYPE html>
+
 <html lang="pt-PT">
+
 <head>
+
   <meta charset="UTF-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Painel de Gestão - Modo Carreira</title>
+
   
+
   <!-- Tailwind CSS CDN -->
+
   <script src="https://cdn.tailwindcss.com"></script>
+
   <!-- FontAwesome 6 Icons CDN -->
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <!-- Chart.js CDN -->
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+
   <style>
+
     .font-heading { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+
     .icon-boot-orange { color: #f97316; }
+
     .icon-boot-blue { color: #2563eb; }
+
     .icon-boot-red { color: #dc2626; }
+
     .icon-boot-black { color: #1e293b; }
+
     .icon-boot-gray { color: #64748b; }
+
     .icon-boot-gold { color: #d97706; }
+
     .icon-glove-yellow { color: #eab308; }
+
     
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
+
     ::-webkit-scrollbar-track { background: #f1f5f9; }
+
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
   </style>
+
 </head>
+
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
 
+
+
   <!-- CABEÇALHO PRINCIPAL -->
+
   <header id="mainHeader" class="bg-white border-b border-slate-200 sticky top-0 z-40 px-4 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4 shadow-xs">
+
     <!-- Símbolo do Clube + Nome + Temporada -->
+
     <div class="flex items-center gap-3.5">
+
       <div id="clubLogoContainer" class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-xs shrink-0">
+
         <img id="clubBadgeImg" src="" alt="Escudo" class="w-full h-full object-contain hidden" onerror="showDefaultLogo()">
+
         <span id="clubDefaultBadge" class="text-xl font-bold text-slate-800">⚽</span>
+
       </div>
+
       <div>
+
         <h1 class="text-lg font-black tracking-tight text-slate-900 uppercase flex items-center gap-2">
+
           <span id="headerClubName">La Coruña</span>
+
           <span class="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-300 font-semibold" id="headerSeason">2025/2026</span>
+
         </h1>
+
         <div class="flex items-center gap-2 text-xs font-semibold">
+
           <span id="headerClubNickname" class="text-slate-800 font-bold"></span>
+
           <span id="headerMottoDivider" class="text-slate-400 hidden">•</span>
+
           <span id="headerClubMotto" class="italic text-slate-500 font-medium"></span>
+
         </div>
+
         <p class="text-xs text-slate-500 font-medium flex items-center gap-1.5 mt-0.5" id="syncStatus">
+
           <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+
           Conectado
+
         </p>
+
       </div>
+
     </div>
+
+
 
     <!-- Navegação de Abas -->
-    <nav class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 flex-wrap">
+
+    <nav class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+
       <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-xs">
+
         <i class="fa-solid fa-chart-line mr-1 text-slate-600"></i> Finanças & Visão
+
       </button>
+
       <button onclick="switchTab('athletes')" id="nav-btn-athletes" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900">
+
         <i class="fa-solid fa-users mr-1 text-slate-500"></i> Atletas
+
       </button>
+
       <button onclick="switchTab('matches')" id="nav-btn-matches" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900">
+
         <i class="fa-solid fa-trophy mr-1 text-slate-500"></i> Campeonatos
+
       </button>
-      <button onclick="switchTab('history')" id="nav-btn-history" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900">
-        <i class="fa-solid fa-monument mr-1 text-amber-500"></i> Histórico & Memorial
-      </button>
+
     </nav>
 
+
+
     <!-- Barra de Ações -->
+
     <div class="flex items-center flex-wrap gap-2">
+
       <button onclick="loadFromGoogleSheets()" title="Puxar dados atualizados do Drive" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-1.5 transition">
+
         <i class="fa-solid fa-cloud-arrow-down"></i> Sincronizar
+
       </button>
+
       <button onclick="syncAllToCloud()" title="Guardar atletas, clube, torneios e partidas" class="px-3 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-800 text-xs font-semibold flex items-center gap-1.5 transition">
+
         <i class="fa-solid fa-cloud-arrow-up"></i> Guardar
+
       </button>
+
       <button onclick="openTransferModal('BUY')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition">
+
         <i class="fa-solid fa-arrow-right-arrow-left"></i> Mercado
+
       </button>
+
       <button onclick="openChangeClubModal()" class="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 text-xs font-semibold flex items-center gap-1.5 transition">
+
         <i class="fa-solid fa-shield-halved"></i> Clube
+
       </button>
+
       <button onclick="openSeasonAdvanceModal()" class="px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-800 text-xs font-semibold flex items-center gap-1.5 transition">
-        <i class="fa-solid fa-calendar-check"></i> Encerrar Temporada
+
+        <i class="fa-solid fa-calendar-plus"></i> Nova Temporada
+
       </button>
+
       <button onclick="exportData()" title="Descarregar Backup em JSON" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs">
+
         <i class="fa-solid fa-download"></i>
+
       </button>
+
     </div>
+
   </header>
 
+
+
   <!-- CONTEÚDO PRINCIPAL -->
+
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 space-y-6">
 
+
+
     <!-- ==================== ABA 1: VISÃO GERAL & FINANÇAS ==================== -->
+
     <section id="tab-dashboard" class="space-y-6">
+
       <!-- Card MVP da Temporada -->
+
       <div class="bg-gradient-to-r from-amber-500/15 via-amber-200/20 to-white border border-amber-300 p-5 rounded-2xl shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
+
         <div class="flex items-center gap-4">
+
           <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shrink-0">
+
             <i class="fa-solid fa-award"></i>
+
           </div>
+
           <div>
+
             <span class="text-[11px] font-extrabold uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300">
+
               Melhor Jogador da Temporada (MVP)
+
             </span>
+
             <h2 class="text-xl font-black text-slate-900 mt-1" id="mvpName">Em apuração...</h2>
+
             <p class="text-xs text-slate-600 font-medium" id="mvpDetails">Posição • Idade • Partidas</p>
+
           </div>
+
         </div>
+
+
 
         <div class="flex items-center gap-6 border-t md:border-t-0 md:border-l border-amber-200 pt-3 md:pt-0 md:pl-6 text-center">
+
           <div>
+
             <div class="text-[10px] font-bold text-slate-500 uppercase">Gols + Ass.</div>
+
             <div class="text-xl font-black text-slate-900" id="mvpGA">0</div>
+
           </div>
+
           <div>
+
             <div class="text-[10px] font-bold text-slate-500 uppercase">Nota Média</div>
+
             <div class="text-xl font-black text-amber-600" id="mvpRating">-</div>
+
           </div>
+
           <div>
+
             <div class="text-[10px] font-bold text-slate-500 uppercase">Índice MVP</div>
+
             <div class="text-xl font-black text-emerald-600" id="mvpScore">0.0</div>
+
           </div>
+
         </div>
+
       </div>
+
+
 
       <!-- Melhores por Posição (Top 1) -->
+
       <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs space-y-3">
+
         <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+
           <i class="fa-solid fa-crown text-amber-500"></i> Destaques da Temporada por Posição (Top 1)
+
         </h3>
+
         <div id="bestByPositionGrid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+
       </div>
+
+
 
       <!-- Cards de Resumo Financeiro -->
+
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs relative overflow-hidden">
+
           <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Verba Transferências</div>
+
           <div class="text-xl sm:text-2xl font-black text-emerald-600 mt-1 font-heading" id="dashBudget">€ 0</div>
+
           <div class="text-xs text-slate-500 mt-1 font-medium">Vendas Acumuladas: <span id="dashTransferAcquired" class="font-bold text-slate-700">€ 0</span></div>
+
           <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-vault"></i></div>
+
         </div>
 
+
+
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs relative overflow-hidden">
+
           <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Folha Semanal</div>
+
           <div class="text-xl sm:text-2xl font-black text-blue-600 mt-1 font-heading" id="dashWage">€ 0</div>
+
           <div class="text-xs text-slate-500 mt-1 font-medium">Teto: <span id="dashWageBudget">€ 0</span></div>
+
           <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-money-bill-wave"></i></div>
+
         </div>
 
+
+
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs relative overflow-hidden">
+
           <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Valor do Elenco</div>
+
           <div class="text-xl sm:text-2xl font-black text-slate-900 mt-1 font-heading" id="dashTotalSquadValue">€ 0</div>
+
           <div class="text-xs text-slate-500 mt-1 font-medium">Total: <span id="dashTotalSquad">0</span> atletas</div>
+
           <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-coins"></i></div>
+
         </div>
 
+
+
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs relative overflow-hidden">
+
           <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Média Força (OVR)</div>
+
           <div class="text-xl sm:text-2xl font-black text-amber-500 mt-1 font-heading" id="dashAvgOvr">0.0</div>
+
           <div class="text-xs text-slate-500 mt-1 font-medium">Idade Média: <span id="dashAvgAge">0.0</span> anos</div>
+
           <div class="absolute right-3 top-3 text-slate-200 text-3xl"><i class="fa-solid fa-bolt"></i></div>
+
         </div>
+
       </div>
+
+
 
       <!-- Médias Setoriais -->
+
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
         <div class="bg-blue-50/60 border border-blue-200 p-4 rounded-xl shadow-xs flex items-center justify-between">
+
           <div>
+
             <span class="text-[11px] font-bold text-blue-800 uppercase tracking-wider">Defesa (GOL, ZAG, LAT)</span>
+
             <div class="text-2xl font-black text-blue-950 font-heading mt-0.5" id="sectorDefAvgOvr">0.0</div>
+
             <div class="text-xs text-blue-700 font-medium mt-1">Valor: <span id="sectorDefTotalValue">€ 0</span></div>
+
           </div>
+
           <div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-lg"><i class="fa-solid fa-shield-halved"></i></div>
+
         </div>
+
+
 
         <div class="bg-amber-50/60 border border-amber-200 p-4 rounded-xl shadow-xs flex items-center justify-between">
+
           <div>
+
             <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider">Meio-Campo (VOL, MC, MEI)</span>
+
             <div class="text-2xl font-black text-amber-950 font-heading mt-0.5" id="sectorMeiAvgOvr">0.0</div>
+
             <div class="text-xs text-amber-700 font-medium mt-1">Valor: <span id="sectorMeiTotalValue">€ 0</span></div>
+
           </div>
+
           <div class="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-lg"><i class="fa-solid fa-arrows-split-up-and-left"></i></div>
+
         </div>
+
+
 
         <div class="bg-rose-50/60 border border-rose-200 p-4 rounded-xl shadow-xs flex items-center justify-between">
+
           <div>
+
             <span class="text-[11px] font-bold text-rose-800 uppercase tracking-wider">Ataque (PE, PD, ATA)</span>
+
             <div class="text-2xl font-black text-rose-950 font-heading mt-0.5" id="sectorAtaAvgOvr">0.0</div>
+
             <div class="text-xs text-rose-700 font-medium mt-1">Valor: <span id="sectorAtaTotalValue">€ 0</span></div>
+
           </div>
+
           <div class="w-10 h-10 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-lg"><i class="fa-solid fa-bullseye"></i></div>
+
         </div>
+
       </div>
+
+
 
       <!-- Gráficos de Setor e Nacionalidade -->
+
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-              <i class="fa-solid fa-earth-americas text-emerald-600"></i> Nacionalidades
-            </h3>
-            <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full" id="natCountLabel">0 países</span>
-          </div>
-          <div class="relative h-64 flex items-center justify-center">
-            <canvas id="nationalityChart"></canvas>
-          </div>
-        </div>
 
         <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
+
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-              <i class="fa-solid fa-chart-column text-indigo-600"></i> Distribuição Financeira por Setor
+
+              <i class="fa-solid fa-earth-americas text-emerald-600"></i> Nacionalidades
+
             </h3>
-            <span class="text-xs font-semibold text-slate-500">Valor de Mercado dos Atletas</span>
+
+            <span class="text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full" id="natCountLabel">0 países</span>
+
           </div>
+
           <div class="relative h-64 flex items-center justify-center">
-            <canvas id="sectorMarketChart"></canvas>
+
+            <canvas id="nationalityChart"></canvas>
+
           </div>
+
         </div>
+
+
+
+        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
+
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+
+              <i class="fa-solid fa-chart-column text-indigo-600"></i> Distribuição Financeira por Setor
+
+            </h3>
+
+            <span class="text-xs font-semibold text-slate-500">Valor de Mercado dos Atletas</span>
+
+          </div>
+
+          <div class="relative h-64 flex items-center justify-center">
+
+            <canvas id="sectorMarketChart"></canvas>
+
+          </div>
+
+        </div>
+
       </div>
+
+
 
       <!-- Destaques Individuais -->
+
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
+
           <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center text-lg"><i class="fa-solid fa-futbol"></i></div>
+
           <div>
+
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Artilheiro</div>
+
             <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[120px]" id="bestScorer">-</div>
+
             <div class="text-xs font-semibold text-amber-700" id="bestScorerGols">0 Gols</div>
+
           </div>
+
         </div>
 
+
+
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
+
           <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center text-lg">
+
             <i class="fa-solid fa-shoe-prints"></i>
+
           </div>
+
           <div>
+
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Assistências</div>
+
             <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[120px]" id="bestAssister">-</div>
+
             <div class="text-xs font-semibold text-blue-700" id="bestAssisterCount">0 Ass.</div>
+
           </div>
+
         </div>
 
+
+
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
+
           <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center text-lg"><i class="fa-solid fa-shield-halved"></i></div>
+
           <div>
+
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Paredão (SSG)</div>
+
             <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[120px]" id="bestSsgPlayer">-</div>
+
             <div class="text-xs font-semibold text-emerald-700" id="bestSsgCount">0 Jogos</div>
+
           </div>
+
         </div>
 
+
+
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
+
           <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center text-lg"><i class="fa-solid fa-star"></i></div>
+
           <div>
+
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Nota Média</div>
+
             <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[120px]" id="bestRatingPlayer">-</div>
+
             <div class="text-xs font-semibold text-purple-700" id="bestRatingVal">-</div>
+
           </div>
+
         </div>
+
       </div>
+
     </section>
+
+
 
     <!-- ==================== ABA 2: ATLETAS & PLANTEL (SISTÊMICA) ==================== -->
+
     <section id="tab-athletes" class="hidden space-y-6">
+
       <!-- Painel de Contadores e Status do Elenco -->
+
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+
         <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs text-center">
+
           <div class="text-[10px] font-bold text-slate-500 uppercase">Total Atletas</div>
+
           <div class="text-xl font-black text-slate-900 mt-0.5" id="totalAthletesCount">0</div>
+
         </div>
+
         <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl shadow-xs text-center">
+
           <div class="text-[10px] font-bold text-blue-700 uppercase">Defesa (GOL/DEF)</div>
+
           <div class="text-xl font-black text-blue-900 mt-0.5" id="countDefense">0</div>
+
         </div>
+
         <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl shadow-xs text-center">
+
           <div class="text-[10px] font-bold text-amber-700 uppercase">Meio-Campo</div>
+
           <div class="text-xl font-black text-amber-900 mt-0.5" id="countMidfield">0</div>
+
         </div>
+
         <div class="bg-rose-50 border border-rose-200 p-3 rounded-xl shadow-xs text-center">
+
           <div class="text-[10px] font-bold text-rose-700 uppercase">Ataque</div>
+
           <div class="text-xl font-black text-rose-900 mt-0.5" id="countAttack">0</div>
+
         </div>
+
         <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl shadow-xs text-center">
+
           <div class="text-[10px] font-bold text-emerald-700 uppercase">Disponíveis</div>
+
           <div class="text-xl font-black text-emerald-900 mt-0.5" id="countUsable">0</div>
+
         </div>
+
         <div class="bg-purple-50 border border-purple-200 p-3 rounded-xl shadow-xs text-center">
+
           <div class="text-[10px] font-bold text-purple-700 uppercase">Emprestados</div>
+
           <div class="text-xl font-black text-purple-900 mt-0.5" id="countLoaned">0</div>
+
         </div>
+
       </div>
+
+
 
       <!-- Legenda Visual dos Ícones -->
+
       <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-xs flex flex-wrap items-center gap-3 text-xs text-slate-700">
+
         <span class="font-bold text-slate-900 uppercase text-[11px] flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-slate-400"></i> Calçado Tático:</span>
+
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-mitten icon-glove-yellow"></i> Guarda-Redes</span>
+
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-orange"></i> Laterais/Meias</span>
+
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-blue"></i> Zagueiros</span>
+
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-red"></i> MC / VOL</span>
+
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-black"></i>Atacantes</span>
+
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-gray"></i> Pontas (PD/PE)</span>
+
         <span class="flex items-center gap-1.5 font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+
           <i class="fa-solid fa-shoe-prints icon-boot-gold"></i> Top 11 (Ouro)
+
         </span>
+
       </div>
+
+
 
       <!-- Filtros e Busca -->
+
       <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
+
         <div class="flex items-center gap-2 flex-wrap">
+
           <button onclick="setPosFilter('TODOS')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white" data-pos="TODOS">Todos</button>
+
           <button onclick="setPosFilter('GOL')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="GOL">Goleiros</button>
+
           <button onclick="setPosFilter('DEF')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="DEF">Defesa</button>
+
           <button onclick="setPosFilter('MEI')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="MEI">Meio-Campo</button>
+
           <button onclick="setPosFilter('ATA')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="ATA">Ataque</button>
+
           <input type="text" id="playerSearch" oninput="renderAthletesContainers()" placeholder="Pesquisar por nome ou país..." class="bg-slate-50 border border-slate-300 text-xs px-3 py-1.5 rounded-lg text-slate-900 focus:outline-none focus:border-slate-800">
+
         </div>
+
+
 
         <button onclick="openAthleteModal()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition">
+
           <i class="fa-solid fa-user-plus"></i> Novo Atleta
+
         </button>
+
       </div>
 
-      <!-- Tabela Sistemática de Atletas -->
+
+
+      <!-- Tabela Sistemática de Atletas (Conforme Modelo da Imagem) -->
+
       <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+
         <div class="overflow-x-auto">
+
           <table class="w-full text-left text-xs text-slate-700 border-collapse">
+
             <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200 tracking-wider">
+
               <tr>
+
                 <th class="py-3 px-3 text-center w-12">Nº</th>
+
                 <th class="py-3 px-3 min-w-[180px]">ATLETA & PAPEL</th>
+
                 <th class="py-3 px-3 text-center">POSIÇÃO</th>
+
                 <th class="py-3 px-3 text-center">IDADE</th>
+
                 <th class="py-3 px-3 text-center">OVR</th>
+
                 <th class="py-3 px-3">V. MERCADO</th>
+
                 <th class="py-3 px-3">SALÁRIO</th>
+
                 <th class="py-3 px-3 text-center">CONTRATO</th>
+
                 <th class="py-3 px-3 text-center">AVALIAÇÃO</th>
+
                 <th class="py-3 px-2 text-center" title="Jogos">JOGOS</th>
+
                 <th class="py-3 px-2 text-center text-amber-600" title="Gols">GOLS</th>
+
                 <th class="py-3 px-2 text-center text-blue-600" title="Assistências">ASS</th>
+
                 <th class="py-3 px-2 text-center text-emerald-600" title="Clean Sheets">SSG</th>
+
                 <th class="py-3 px-2 text-center text-yellow-600" title="Cartões Amarelos">CA</th>
+
                 <th class="py-3 px-2 text-center text-rose-600" title="Cartões Vermelhos">CV</th>
+
                 <th class="py-3 px-2 text-center text-purple-600 font-extrabold" title="Nota Média">NOTA</th>
+
                 <th class="py-3 px-3 text-right">AÇÕES</th>
+
               </tr>
+
             </thead>
+
             <tbody id="athletesTableBody" class="divide-y divide-slate-100 font-medium"></tbody>
+
           </table>
+
         </div>
+
       </div>
+
     </section>
+
+
 
     <!-- ==================== ABA 3: CAMPEONATOS & RESULTADOS ==================== -->
+
     <section id="tab-matches" class="hidden space-y-6">
+
       <!-- DASHBOARD DE DESEMPENHO POR MANDO DE CAMPO -->
+
       <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
+
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+
           <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+
             <i class="fa-solid fa-chart-pie text-emerald-600"></i> Desempenho em Torneios (Mandante vs Visitante)
+
           </h3>
+
           <span class="text-xs text-slate-500 font-semibold" id="tourneyEfficiency">Aproveitamento: 0%</span>
+
         </div>
+
+
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
           <!-- Casa -->
+
           <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl p-4">
+
             <div class="flex items-center justify-between">
+
               <span class="text-xs font-bold text-emerald-950 uppercase flex items-center gap-1.5">
+
                 <i class="fa-solid fa-house text-emerald-600"></i> Em Casa
+
               </span>
+
               <span class="text-xs font-extrabold text-emerald-700" id="homeWinRate">0% Vitórias</span>
+
             </div>
+
             <div class="grid grid-cols-4 gap-2 mt-3 text-center">
+
               <div class="bg-white p-2 rounded-lg border border-emerald-100">
+
                 <div class="text-[10px] text-slate-500 font-semibold">Jogos</div>
+
                 <div class="text-base font-bold text-slate-800" id="homeMatches">0</div>
+
               </div>
+
               <div class="bg-white p-2 rounded-lg border border-emerald-100">
+
                 <div class="text-[10px] text-slate-500 font-semibold">V - E - D</div>
+
                 <div class="text-base font-bold text-slate-800" id="homeRecord">0-0-0</div>
+
               </div>
+
               <div class="bg-white p-2 rounded-lg border border-emerald-100">
+
                 <div class="text-[10px] text-slate-500 font-semibold">Gols Pró</div>
+
                 <div class="text-base font-bold text-emerald-700" id="homeGoalsFor">0</div>
+
               </div>
+
               <div class="bg-white p-2 rounded-lg border border-emerald-100">
+
                 <div class="text-[10px] text-slate-500 font-semibold">Gols Contra</div>
+
                 <div class="text-base font-bold text-rose-700" id="homeGoalsAgainst">0</div>
+
               </div>
+
             </div>
+
           </div>
+
+
 
           <!-- Fora -->
+
           <div class="bg-indigo-50/60 border border-indigo-200 rounded-xl p-4">
+
             <div class="flex items-center justify-between">
+
               <span class="text-xs font-bold text-indigo-950 uppercase flex items-center gap-1.5">
+
                 <i class="fa-solid fa-plane-departure text-indigo-600"></i> Fora de Casa
+
               </span>
+
               <span class="text-xs font-extrabold text-indigo-700" id="awayWinRate">0% Vitórias</span>
+
             </div>
+
             <div class="grid grid-cols-4 gap-2 mt-3 text-center">
+
               <div class="bg-white p-2 rounded-lg border border-indigo-100">
+
                 <div class="text-[10px] text-slate-500 font-semibold">Jogos</div>
+
                 <div class="text-base font-bold text-slate-800" id="awayMatches">0</div>
+
               </div>
+
               <div class="bg-white p-2 rounded-lg border border-indigo-100">
+
                 <div class="text-[10px] text-slate-500 font-semibold">V - E - D</div>
+
                 <div class="text-base font-bold text-slate-800" id="awayRecord">0-0-0</div>
+
               </div>
+
               <div class="bg-white p-2 rounded-lg border border-indigo-100">
+
                 <div class="text-[10px] text-slate-500 font-semibold">Gols Pró</div>
+
                 <div class="text-base font-bold text-emerald-700" id="awayGoalsFor">0</div>
+
               </div>
+
               <div class="bg-white p-2 rounded-lg border border-indigo-100">
+
                 <div class="text-[10px] text-slate-500 font-semibold">Gols Contra</div>
+
                 <div class="text-base font-bold text-rose-700" id="awayGoalsAgainst">0</div>
+
               </div>
+
             </div>
+
           </div>
+
         </div>
+
+
 
         <div class="h-44">
+
           <canvas id="homeAwayCompareChart"></canvas>
+
         </div>
+
       </div>
+
+
 
       <!-- Barra de Seleção de Torneio -->
+
       <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+
         <div class="flex items-center gap-3 flex-wrap">
+
           <div id="champTrophyPreview" class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-xs">
+
             <img id="trophyImg" src="" alt="Taça" class="w-full h-full object-contain hidden" onerror="this.classList.add('hidden'); document.getElementById('trophyDefaultIcon').classList.remove('hidden');">
+
             <i id="trophyDefaultIcon" class="fa-solid fa-trophy text-amber-500 text-lg"></i>
+
           </div>
 
+
+
           <div>
+
             <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Competição Selecionada:</label>
+
             <select id="champSelect" onchange="onChampSelectChange()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-900 focus:border-slate-800"></select>
+
           </div>
+
+
 
           <button onclick="openNewChampModal()" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 self-end transition">
+
             <i class="fa-solid fa-plus mr-1"></i> Novo Torneio
+
           </button>
+
         </div>
+
+
 
         <button onclick="openMatchModal()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition">
+
           <i class="fa-solid fa-clipboard-check"></i> Registar Resultado
+
         </button>
+
       </div>
+
+
 
       <!-- Histórico de Partidas Detalhado -->
+
       <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
+
         <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center justify-between border-b border-slate-100 pb-2">
+
           <span><i class="fa-solid fa-clock-rotate-left mr-2 text-slate-400"></i> Histórico de Jogos</span>
+
           <span class="text-xs font-normal text-slate-500" id="matchesCountLabel">0 partidas</span>
+
         </h3>
+
         <div id="matchesList" class="space-y-3"></div>
-      </div>
-    </section>
 
-    <!-- ==================== ABA 4: HISTÓRICO GLOBAL & MEMORIAL ==================== -->
-    <section id="tab-history" class="hidden space-y-6">
-      
-      <!-- SALA DE TROFÉUS DO CLUBE -->
-      <div class="bg-gradient-to-r from-amber-600/10 via-amber-400/10 to-amber-600/5 border border-amber-300 rounded-2xl p-5 shadow-xs space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-amber-200/80 pb-3">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md">
-              <i class="fa-solid fa-trophy"></i>
-            </div>
-            <div>
-              <h2 class="text-base font-black uppercase tracking-wide text-slate-900 flex items-center gap-2">
-                Galeria de Títulos & Sala de Troféus
-              </h2>
-              <p class="text-xs text-slate-600 font-medium">As maiores glórias e conquistas oficiais da história do clube</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Total de Conquistas</span>
-            <span class="text-2xl font-black text-amber-700" id="histTotalTrophiesCount">0</span>
-          </div>
-        </div>
-
-        <div id="trophyRoomGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          <!-- Renderizado via JS -->
-        </div>
-      </div>
-
-      <!-- COMPARAÇÃO GLOBAL ENTRE TEMPORADAS (GRÁFICOS) -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-              <i class="fa-solid fa-chart-line text-emerald-600"></i> Evolução de Aproveitamento (%)
-            </h3>
-            <span class="text-[11px] font-semibold text-slate-400">Por Época</span>
-          </div>
-          <div class="relative h-64 flex items-center justify-center">
-            <canvas id="seasonsWinRateChart"></canvas>
-          </div>
-        </div>
-
-        <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-              <i class="fa-solid fa-futbol text-blue-600"></i> Gols Pró vs Sofridos por Época
-            </h3>
-            <span class="text-[11px] font-semibold text-slate-400">Comparativo Global</span>
-          </div>
-          <div class="relative h-64 flex items-center justify-center">
-            <canvas id="seasonsGoalsChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- COMPARATIVO HISTÓRICO DE DESEMPENHO DOS SETORES -->
-      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
-          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-            <i class="fa-solid fa-arrows-split-up-and-left text-indigo-600"></i> Comparação Histórica dos Setores (Média de Força & Gols)
-          </h3>
-          <span class="text-xs text-slate-500 font-medium">Desempenho consolidado época a época</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs border-collapse">
-            <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200">
-              <tr>
-                <th class="py-2.5 px-3">Temporada</th>
-                <th class="py-2.5 px-3 text-center text-blue-700">Média OVR Defesa</th>
-                <th class="py-2.5 px-3 text-center text-blue-700">Gols Sofridos</th>
-                <th class="py-2.5 px-3 text-center text-amber-700">Média OVR Meio</th>
-                <th class="py-2.5 px-3 text-center text-amber-700">Gols do Meio</th>
-                <th class="py-2.5 px-3 text-center text-rose-700">Média OVR Ataque</th>
-                <th class="py-2.5 px-3 text-center text-rose-700">Gols do Ataque</th>
-                <th class="py-2.5 px-3 text-center text-emerald-700">Clean Sheets (SSG)</th>
-                <th class="py-2.5 px-3 text-right">Aproveitamento</th>
-              </tr>
-            </thead>
-            <tbody id="sectorHistoryTableBody" class="divide-y divide-slate-100 font-semibold text-slate-700">
-              <!-- Renderizado via JS -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- MEMORIAL & HISTÓRIA DOS JOGADORES (HALL DA FAMA) -->
-      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
-        <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-100 pb-3">
-          <div>
-            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-              <i class="fa-solid fa-book-bookmark text-amber-600"></i> Memorial dos Atletas (Presentes e Históricos)
-            </h3>
-            <p class="text-xs text-slate-500 font-medium mt-0.5">Histórico consolidado com todos os atletas que jogaram ou foram transferidos pelo clube</p>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <button onclick="setPlayerHistoryFilter('ALL')" id="filterHistAll" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white">Todos</button>
-            <button onclick="setPlayerHistoryFilter('CURRENT')" id="filterHistCurrent" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">No Elenco</button>
-            <button onclick="setPlayerHistoryFilter('PAST')" id="filterHistPast" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Ex-Jogadores</button>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs border-collapse">
-            <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200">
-              <tr>
-                <th class="py-3 px-3">Atleta</th>
-                <th class="py-3 px-3 text-center">Posição</th>
-                <th class="py-3 px-3 text-center">Situação</th>
-                <th class="py-3 px-3 text-center">Evolução OVR</th>
-                <th class="py-3 px-3 text-center">Épocas</th>
-                <th class="py-3 px-2 text-center text-slate-800">Jogos</th>
-                <th class="py-3 px-2 text-center text-amber-700">Gols</th>
-                <th class="py-3 px-2 text-center text-blue-700">Assists</th>
-                <th class="py-3 px-2 text-center text-emerald-700">SSG</th>
-                <th class="py-3 px-2 text-center text-purple-700">Nota Hist.</th>
-                <th class="py-3 px-3 text-center">Títulos</th>
-              </tr>
-            </thead>
-            <tbody id="playerMemorialTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
-              <!-- Renderizado via JS -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- CARDS DAS TEMPORADAS ENCERRADAS -->
-      <div class="space-y-4">
-        <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-          <i class="fa-solid fa-scroll text-slate-500"></i> Livro de Ouro das Campanhas Encerradas
-        </h3>
-        <div id="closedSeasonsCardsContainer" class="space-y-4">
-          <!-- Renderizado via JS -->
-        </div>
       </div>
 
     </section>
+
   </main>
 
+
+
   <!-- ==================== MODAL DE ATLETA ==================== -->
+
   <div id="athleteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+
     <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+
         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2" id="athleteModalTitle">
+
           <i class="fa-solid fa-user-pen text-emerald-600"></i> Dados do Atleta
+
         </h3>
+
         <button onclick="closeAthleteModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+
       </div>
+
+
 
       <form id="athleteForm" onsubmit="saveAthleteData(event)" class="space-y-3 text-xs">
+
         <input type="hidden" id="athId">
+
         <div class="grid grid-cols-3 gap-2">
+
           <div class="col-span-2">
+
             <label class="block mb-1 font-semibold text-slate-700">Nome do Atleta</label>
+
             <input type="text" id="athName" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900 focus:outline-none focus:border-slate-800">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Nº Camisa</label>
+
             <input type="number" id="athNumber" min="1" max="99" value="10" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
           </div>
+
         </div>
 
+
+
         <div class="grid grid-cols-3 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Posição</label>
+
             <select id="athPos" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
               <option value="GOL">GOL (Goleiro)</option>
+
               <option value="ZAG">ZAG (Zagueiro)</option>
+
               <option value="LD">LD (Lateral Dir.)</option>
+
               <option value="LE">LE (Lateral Esq.)</option>
+
               <option value="VOL">VOL (Volante)</option>
+
               <option value="MC">MC (Meia Central)</option>
+
               <option value="MEI">MEI (Meia Atacante)</option>
+
               <option value="MD">MD (Meia Direita)</option>
+
               <option value="ME">ME (Meia Esquerda)</option>
+
               <option value="PD">PD (Ponta Direita)</option>
+
               <option value="PE">PE (Ponta Esquerda)</option>
+
               <option value="ATA">ATA (Centroavante)</option>
+
               <option value="SA">SA (Segundo Atacante)</option>
+
               <option value="ATD">ATD (Atacante Dir.)</option>
+
               <option value="ATE">ATE (Atacante Esq.)</option>
+
             </select>
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Idade</label>
+
             <input type="number" id="athAge" value="23" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">País (Sigla / Nome)</label>
+
             <input type="text" id="athNat" value="ING" maxlength="6" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold uppercase text-slate-900">
+
           </div>
+
         </div>
+
+
 
         <div class="grid grid-cols-3 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Força Atual (OVR)</label>
+
             <input type="number" id="athOvr" min="40" max="99" value="72" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">OVR Inicial</label>
+
             <input type="number" id="athInitialOvr" min="40" max="99" value="72" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Tempo de Contrato</label>
+
             <input type="number" id="athContract" min="0" max="10" value="3" placeholder="Em anos" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
           </div>
+
         </div>
 
+
+
         <div class="grid grid-cols-2 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Papel no Plantel</label>
+
             <select id="athRole" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
               <option value="Crucial">Crucial</option>
+
               <option value="Importante" selected>Importante</option>
+
               <option value="Esporádico">Esporádico</option>
+
               <option value="Rodízio">Rodízio</option>
+
               <option value="Promessa">Promessa</option>
+
             </select>
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Valor de Mercado</label>
+
             <input type="number" id="athMarketValue" value="500000" min="0" step="any" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
         </div>
 
+
+
         <div class="grid grid-cols-2 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Salário Semanal</label>
+
             <input type="number" id="athWage" value="1000" min="0" step="any" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Situação Empréstimo</label>
+
             <select id="athLoanStatus" onchange="toggleLoanClubInput()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
               <option value="NONE" selected>Permanente (Nosso)</option>
+
               <option value="LOAN_OUT">Emprestado por nós</option>
+
               <option value="LOAN_IN">Emprestado para nós</option>
+
             </select>
+
           </div>
+
         </div>
+
+
 
         <div id="loanClubContainer" class="hidden">
+
           <label class="block mb-1 font-semibold text-slate-700">Clube Empréstimo</label>
+
           <input type="text" id="athLoanClub" placeholder="Ex: Girona, Alavés..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
         </div>
 
+
+
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+
           <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+
           <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold text-white shadow-xs">Guardar Atleta</button>
+
         </div>
+
       </form>
+
     </div>
+
   </div>
+
+
 
   <!-- ==================== MODAL DE ESTATÍSTICAS DO ATLETA ==================== -->
+
   <div id="statsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+
     <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
+
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+
         <div>
+
           <h3 class="text-sm font-bold text-slate-900 uppercase">Editar Estatísticas</h3>
+
           <p class="text-xs text-slate-500" id="statsModalPlayerName">-</p>
+
         </div>
+
         <button onclick="closeStatsModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+
       </div>
+
+
 
       <form id="statsForm" onsubmit="saveAthleteStats(event)" class="space-y-3 text-xs">
+
         <input type="hidden" id="statsPlayerId">
 
+
+
         <div class="grid grid-cols-2 gap-3">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Total de Jogos</label>
+
             <input type="number" id="statsMatches" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Nota Média (0 - 10)</label>
+
             <input type="number" id="statsAvgRating" step="0.01" min="0" max="10" placeholder="6.50" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+
           </div>
+
         </div>
 
+
+
         <div class="grid grid-cols-3 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Gols</label>
+
             <input type="number" id="statsGoals" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Assistências</label>
+
             <input type="number" id="statsAssists" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">SSG (Sem Sofrer)</label>
+
             <input type="number" id="statsSsg" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
         </div>
+
+
 
         <div class="grid grid-cols-2 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Cartões Amarelos (CA)</label>
+
             <input type="number" id="statsYellow" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Cartões Vermelhos (CV)</label>
+
             <input type="number" id="statsRed" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
         </div>
+
+
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
+
           <button type="button" onclick="closeStatsModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+
           <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-semibold text-white shadow-xs">Atualizar Dados</button>
+
         </div>
+
       </form>
+
     </div>
+
   </div>
+
+
 
   <!-- ==================== MODAL DE PARTIDAS (NOVA OU EDITAR) ==================== -->
+
   <div id="matchModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
+
     <div class="bg-white border border-slate-200 rounded-2xl max-w-3xl w-full p-5 shadow-2xl space-y-4 max-h-[92vh] flex flex-col overflow-hidden">
+
       
+
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+
         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2" id="matchModalTitle">
+
           <i class="fa-solid fa-futbol text-emerald-600"></i> Registar Nova Partida
+
         </h3>
+
         <button onclick="closeMatchModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+
       </div>
+
+
 
       <div class="p-1 overflow-y-auto space-y-5 flex-1">
+
         <input type="hidden" id="matchEditId">
 
+
+
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+
           <div>
+
             <label class="text-[11px] font-semibold text-slate-600 block mb-1">Competição</label>
+
             <select id="matchModalChamp" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-900"></select>
+
           </div>
+
           <div>
+
             <label class="text-[11px] font-semibold text-slate-600 block mb-1">Adversário</label>
+
             <input type="text" id="matchOpponent" placeholder="Ex: Mirandés, Levante..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-900">
+
           </div>
+
           <div>
+
             <label class="text-[11px] font-semibold text-slate-600 block mb-1">Mando de Campo</label>
+
             <select id="matchLocation" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-900">
+
               <option value="CASA">Casa (Mandante)</option>
+
               <option value="FORA">Fora (Visitante)</option>
+
             </select>
+
           </div>
+
         </div>
+
+
 
         <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-around">
+
           <div class="text-center">
+
             <span class="text-xs font-bold text-slate-700 block mb-1" id="matchModalMyClubName">O Meu Clube</span>
+
             <input type="number" id="matchMyScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-slate-300 rounded-xl focus:border-slate-800">
+
           </div>
+
           <div class="text-xl font-black text-slate-400">VS</div>
+
           <div class="text-center">
+
             <span class="text-xs font-bold text-slate-700 block mb-1">Adversário</span>
+
             <input type="number" id="matchOppScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-slate-300 rounded-xl focus:border-slate-800">
+
           </div>
+
         </div>
 
+
+
         <div class="space-y-2">
+
           <div class="flex items-center justify-between">
+
             <label class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+
               <i class="fa-solid fa-bullseye text-emerald-600"></i> Marcadores de Gols
+
             </label>
+
             <button type="button" onclick="addGoalDetailRow()" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 border border-slate-300 flex items-center gap-1">
+
               <i class="fa-solid fa-plus"></i> Adicionar Golo
+
             </button>
+
           </div>
+
           <div id="goalDetailsContainer" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+
             <p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>
+
           </div>
+
         </div>
 
+
+
         <div class="space-y-2">
+
           <div class="flex items-center justify-between">
+
             <label class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+
               <i class="fa-solid fa-star text-amber-500"></i> Desempenho dos Atletas
+
             </label>
+
             <span class="text-[11px] text-slate-400 font-medium">Marque quem esteve em campo</span>
+
           </div>
+
           <div class="border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
+
             <table class="w-full text-left text-xs">
+
               <thead class="bg-slate-50 sticky top-0 text-[10px] uppercase font-bold text-slate-500">
+
                 <tr>
+
                   <th class="p-2 w-10 text-center">Jogou?</th>
+
                   <th class="p-2">Atleta</th>
+
                   <th class="p-2 w-20 text-center">Nota (0-10)</th>
+
                   <th class="p-2 w-16 text-center">CA</th>
+
                   <th class="p-2 w-16 text-center">CV</th>
+
                 </tr>
+
               </thead>
+
               <tbody id="matchAthletesPerformanceBody" class="divide-y divide-slate-100 bg-white"></tbody>
+
             </table>
+
           </div>
+
         </div>
+
       </div>
+
+
 
       <div class="px-2 pt-3 border-t border-slate-200 bg-white flex justify-end gap-2">
+
         <button onclick="closeMatchModal()" class="px-4 py-2 rounded-lg bg-slate-100 text-xs font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+
         <button onclick="saveMatchData()" id="saveMatchBtn" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs">Guardar Partida</button>
+
       </div>
+
     </div>
+
   </div>
+
+
 
   <!-- ==================== MODAL DE TRANSFERÊNCIAS (COMPRA E VENDA) ==================== -->
+
   <div id="transferModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 hidden">
+
     <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
+
       <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+
         <div class="flex items-center gap-2.5">
+
           <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+
             <i class="fa-solid fa-arrow-right-arrow-left"></i>
+
           </div>
+
           <div>
+
             <h3 class="text-sm font-bold tracking-wide">Mercado de Transferências</h3>
+
             <p class="text-[11px] text-slate-300">Registo de compras, vendas e atualização orçamental</p>
+
           </div>
+
         </div>
+
         <button onclick="closeTransferModal()" type="button" class="text-slate-400 hover:text-white transition text-lg">
+
           <i class="fa-solid fa-xmark"></i>
+
         </button>
+
       </div>
+
+
 
       <div class="flex border-b border-slate-200 bg-slate-50 text-xs font-bold">
+
         <button type="button" id="tabBtnBuy" onclick="setTransferType('BUY')" class="flex-1 py-3 text-center border-b-2 border-emerald-600 text-emerald-700 bg-white transition flex items-center justify-center gap-2">
+
           <i class="fa-solid fa-user-plus text-emerald-600"></i> Comprar / Contratar Atleta
+
         </button>
+
         <button type="button" id="tabBtnSell" onclick="setTransferType('SELL')" class="flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2">
+
           <i class="fa-solid fa-user-minus text-rose-600"></i> Vender Atleta
+
         </button>
+
       </div>
+
+
 
       <form id="transferForm" onsubmit="handleTransferSubmit(event)" class="p-5 space-y-4">
+
         <input type="hidden" id="transType" value="BUY">
 
+
+
         <div id="transferBuySection" class="space-y-3">
+
           <div class="grid grid-cols-2 gap-3">
+
             <div class="col-span-2">
+
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Nome do Jogador</label>
+
               <input type="text" id="buyName" placeholder="Ex: Erling Haaland" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 focus:bg-white focus:border-slate-800">
+
             </div>
+
             <div>
+
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Posição</label>
+
               <select id="buyPos" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+
                 <option value="GOL">GOL (Guarda-Redes)</option>
+
                 <option value="ZAG">ZAG (Zagueiro Central)</option>
+
                 <option value="LD">LD (Lateral Direito)</option>
+
                 <option value="LE">LE (Lateral Esquerdo)</option>
+
                 <option value="VOL">VOL (Volante)</option>
+
                 <option value="MC">MC (Médio Centro)</option>
+
                 <option value="MEI">MEI (Médio Ofensivo)</option>
+
                 <option value="MD">MD (Médio Direito)</option>
+
                 <option value="ME">ME (Médio Esquerdo)</option>
+
                 <option value="PD">PD (Ponta Direita)</option>
+
                 <option value="PE">PE (Ponta Esquerda)</option>
+
                 <option value="ATA" selected>ATA (Avançado / Centroavante)</option>
+
               </select>
+
             </div>
+
             <div>
+
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Idade</label>
+
               <input type="number" id="buyAge" value="23" min="15" max="45" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+
             </div>
+
             <div>
+
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Overall (OVR)</label>
+
               <input type="number" id="buyOvr" value="75" min="45" max="99" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+
             </div>
+
             <div>
+
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Nacionalidade</label>
+
               <input type="text" id="buyNat" value="ING" maxlength="6" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 uppercase">
+
             </div>
+
             <div>
+
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Salário Semanal</label>
+
               <input type="number" id="buyWage" value="12000" step="500" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+
             </div>
+
             <div>
+
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Contrato (Anos)</label>
+
               <input type="number" id="buyContract" value="3" min="1" max="5" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+
             </div>
+
             <div class="col-span-2">
+
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Equipa / Clube de Origem</label>
+
               <input type="text" id="buyOriginClub" placeholder="Ex: Sporting CP, Benfica, Girona..." class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+
             </div>
+
           </div>
+
         </div>
+
+
 
         <div id="transferSellSection" class="space-y-3 hidden">
+
           <div>
+
             <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Selecionar Atleta a Vender</label>
+
             <select id="sellAthleteId" onchange="onAthleteSellSelectChange()" class="mt-1 w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900"></select>
+
           </div>
+
+
 
           <div id="sellAthletePreview" class="p-3 bg-amber-50/60 border border-amber-200 rounded-xl text-xs space-y-1 hidden">
+
             <div class="font-bold text-slate-900" id="sellPreviewName">-</div>
+
             <div class="text-slate-600 text-[11px]" id="sellPreviewDetails">-</div>
+
             <div class="text-[11px] font-bold text-amber-800" id="sellPreviewMarketValue">Valor de Mercado Atual: € 0</div>
+
           </div>
 
+
+
           <div>
+
             <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Equipa / Clube de Destino</label>
+
             <input type="text" id="sellDestClub" placeholder="Ex: Real Madrid, Juventus, Al Hilal..." class="mt-1 w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
+
           </div>
+
         </div>
+
+
 
         <div class="pt-2 border-t border-slate-200">
+
           <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-800 flex items-center justify-between">
+
             <span>Valor da Transferência</span>
+
             <span id="transHelperLabel" class="text-emerald-700 font-semibold text-[10px] lowercase"></span>
+
           </label>
+
           <div class="relative mt-1">
+
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-bold text-slate-400" id="transCurrencySymbol">€</span>
+
             <input type="number" id="transAmount" min="0" step="10000" placeholder="0" required class="w-full pl-8 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-black text-slate-900 focus:bg-white focus:border-slate-800">
+
           </div>
+
         </div>
+
+
 
         <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
+
           <button type="button" onclick="closeTransferModal()" class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition">Cancelar</button>
+
           <button type="submit" id="transSubmitBtn" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition">Confirmar Compra</button>
+
         </div>
+
       </form>
+
     </div>
+
   </div>
+
+
 
   <!-- ==================== MODAL: DADOS DO CLUBE & ESCUDO ==================== -->
+
   <div id="changeClubModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+
     <div class="bg-white border border-slate-200 w-full max-w-lg rounded-2xl shadow-xl p-5 space-y-4">
+
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+
         <h3 class="text-sm font-bold uppercase tracking-wide text-slate-900 flex items-center gap-2">
+
           <i class="fa-solid fa-shield-halved text-indigo-600"></i> Clube, Identidade & Estádio
+
         </h3>
+
         <button onclick="closeChangeClubModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+
       </div>
+
+
 
       <div class="space-y-3.5 text-xs font-medium max-h-[75vh] overflow-y-auto pr-1">
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Nome do Clube</label>
+
             <input type="text" id="newClubNameInput" placeholder="Ex: Deportivo La Coruña" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Alcunha / Apelido</label>
+
             <input type="text" id="newClubNicknameInput" placeholder="Ex: Os Branquiazuis" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+
           </div>
+
         </div>
+
+
 
         <div>
+
           <label class="block mb-1 font-semibold text-slate-700">Lema do Clube</label>
+
           <input type="text" id="newClubMottoInput" placeholder="Ex: Forza Dépor! Sempre contigo." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
         </div>
 
+
+
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">URL do Escudo</label>
+
             <input type="url" id="newClubLogoUrlInput" placeholder="https://.../escudo.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">URL Foto do Estádio (Banner)</label>
+
             <input type="url" id="newClubStadiumUrlInput" placeholder="https://.../estadio.jpg" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+
           </div>
+
         </div>
+
+
 
         <div class="grid grid-cols-3 gap-2">
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Moeda Oficial</label>
+
             <select id="newClubCurrencyInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
+
               <option value="€">€ (Euro)</option>
+
               <option value="£">£ (Libra)</option>
+
               <option value="$">$ (Dólar)</option>
+
               <option value="R$">R$ (Real)</option>
+
             </select>
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Verba Transf.</label>
+
             <input type="number" id="newClubBudgetInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
           <div>
+
             <label class="block mb-1 font-semibold text-slate-700">Teto Salarial</label>
+
             <input type="number" id="newClubWageInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
+
           </div>
+
         </div>
+
       </div>
 
+
+
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+
         <button onclick="closeChangeClubModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+
         <button onclick="confirmChangeClub()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-xs">Confirmar</button>
+
       </div>
+
     </div>
+
   </div>
+
+
 
   <!-- ==================== MODAL: NOVO TORNEIO ==================== -->
+
   <div id="champModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+
     <div class="bg-white border border-slate-200 w-full max-w-sm rounded-2xl shadow-xl p-5 space-y-4">
+
       <h3 class="text-sm font-bold text-slate-900 uppercase flex items-center gap-2">
+
         <i class="fa-solid fa-trophy text-amber-500"></i> Novo Campeonato
+
       </h3>
+
       <div class="space-y-3 text-xs">
+
         <div>
+
           <label class="block text-slate-600 mb-1 font-bold">Nome do Torneio</label>
+
           <input type="text" id="newChampName" placeholder="Ex: LaLiga, Champions League" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-900">
+
         </div>
+
         <div>
+
           <label class="block text-slate-600 mb-1 font-bold">URL da Imagem da Taça</label>
+
           <input type="url" id="newChampTrophyUrl" placeholder="https://exemplo.com/taca.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-900">
+
         </div>
+
         <div>
+
           <label class="block text-slate-600 mb-1 font-bold">Formato</label>
+
           <select id="newChampFormat" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-900">
+
             <option value="PONTOS">Pontos Corridos</option>
+
             <option value="MATA">Eliminatória / Taça</option>
+
           </select>
+
         </div>
+
       </div>
+
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+
         <button onclick="closeNewChampModal()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">Cancelar</button>
+
         <button onclick="saveNewChamp()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">Cadastrar</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- ==================== MODAL: VIRADA DE ÉPOCA & CONFIRMAÇÃO DE RESULTADOS ==================== -->
-  <div id="seasonAdvanceModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3">
-    <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-2xl shadow-2xl p-5 space-y-4 max-h-[92vh] flex flex-col overflow-hidden">
-      
-      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-        <div class="flex items-center gap-2">
-          <div class="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-700 flex items-center justify-center font-bold text-lg">
-            <i class="fa-solid fa-trophy"></i>
-          </div>
-          <div>
-            <h3 class="text-sm font-bold text-slate-900 uppercase">Fecho de Temporada & Classificações</h3>
-            <p class="text-xs text-slate-500">Confirme as classificações nos torneios antes de avançar para a próxima época</p>
-          </div>
-        </div>
-        <button onclick="closeSeasonAdvanceModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-
-      <div class="p-1 overflow-y-auto space-y-4 flex-1 text-xs">
-        <!-- Aviso / Resumo dos impactos -->
-        <div class="bg-amber-50/70 border border-amber-200 p-3 rounded-xl space-y-1 text-slate-700">
-          <div class="font-bold text-amber-900 flex items-center gap-1.5 text-xs">
-            <i class="fa-solid fa-circle-exclamation text-amber-600"></i> O que acontece ao confirmar o encerramento:
-          </div>
-          <p class="leading-relaxed text-[11px]">
-            • Um snapshot completo e imutável de todas as partidas, estatísticas do elenco e notas por setor será arquivado no <strong>Histórico Global</strong>.<br>
-            • Os títulos marcados como <strong>CAMPEÃO</strong> serão adicionados à Galeria de Troféus oficial.<br>
-            • No novo ano, as estatísticas são reiniciadas, todos os atletas envelhecem <strong>+1 ano</strong> e os contratos reduzem <strong>-1 ano</strong>.
-          </p>
-        </div>
-
-        <!-- Classificações por Torneio Disputado -->
-        <div class="space-y-2">
-          <label class="font-bold uppercase tracking-wide text-slate-700 block text-[11px] flex items-center gap-1.5">
-            <i class="fa-solid fa-ranking-star text-indigo-600"></i> Desempenho e Classificação nos Torneios da Época (<span id="advanceCurrentSeasonLabel">2025/2026</span>):
-          </label>
-          <div id="seasonTournamentsRankingContainer" class="space-y-2.5">
-            <!-- Gerado via JS de acordo com os campeonatos -->
-          </div>
-        </div>
-
-        <!-- Nome da Nova Época -->
-        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
-          <label class="block text-slate-700 font-bold uppercase tracking-wider text-[11px]">Identificação da Nova Temporada</label>
-          <input type="text" id="nextSeasonNameInput" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-slate-900 font-black text-sm focus:border-slate-800">
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 bg-white">
-        <button onclick="closeSeasonAdvanceModal()" class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">Cancelar</button>
-        <button onclick="confirmAdvanceSeason()" class="px-5 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs flex items-center gap-2">
-          <i class="fa-solid fa-check-double"></i> Confirmar & Avançar Época
-        </button>
       </div>
 
     </div>
+
   </div>
+
+
+
+  <!-- ==================== MODAL: VIRADA DE ÉPOCA ==================== -->
+
+  <div id="seasonAdvanceModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+
+    <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
+
+      <h3 class="text-sm font-bold text-amber-700 uppercase flex items-center gap-2">
+
+        <i class="fa-solid fa-calendar-check"></i> Virada de Época
+
+      </h3>
+
+      <p class="text-xs text-slate-600 leading-relaxed">
+
+        • A idade de todos os atletas aumenta em <strong>+1 ano</strong>.<br>
+
+        • Os Gols, assistências, cartões e notas são reiniciados para o novo ano.<br>
+
+        • O OVR atual torna-se a força inicial do atleta.
+
+      </p>
+
+      <div class="text-xs">
+
+        <label class="block text-slate-700 mb-1 font-bold">Nome da Nova Época</label>
+
+        <input type="text" id="nextSeasonNameInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-900 font-bold">
+
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
+
+        <button onclick="closeSeasonAdvanceModal()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">Cancelar</button>
+
+        <button onclick="confirmAdvanceSeason()" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs">Confirmar</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
 
   <!-- JAVASCRIPT GLOBAL -->
+
   <script>
+
     const API_URL = "https://script.google.com/macros/s/AKfycbysXpEpvC2Yjl_ksDdXvVCLTSrPG4NzHxa1Y3szeCbh25nLQ5VJVCQUTW7Z2VAYjPRh/exec";
+
     const STORAGE_KEY = 'MODO_CARREIRA_FIFA_APP_V12_SYSTEM';
 
+
+
     const countryIsoMap = {
+
       'BRA': 'br', 'ESP': 'es', 'POR': 'pt', 'ARG': 'ar', 'FRA': 'fr', 'GER': 'de', 'ALE': 'de',
+
       'ENG': 'gb-eng', 'ING': 'gb-eng', 'ITA': 'it', 'NED': 'nl', 'HOL': 'nl', 'BEL': 'be', 'URU': 'uy',
+
       'COL': 'co', 'CHI': 'cl', 'PAR': 'py', 'ECU': 'ec', 'PER': 'pe', 'VEN': 've', 'BOL': 'bo',
+
       'MEX': 'mx', 'USA': 'us', 'EUA': 'us', 'CAN': 'ca', 'CRO': 'hr', 'SRB': 'rs', 'SUI': 'ch',
+
       'AUT': 'at', 'SWE': 'se', 'NOR': 'no', 'DEN': 'dk', 'DIN': 'dk', 'POL': 'pl', 'CZE': 'cz',
+
       'TUR': 'tr', 'GRE': 'gr', 'UKR': 'ua', 'RUS': 'ru', 'SCO': 'gb-sct', 'WAL': 'gb-wls', 'GAL': 'gb-wls',
+
       'IRL': 'ie', 'NIR': 'gb-nir', 'MAR': 'ma', 'SEN': 'sn', 'NGA': 'ng', 'GHA': 'gh', 'CIV': 'ci',
+
       'CMR': 'cm', 'CAM': 'cm', 'EGY': 'eg', 'ALG': 'dz', 'TUN': 'tn', 'RSA': 'za', 'JPN': 'jp',
+
       'KOR': 'kr', 'AUS': 'au', 'NZL': 'nz', 'KSA': 'sa', 'QAT': 'qa', 'UAE': 'ae', 'IRN': 'ir', 'CHN': 'cn',
+
       'SLO': 'si', 'SVK': 'sk', 'ROU': 'ro', 'HUN': 'hu'
+
     };
+
+
 
     const defaultState = {
+
       clubName: 'La Coruña',
+
       clubNickname: '',
+
       clubMotto: '',
+
       clubLogoUrl: '',
+
       clubStadiumUrl: '',
+
       currency: '€',
+
       currentSeason: '2025/2026',
+
       budget: 8075625,
+
       transferAcquired: 0,
+
       wageBudget: 155300,
+
       currentChampId: 'c1',
+
       championships: [
+
         { id: 'c1', name: 'LaLiga Hyper', format: 'PONTOS', trophyUrl: '' }
+
       ],
+
       athletes: [],
+
       matches: [],
-      transfersHistory: [],
-      // NOVO: Histórico global imutável das temporadas encerradas
-      seasonsHistory: [],
-      // NOVO: Memorial de ex-jogadores e hall da fama
-      departedAthletes: [],
-      // NOVO: Troféus oficiais conquistados
-      trophiesWon: []
+
+      transfersHistory: []
+
     };
 
+
+
     let state = loadState();
+
     let currentPosFilter = 'TODOS';
-    let currentHistPlayerFilter = 'ALL';
+
     let natChartInstance = null;
+
     let sectorChartInstance = null;
+
     let homeAwayChartInstance = null;
-    let seasonsWinRateChartInstance = null;
-    let seasonsGoalsChartInstance = null;
+
+
 
     function loadState() {
+
       const data = localStorage.getItem(STORAGE_KEY);
+
       if (!data) return JSON.parse(JSON.stringify(defaultState));
+
       try {
+
         const parsed = JSON.parse(data);
+
         return Object.assign({}, defaultState, parsed);
+
       } catch (e) {
+
         return JSON.parse(JSON.stringify(defaultState));
+
       }
+
     }
+
+
 
     function saveState() {
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
       updateUI();
+
     }
+
+
 
     function formatCurrency(val) {
+
       const sym = state.currency || '€';
+
       return `${sym} ${Number(val || 0).toLocaleString('pt-PT')}`;
+
     }
+
+
 
     // BANDEIRAS COM SUPORTE REAL FLAGCDN
+
     function getCountryFlagImg(natCode) {
+
       if (!natCode) return `<span class="text-xs">🌐</span>`;
+
       const clean = String(natCode).toUpperCase().trim();
+
       const iso2 = countryIsoMap[clean] || clean.toLowerCase();
+
       return `<img src="https://flagcdn.com/24x18/${iso2}.png" alt="${clean}" title="${clean}" class="w-5 h-3.5 object-cover rounded-[2px] shadow-xs inline-block align-middle border border-slate-200" onerror="this.onerror=null; this.outerHTML='<span class=\\'font-bold text-[10px] text-slate-700 uppercase\\'>${clean}</span>';">`;
+
     }
+
+
 
     // CONTROLO DE ABAS
+
     function switchTab(tabId) {
+
       document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+
       document.getElementById(`tab-${tabId}`)?.classList.remove('hidden');
 
+
+
       document.querySelectorAll('.tab-btn').forEach(btn => {
+
         btn.classList.remove('bg-white', 'text-slate-900', 'shadow-xs');
+
         btn.classList.add('text-slate-600');
+
       });
+
       document.getElementById(`nav-btn-${tabId}`)?.classList.add('bg-white', 'text-slate-900', 'shadow-xs');
+
       document.getElementById(`nav-btn-${tabId}`)?.classList.remove('text-slate-600');
 
+
+
       if (tabId === 'dashboard') {
+
         renderDashboardVisuals();
+
         renderBestAthletesByPosition();
+
       }
+
       if (tabId === 'athletes') renderAthletesContainers();
+
       if (tabId === 'matches') updateTourneyHomeAwayDashboard();
-      if (tabId === 'history') renderHistoryTab();
+
     }
+
+
 
     function updateClubLogo() {
+
       const img = document.getElementById('clubBadgeImg');
+
       const def = document.getElementById('clubDefaultBadge');
+
       if (state.clubLogoUrl && state.clubLogoUrl.trim() !== '') {
+
         img.src = state.clubLogoUrl;
+
         img.classList.remove('hidden');
+
         def.classList.add('hidden');
+
       } else {
+
         showDefaultLogo();
+
       }
+
     }
+
+
 
     function showDefaultLogo() {
+
       const img = document.getElementById('clubBadgeImg');
+
       const def = document.getElementById('clubDefaultBadge');
+
       if (img) img.classList.add('hidden');
+
       if (def) {
+
         def.classList.remove('hidden');
+
         def.innerText = state.clubName ? state.clubName.charAt(0).toUpperCase() : '⚽';
+
       }
+
     }
+
+
 
     // CALÇADO TÁTICO
+
     function getPlayerShoeOrGloveIcon(player, isTop11) {
+
       const pos = (player.pos || '').toUpperCase().trim();
+
       if (isTop11 && Number(player.matches) > 0) {
+
         if (pos === 'GOL') {
+
           return `<span title="Top 11 Mais Jogos" class="inline-flex items-center gap-1 font-bold"><i class="fa-solid fa-mitten text-amber-500"></i> <span class="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded border border-amber-300 font-bold">Top 11</span></span>`;
+
         }
+
         return `<span title="Top 11 Mais Jogos" class="inline-flex items-center gap-1 font-bold"><i class="fa-solid fa-shoe-prints icon-boot-gold"></i> <span class="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded border border-amber-300 font-bold">Top 11</span></span>`;
+
       }
+
+
 
       if (pos === 'GOL') return `<i class="fa-solid fa-mitten icon-glove-yellow text-sm" title="Guarda-Redes"></i>`;
+
       if (['LD', 'LE', 'LAT'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Lateral"></i>`;
+
       if (['ZAG', 'DEF'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-blue text-sm" title="Central"></i>`;
+
       if (['ME', 'MD', 'MEI'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Médio"></i>`;
+
       if (['MC', 'VOL'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-red text-sm" title="Médio/Volante"></i>`;
+
       if (['ATA', 'SA', 'ATD', 'ATE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-black text-sm" title="Avançado"></i>`;
+
       if (['PD', 'PE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-gray text-sm" title="Extremo"></i>`;
 
+
+
       return `<i class="fa-solid fa-shoe-prints text-slate-400 text-sm"></i>`;
+
     }
+
+
 
     // BADGE DE PAPEL NO PLANTEL
+
     function getRoleBadge(role) {
+
       const r = (role || 'Importante').toUpperCase().trim();
+
       if (r === 'CRUCIAL') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Crucial</span>`;
+
       if (r === 'IMPORTANTE') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">Importante</span>`;
+
       if (r === 'ESPORÁDICO' || r === 'ESPORADICO') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Esporádico</span>`;
+
       if (r === 'RODÍZIO' || r === 'RODIZIO') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Rodízio</span>`;
+
       if (r === 'PROMESSA') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Promessa</span>`;
+
       return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">${role || 'Importante'}</span>`;
+
     }
+
+
 
     // DASHBOARD & MVP RIGOROSO
+
     function calculateMVP() {
+
       if (state.athletes.length === 0) {
+
         document.getElementById('mvpName').textContent = 'Nenhum atleta';
+
         return;
+
       }
+
+
+
+      // Se nenhum jogo foi disputado pelo clube inteiro, não há MVP
 
       const totalTeamMatches = state.athletes.reduce((acc, a) => acc + (Number(a.matches) || 0), 0);
+
       if (totalTeamMatches === 0) {
+
         document.getElementById('mvpName').textContent = 'Sem jogos disputados';
+
         document.getElementById('mvpDetails').textContent = 'Aguardando início dos confrontos';
+
         document.getElementById('mvpGA').textContent = '0';
+
         document.getElementById('mvpRating').textContent = '-';
+
         document.getElementById('mvpScore').textContent = '0.0';
+
         return;
+
       }
+
+
 
       const scoredAthletes = state.athletes.map(a => {
+
         const jogos = Number(a.matches) || 0;
+
         const gols = Number(a.goals) || 0;
+
         const assists = Number(a.assists) || 0;
+
         const ssg = Number(a.ssg) || 0;
+
         const notaSoma = Number(a.ratingSum) || 0;
+
         const avg = jogos > 0 ? (notaSoma / jogos) : 0;
+
         const isDef = ['GOL', 'ZAG', 'LD', 'LE'].includes(a.pos);
+
+        // Score estritamente baseado no rendimento das partidas
+
         const score = jogos > 0 ? ((avg * 10) + ((gols + assists) * 2) + (isDef ? (ssg * 1.5) : 0)) : 0;
 
+
+
         return { ...a, avg, ga: gols + assists, mvpScore: score, jogos };
+
       }).sort((a, b) => b.mvpScore - a.mvpScore);
 
+
+
       const mvp = scoredAthletes[0];
+
       if (mvp && mvp.jogos > 0) {
+
         document.getElementById('mvpName').textContent = `${mvp.name} (#${mvp.number || '-'})`;
+
         document.getElementById('mvpDetails').textContent = `${mvp.pos} • ${mvp.age} anos • ${mvp.jogos} jogos disputados`;
+
         document.getElementById('mvpGA').textContent = mvp.ga;
+
         document.getElementById('mvpRating').textContent = mvp.avg > 0 ? mvp.avg.toFixed(2) : '-';
+
         document.getElementById('mvpScore').textContent = mvp.mvpScore.toFixed(1);
+
       } else {
+
         document.getElementById('mvpName').textContent = 'Sem jogos disputados';
+
         document.getElementById('mvpDetails').textContent = 'Aguardando registo de partidas';
+
         document.getElementById('mvpGA').textContent = '0';
+
         document.getElementById('mvpRating').textContent = '-';
+
         document.getElementById('mvpScore').textContent = '0.0';
+
       }
+
     }
 
+
+
     function renderBestAthletesByPosition() {
+
       const container = document.getElementById('bestByPositionGrid');
+
       if (!container) return;
 
+
+
       const positions = ['GOL', 'ZAG', 'LD', 'LE', 'VOL', 'MC', 'MEI', 'ATA'];
+
       container.innerHTML = positions.map(pos => {
+
         const group = state.athletes.filter(a => a.pos === pos);
+
         if (group.length === 0) {
+
           return `
+
             <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-center">
+
               <span class="text-[10px] font-bold text-slate-400 block">${pos}</span>
+
               <span class="text-xs text-slate-400 italic font-medium">-</span>
+
             </div>
+
           `;
+
         }
 
+
+
         const best = group.sort((a, b) => {
+
           const avgA = a.matches > 0 ? (a.ratingSum / a.matches) : 0;
+
           const avgB = b.matches > 0 ? (b.ratingSum / b.matches) : 0;
+
           return avgB - avgA || Number(b.currentOvr) - Number(a.currentOvr);
+
         })[0];
+
+
 
         const avg = best.matches > 0 ? (best.ratingSum / best.matches).toFixed(2) : '-';
 
+
+
         return `
+
           <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-center shadow-2xs hover:border-amber-300 transition">
+
             <span class="text-[10px] font-extrabold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded uppercase">${pos}</span>
+
             <div class="font-bold text-slate-900 text-xs truncate mt-1.5" title="${best.name}">${best.name}</div>
+
             <div class="text-[10px] text-slate-500 font-semibold">OVR ${best.currentOvr} • Nota ${avg}</div>
+
           </div>
+
         `;
+
       }).join('');
+
     }
+
+
 
     function renderDashboardVisuals() {
+
       calculateMVP();
+
       renderBestAthletesByPosition();
 
+
+
       document.getElementById('dashBudget').textContent = formatCurrency(state.budget);
+
       document.getElementById('dashTransferAcquired').textContent = formatCurrency(state.transferAcquired);
 
+
+
       const totalWage = state.athletes.reduce((s, a) => s + (Number(a.wage) || 0), 0);
+
       document.getElementById('dashWage').textContent = formatCurrency(totalWage);
+
       document.getElementById('dashWageBudget').textContent = formatCurrency(state.wageBudget);
 
+
+
       const totalVal = state.athletes.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
+
       document.getElementById('dashTotalSquadValue').textContent = formatCurrency(totalVal);
+
       document.getElementById('dashTotalSquad').textContent = state.athletes.length;
 
+
+
       if (state.athletes.length > 0) {
+
         const avgOvr = (state.athletes.reduce((s, a) => s + Number(a.currentOvr), 0) / state.athletes.length).toFixed(1);
+
         const avgAge = (state.athletes.reduce((s, a) => s + Number(a.age), 0) / state.athletes.length).toFixed(1);
+
         document.getElementById('dashAvgOvr').textContent = avgOvr;
+
         document.getElementById('dashAvgAge').textContent = avgAge;
+
       }
+
+
 
       // Médias Setoriais
+
       const defPlayers = state.athletes.filter(a => ['GOL', 'ZAG', 'LD', 'LE'].includes(a.pos));
+
       const meiPlayers = state.athletes.filter(a => ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos));
+
       const ataPlayers = state.athletes.filter(a => ['PD', 'PE', 'ATA', 'SA'].includes(a.pos));
 
+
+
       const getAvgOvr = arr => arr.length ? (arr.reduce((s, a) => s + Number(a.currentOvr), 0) / arr.length).toFixed(1) : '0.0';
+
       const getTotalVal = arr => formatCurrency(arr.reduce((s, a) => s + (Number(a.marketValue) || 0), 0));
 
+
+
       document.getElementById('sectorDefAvgOvr').textContent = getAvgOvr(defPlayers);
+
       document.getElementById('sectorDefTotalValue').textContent = getTotalVal(defPlayers);
 
+
+
       document.getElementById('sectorMeiAvgOvr').textContent = getAvgOvr(meiPlayers);
+
       document.getElementById('sectorMeiTotalValue').textContent = getTotalVal(meiPlayers);
 
+
+
       document.getElementById('sectorAtaAvgOvr').textContent = getAvgOvr(ataPlayers);
+
       document.getElementById('sectorAtaTotalValue').textContent = getTotalVal(ataPlayers);
 
+
+
       // Líderes
+
       const bestScorer = [...state.athletes].filter(a => Number(a.goals) > 0).sort((a, b) => b.goals - a.goals)[0];
+
       const bestAssister = [...state.athletes].filter(a => Number(a.assists) > 0).sort((a, b) => b.assists - a.assists)[0];
+
       const bestSsg = [...state.athletes].filter(a => Number(a.ssg) > 0).sort((a, b) => b.ssg - a.ssg)[0];
+
       const bestRating = [...state.athletes].filter(a => Number(a.matches) > 0).sort((a, b) => (b.ratingSum/b.matches) - (a.ratingSum/a.matches))[0];
 
+
+
       document.getElementById('bestScorer').textContent = bestScorer ? bestScorer.name : '-';
+
       document.getElementById('bestScorerGols').textContent = bestScorer ? `${bestScorer.goals} Gols` : '0 Gols';
 
+
+
       document.getElementById('bestAssister').textContent = bestAssister ? bestAssister.name : '-';
+
       document.getElementById('bestAssisterCount').textContent = bestAssister ? `${bestAssister.assists} Ass.` : '0 Ass.';
 
+
+
       document.getElementById('bestSsgPlayer').textContent = bestSsg ? bestSsg.name : '-';
+
       document.getElementById('bestSsgCount').textContent = bestSsg ? `${bestSsg.ssg} Jogos` : '0 Jogos';
 
+
+
       document.getElementById('bestRatingPlayer').textContent = bestRating ? bestRating.name : '-';
+
       document.getElementById('bestRatingVal').textContent = bestRating ? (bestRating.ratingSum / bestRating.matches).toFixed(2) : '-';
 
+
+
       // Gráficos
+
       const natMap = {};
+
       state.athletes.forEach(a => { const n = a.nat || 'OUT'; natMap[n] = (natMap[n] || 0) + 1; });
+
       const natCtx = document.getElementById('nationalityChart')?.getContext('2d');
+
       if (natChartInstance) natChartInstance.destroy();
+
       if (natCtx) {
+
         natChartInstance = new Chart(natCtx, {
+
           type: 'doughnut',
+
           data: {
+
             labels: Object.keys(natMap),
+
             datasets: [{ data: Object.values(natMap), backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'] }]
+
           },
+
           options: { responsive: true, maintainAspectRatio: false }
+
         });
+
       }
+
       document.getElementById('natCountLabel').textContent = `${Object.keys(natMap).length} países`;
 
+
+
       const secCtx = document.getElementById('sectorMarketChart')?.getContext('2d');
+
       if (sectorChartInstance) sectorChartInstance.destroy();
+
       if (secCtx) {
+
         const defV = defPlayers.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
+
         const meiV = meiPlayers.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
+
         const ataV = ataPlayers.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
 
+
+
         sectorChartInstance = new Chart(secCtx, {
+
           type: 'bar',
+
           data: {
+
             labels: ['Defesa', 'Meio-Campo', 'Ataque'],
+
             datasets: [{ label: 'Valor de Mercado', data: [defV, meiV, ataV], backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'], borderRadius: 6 }]
+
           },
+
           options: { responsive: true, maintainAspectRatio: false }
+
         });
+
       }
+
     }
+
+
 
     // RESUMO DE ATLETAS
+
     function updateAthletesSummary() {
+
       const defPositions = ['GOL', 'ZAG', 'LD', 'LE'];
+
       const midPositions = ['VOL', 'MC', 'MEI', 'MD', 'ME'];
+
       const attPositions = ['PD', 'PE', 'ATA', 'SA'];
 
+
+
       document.getElementById('totalAthletesCount').textContent = state.athletes.length;
+
       document.getElementById('countDefense').textContent = state.athletes.filter(a => defPositions.includes(a.pos)).length;
+
       document.getElementById('countMidfield').textContent = state.athletes.filter(a => midPositions.includes(a.pos)).length;
+
       document.getElementById('countAttack').textContent = state.athletes.filter(a => attPositions.includes(a.pos)).length;
+
       document.getElementById('countUsable').textContent = state.athletes.filter(a => a.loanStatus !== 'LOAN_OUT').length;
+
       document.getElementById('countLoaned').textContent = state.athletes.filter(a => a.loanStatus === 'LOAN_OUT' || a.loanStatus === 'LOAN_IN').length;
+
     }
+
+
 
     function setPosFilter(pos) {
+
       currentPosFilter = pos;
+
       document.querySelectorAll('.pos-filter-btn').forEach(btn => {
+
         if (btn.dataset.pos === pos) {
+
           btn.className = "pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white";
+
         } else {
+
           btn.className = "pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
+
         }
+
       });
+
       renderAthletesContainers();
+
     }
 
-    // TABELA SISTÊMICA DE ATLETAS
+
+
+    // TABELA SISTÊMICA DE ATLETAS (CONFORME A IMAGEM FORNECIDA)
+
     function renderAthletesContainers() {
+
       const tbody = document.getElementById('athletesTableBody');
+
       if (!tbody) return;
+
+
 
       const search = (document.getElementById('playerSearch')?.value || '').toLowerCase();
 
+
+
       const top11Ids = [...state.athletes]
+
         .filter(a => Number(a.matches) > 0)
+
         .sort((a, b) => b.matches - a.matches)
+
         .slice(0, 11)
+
         .map(a => a.id);
 
+
+
       const filtered = state.athletes.filter(a => {
+
         const matchesSearch = a.name.toLowerCase().includes(search) || (a.nat || '').toLowerCase().includes(search);
+
         if (!matchesSearch) return false;
+
         if (currentPosFilter === 'GOL') return a.pos === 'GOL';
+
         if (currentPosFilter === 'DEF') return ['ZAG', 'LD', 'LE'].includes(a.pos);
+
         if (currentPosFilter === 'MEI') return ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos);
+
         if (currentPosFilter === 'ATA') return ['PD', 'PE', 'ATA', 'SA'].includes(a.pos);
+
         return true;
+
       });
 
+
+
       if (filtered.length === 0) {
+
         tbody.innerHTML = `<tr><td colspan="17" class="p-8 text-center text-xs text-slate-400 italic">Nenhum atleta encontrado no plantel.</td></tr>`;
+
         return;
+
       }
 
+
+
       tbody.innerHTML = filtered.map(a => {
+
         const isTop11 = top11Ids.includes(a.id);
+
         const iconHtml = getPlayerShoeOrGloveIcon(a, isTop11);
+
         const flagHtml = getCountryFlagImg(a.nat);
+
         const roleBadge = getRoleBadge(a.role);
+
         const matches = Number(a.matches) || 0;
+
         const avg = matches > 0 ? (Number(a.ratingSum) / matches).toFixed(2) : '-';
 
+
+
         // Analytics de Potencial e Margem
+
         const ovr = Number(a.currentOvr) || 70;
+
         const age = Number(a.age) || 20;
+
         let pot = ovr;
+
         if (age < 21) pot += 5;
+
         else if (age <= 24) pot += 2;
+
         else if (age >= 32) pot -= 2;
+
         const margin = pot - ovr;
+
         const resale = (Number(a.marketValue) || 0) * (margin > 0 ? 1.6 : 1.0);
 
+
+
         return `
+
           <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+
             <td class="py-3 px-3 text-center font-bold text-slate-400 font-mono">${a.number || '-'}</td>
+
             
+
             <td class="py-3 px-3">
+
               <div class="flex items-center gap-2.5">
+
                 ${flagHtml}
+
                 <div>
+
                   <div class="font-extrabold text-slate-900 text-xs">${a.name}</div>
+
                   <div class="mt-0.5">${roleBadge}</div>
+
                 </div>
+
               </div>
+
             </td>
 
+
+
             <td class="py-3 px-3 text-center">
+
               <span class="inline-flex items-center gap-1.5 font-bold text-[11px] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+
                 ${a.pos} ${iconHtml}
+
               </span>
+
             </td>
+
+
 
             <td class="py-3 px-3 text-center text-slate-600 font-semibold">${a.age} anos</td>
 
+
+
             <td class="py-3 px-3 text-center font-black text-slate-900 text-sm">${a.currentOvr}</td>
 
+
+
             <td class="py-3 px-3">
+
               <div class="font-extrabold text-slate-900 text-xs">${formatCurrency(a.marketValue)}</div>
+
               <div class="text-[10px] text-emerald-600 font-semibold">Revenda: ${formatCurrency(resale)}</div>
+
             </td>
+
+
 
             <td class="py-3 px-3 text-slate-600 font-semibold text-xs">${formatCurrency(a.wage)}/sem</td>
 
+
+
             <td class="py-3 px-3 text-center text-slate-600 font-medium">${a.contractYears || 3} anos</td>
 
+
+
             <td class="py-3 px-3 text-center">
+
               <div class="text-indigo-600 font-bold text-xs">POT: ${pot}</div>
+
               <div class="text-[10px] text-slate-400 font-medium">(Margem: ${margin >= 0 ? '+'+margin : margin})</div>
+
             </td>
+
+
 
             <td class="py-3 px-2 text-center font-bold text-slate-800">${matches}</td>
+
             <td class="py-3 px-2 text-center font-bold text-amber-600">${a.goals || 0}</td>
+
             <td class="py-3 px-2 text-center font-bold text-blue-600">${a.assists || 0}</td>
+
             <td class="py-3 px-2 text-center font-bold text-emerald-600">${a.ssg || 0}</td>
+
             <td class="py-3 px-2 text-center font-bold text-yellow-600">${a.yellow || 0}</td>
+
             <td class="py-3 px-2 text-center font-bold text-rose-600">${a.red || 0}</td>
+
             <td class="py-3 px-2 text-center font-extrabold ${avg !== '-' ? 'text-purple-600' : 'text-slate-400'}">${avg}</td>
 
+
+
             <td class="py-3 px-3 text-right">
+
               <div class="flex items-center justify-end gap-1">
+
                 <button onclick="openStatsModal(${a.id})" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100" title="Editar Estatísticas (Jogos, Gols, Notas)"><i class="fa-solid fa-chart-simple"></i></button>
+
                 <button onclick="editAthlete(${a.id})" class="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="Editar Atleta"><i class="fa-solid fa-pen-to-square"></i></button>
+
                 <button onclick="deleteAthlete(${a.id})" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100" title="Remover"><i class="fa-solid fa-trash"></i></button>
+
               </div>
+
             </td>
+
           </tr>
+
         `;
+
       }).join('');
+
     }
+
+
 
     // CRUD ATLETAS & STATS
+
     function openAthleteModal() {
+
       document.getElementById('athleteForm').reset();
+
       document.getElementById('athId').value = "";
+
       document.getElementById('athleteModalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-emerald-600"></i> Cadastrar Atleta`;
+
       document.getElementById('athleteModal').classList.remove('hidden');
+
     }
+
+
 
     function closeAthleteModal() {
+
       document.getElementById('athleteModal').classList.add('hidden');
+
     }
+
+
 
     function toggleLoanClubInput() {
+
       const status = document.getElementById('athLoanStatus').value;
+
       document.getElementById('loanClubContainer').classList.toggle('hidden', status === 'NONE');
+
     }
+
+
 
     function editAthlete(id) {
+
       const a = state.athletes.find(p => p.id === id);
+
       if (!a) return;
+
       document.getElementById('athId').value = a.id;
+
       document.getElementById('athName').value = a.name;
+
       document.getElementById('athNumber').value = a.number || '';
+
       document.getElementById('athPos').value = a.pos;
+
       document.getElementById('athAge').value = a.age;
+
       document.getElementById('athNat').value = a.nat;
+
       document.getElementById('athOvr').value = a.currentOvr;
+
       document.getElementById('athInitialOvr').value = a.initialOvr;
+
       document.getElementById('athContract').value = a.contractYears || 3;
+
       document.getElementById('athRole').value = a.role || 'Importante';
+
       document.getElementById('athMarketValue').value = a.marketValue || 0;
+
       document.getElementById('athWage').value = a.wage || 0;
+
       document.getElementById('athLoanStatus').value = a.loanStatus || 'NONE';
+
       document.getElementById('athLoanClub').value = a.loanClub || '';
+
       toggleLoanClubInput();
 
+
+
       document.getElementById('athleteModalTitle').innerHTML = `<i class="fa-solid fa-user-pen text-indigo-600"></i> Editar Atleta`;
+
       document.getElementById('athleteModal').classList.remove('hidden');
+
     }
+
+
 
     function saveAthleteData(e) {
+
       if (e && e.preventDefault) e.preventDefault();
+
       const idVal = document.getElementById('athId').value;
+
       const id = idVal ? Number(idVal) : Date.now();
 
+
+
       const ovr = Number(document.getElementById('athOvr').value) || 70;
+
       const initialOvr = Number(document.getElementById('athInitialOvr').value) || ovr;
+
       const rawNumber = document.getElementById('athNumber').value;
 
+
+
       const athleteObj = {
+
         id: id,
+
         name: document.getElementById('athName').value.trim(),
+
         number: rawNumber !== '' ? rawNumber : '-',
+
         pos: document.getElementById('athPos').value,
+
         age: Number(document.getElementById('athAge').value) || 20,
+
         nat: (document.getElementById('athNat').value || 'ING').toUpperCase().trim(),
+
         currentOvr: ovr,
+
         initialOvr: initialOvr,
+
         contractYears: Number(document.getElementById('athContract').value) || 3,
+
         role: document.getElementById('athRole').value,
+
         marketValue: Number(document.getElementById('athMarketValue').value) || 0,
+
         wage: Number(document.getElementById('athWage').value) || 0,
+
         loanStatus: document.getElementById('athLoanStatus').value,
+
         loanClub: document.getElementById('athLoanClub').value.trim()
+
       };
 
+
+
       const existingIndex = state.athletes.findIndex(a => a.id === id);
+
       if (existingIndex > -1) {
+
         const old = state.athletes[existingIndex];
+
         state.athletes[existingIndex] = Object.assign({}, old, athleteObj);
+
       } else {
+
         state.athletes.push(Object.assign(athleteObj, {
+
           matches: 0,
+
           goals: 0,
+
           assists: 0,
+
           ssg: 0,
+
           yellow: 0,
+
           red: 0,
+
           ratingSum: 0
+
         }));
+
       }
+
+
 
       closeAthleteModal();
+
       saveState();
+
       syncAllToCloud();
+
     }
+
+
 
     function deleteAthlete(id) {
+
       if (confirm('Tem a certeza de que deseja remover este atleta?')) {
+
         state.athletes = state.athletes.filter(a => a.id !== id);
+
         saveState();
+
         syncAllToCloud();
+
       }
+
     }
+
+
 
     function openStatsModal(id) {
+
       const a = state.athletes.find(p => p.id === id);
+
       if (!a) return;
+
       document.getElementById('statsPlayerId').value = a.id;
+
       document.getElementById('statsModalPlayerName').textContent = `${a.name} (${a.pos}) - OVR ${a.currentOvr}`;
+
       document.getElementById('statsMatches').value = a.matches;
+
       document.getElementById('statsGoals').value = a.goals;
+
       document.getElementById('statsAssists').value = a.assists;
+
       document.getElementById('statsSsg').value = a.ssg;
+
       document.getElementById('statsYellow').value = a.yellow;
+
       document.getElementById('statsRed').value = a.red;
+
       document.getElementById('statsAvgRating').value = a.matches > 0 ? (a.ratingSum / a.matches).toFixed(2) : '6.50';
+
       document.getElementById('statsModal').classList.remove('hidden');
+
     }
+
+
 
     function closeStatsModal() {
+
       document.getElementById('statsModal').classList.add('hidden');
+
     }
+
+
 
     function saveAthleteStats(e) {
+
       if (e && e.preventDefault) e.preventDefault();
+
       const pId = Number(document.getElementById('statsPlayerId').value);
+
       const a = state.athletes.find(p => p.id === pId);
+
       if (!a) return;
 
+
+
       const m = Number(document.getElementById('statsMatches').value) || 0;
+
       a.matches = m;
+
       a.goals = Number(document.getElementById('statsGoals').value) || 0;
+
       a.assists = Number(document.getElementById('statsAssists').value) || 0;
+
       a.ssg = Number(document.getElementById('statsSsg').value) || 0;
+
       a.yellow = Number(document.getElementById('statsYellow').value) || 0;
+
       a.red = Number(document.getElementById('statsRed').value) || 0;
+
       const avg = Number(document.getElementById('statsAvgRating').value) || 0;
+
       a.ratingSum = m > 0 ? (avg * m) : 0;
 
+
+
       closeStatsModal();
+
       saveState();
+
       syncAllToCloud();
+
     }
+
+
 
     // PARTIDAS
+
     function openMatchModal() {
+
       document.getElementById('matchEditId').value = '';
+
       document.getElementById('matchModalTitle').innerHTML = `<i class="fa-solid fa-futbol text-emerald-600"></i> Registar Nova Partida`;
+
       document.getElementById('saveMatchBtn').textContent = 'Guardar Partida';
 
+
+
       document.getElementById('matchOpponent').value = '';
+
       document.getElementById('matchMyScore').value = 0;
+
       document.getElementById('matchOppScore').value = 0;
+
       document.getElementById('goalDetailsContainer').innerHTML = `<p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>`;
 
+
+
       renderMatchAthletesPerformanceInputs();
+
       document.getElementById('matchModal').classList.remove('hidden');
+
     }
+
+
 
     function closeMatchModal() {
+
       document.getElementById('matchModal').classList.add('hidden');
+
     }
+
+
 
     function addGoalDetailRow(scorerId = '', assistId = '') {
+
       const emptyMsg = document.getElementById('emptyGoalsMsg');
+
       if (emptyMsg) emptyMsg.remove();
 
+
+
       const container = document.getElementById('goalDetailsContainer');
+
       const rowId = 'goal_' + Date.now() + Math.random().toString(36).substring(7);
+
       const playerOptions = state.athletes.map(a => `<option value="${a.id}">${a.name} (${a.pos})</option>`).join('');
 
+
+
       const div = document.createElement('div');
+
       div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs';
+
       div.id = rowId;
+
       div.innerHTML = `
+
         <div class="sm:col-span-5">
+
           <span class="text-[10px] text-slate-500 font-bold block">Marcador:</span>
+
           <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900">
+
             ${playerOptions}
+
           </select>
+
         </div>
+
         <div class="sm:col-span-5">
+
           <span class="text-[10px] text-slate-500 font-bold block">Assistência:</span>
+
           <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900">
+
             <option value="">Nenhuma / Individual</option>
+
             ${playerOptions}
+
           </select>
+
         </div>
+
         <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-2 sm:mt-0">
+
           <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs border border-rose-200">
+
             <i class="fa-solid fa-trash"></i>
+
           </button>
+
         </div>
+
       `;
+
       container.appendChild(div);
 
+
+
       if (scorerId) div.querySelector('.goal-scorer-select').value = scorerId;
+
       if (assistId) div.querySelector('.goal-assist-select').value = assistId;
 
+
+
       document.getElementById('matchMyScore').value = document.querySelectorAll('.goal-detail-row').length;
+
     }
+
+
 
     function removeGoalDetailRow(rowId) {
+
       document.getElementById(rowId)?.remove();
+
       const count = document.querySelectorAll('.goal-detail-row').length;
+
       document.getElementById('matchMyScore').value = count;
+
       if (count === 0) {
+
         document.getElementById('goalDetailsContainer').innerHTML = `<p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>`;
+
       }
+
     }
+
+
 
     function renderMatchAthletesPerformanceInputs() {
+
       const tbody = document.getElementById('matchAthletesPerformanceBody');
+
       tbody.innerHTML = state.athletes.map(a => `
+
         <tr class="hover:bg-slate-50">
+
           <td class="p-2 text-center">
+
             <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-emerald-600 w-4 h-4 cursor-pointer" onchange="toggleRatingField(${a.id})">
+
           </td>
+
           <td class="p-2">
+
             <div class="font-bold text-slate-900 text-xs">${a.name}</div>
+
             <div class="text-[10px] text-slate-500">${a.pos} • OVR ${a.currentOvr}</div>
+
           </td>
+
           <td class="p-2 text-center">
+
             <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-amber-600 font-bold disabled:opacity-30">
+
           </td>
+
           <td class="p-2 text-center">
+
             <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-yellow-600 font-bold disabled:opacity-30">
+
           </td>
+
           <td class="p-2 text-center">
+
             <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-rose-600 font-bold disabled:opacity-30">
+
           </td>
+
         </tr>
+
       `).join('');
+
     }
+
+
 
     function toggleRatingField(playerId) {
+
       const isChecked = document.getElementById(`played_${playerId}`).checked;
+
       const ratingIn = document.getElementById(`rating_${playerId}`);
+
       const yellowIn = document.getElementById(`yellow_${playerId}`);
+
       const redIn = document.getElementById(`red_${playerId}`);
 
+
+
       ratingIn.disabled = !isChecked;
+
       yellowIn.disabled = !isChecked;
+
       redIn.disabled = !isChecked;
 
+
+
       if (isChecked && !ratingIn.value) ratingIn.value = '6.5';
+
     }
 
+
+
     function editMatch(matchId) {
+
       const match = state.matches.find(m => m.id === matchId);
+
       if (!match) return;
 
+
+
       document.getElementById('matchEditId').value = match.id;
+
       document.getElementById('matchModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-indigo-600"></i> Editar Partida`;
+
       document.getElementById('saveMatchBtn').textContent = 'Atualizar Partida';
 
+
+
       document.getElementById('matchModalChamp').value = match.champId;
+
       document.getElementById('matchOpponent').value = match.opponent;
+
       document.getElementById('matchLocation').value = match.location;
+
       document.getElementById('matchMyScore').value = match.myScore;
+
       document.getElementById('matchOppScore').value = match.oppScore;
+
+
 
       renderMatchAthletesPerformanceInputs();
 
+
+
       (match.performances || []).forEach(p => {
+
         const chk = document.getElementById(`played_${p.playerId}`);
+
         if (chk) {
+
           chk.checked = true;
+
           toggleRatingField(p.playerId);
+
           document.getElementById(`rating_${p.playerId}`).value = p.rating || 6.5;
+
           document.getElementById(`yellow_${p.playerId}`).value = p.yellow || 0;
+
           document.getElementById(`red_${p.playerId}`).value = p.red || 0;
+
         }
+
       });
+
+
 
       const container = document.getElementById('goalDetailsContainer');
+
       container.innerHTML = '';
+
       if (!match.goals || match.goals.length === 0) {
+
         container.innerHTML = `<p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>`;
+
       } else {
+
         match.goals.forEach(g => {
+
           addGoalDetailRow(g.scorerId, g.assistId);
+
         });
+
       }
+
+
 
       document.getElementById('matchModal').classList.remove('hidden');
+
     }
 
+
+
     function saveMatchData() {
+
       const opponent = document.getElementById('matchOpponent').value.trim();
+
       if (!opponent) return alert('Por favor, informe a equipa adversária!');
 
+
+
       const editIdStr = document.getElementById('matchEditId').value;
+
       const isEditing = Boolean(editIdStr);
+
       const matchId = isEditing ? Number(editIdStr) : Date.now();
 
+
+
       if (isEditing) {
+
         const oldMatch = state.matches.find(m => m.id === matchId);
+
         if (oldMatch) {
+
           (oldMatch.performances || []).forEach(p => {
+
             const a = state.athletes.find(ath => ath.id === p.playerId);
+
             if (a) {
+
               a.matches = Math.max(0, (a.matches || 0) - 1);
+
               a.ratingSum = Math.max(0, (a.ratingSum || 0) - (p.rating || 0));
+
               a.yellow = Math.max(0, (a.yellow || 0) - (p.yellow || 0));
+
               a.red = Math.max(0, (a.red || 0) - (p.red || 0));
+
               if (oldMatch.oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes(a.pos)) {
+
                 a.ssg = Math.max(0, (a.ssg || 0) - 1);
+
               }
+
             }
+
           });
+
+
 
           (oldMatch.goals || []).forEach(g => {
+
             if (g.scorerId) {
+
               const sc = state.athletes.find(ath => ath.id === g.scorerId);
+
               if (sc) sc.goals = Math.max(0, (sc.goals || 0) - 1);
+
             }
+
             if (g.assistId) {
+
               const as = state.athletes.find(ath => ath.id === g.assistId);
+
               if (as) as.assists = Math.max(0, (as.assists || 0) - 1);
+
             }
+
           });
+
         }
+
       }
 
+
+
       const champId = document.getElementById('matchModalChamp').value;
+
       const activeChamp = state.championships.find(c => c.id === champId);
+
       const location = document.getElementById('matchLocation').value;
+
       const myScore = Number(document.getElementById('matchMyScore').value) || 0;
+
       const oppScore = Number(document.getElementById('matchOppScore').value) || 0;
 
+
+
       const goalDetails = [];
+
       document.querySelectorAll('.goal-detail-row').forEach(row => {
+
         const scorerId = Number(row.querySelector('.goal-scorer-select').value);
+
         const assistVal = row.querySelector('.goal-assist-select').value;
+
         const assistId = assistVal ? Number(assistVal) : null;
+
         goalDetails.push({ scorerId, assistId });
+
       });
 
+
+
       const performances = [];
+
       state.athletes.forEach(a => {
+
         const played = document.getElementById(`played_${a.id}`)?.checked;
+
         if (played) {
+
           const rating = Number(document.getElementById(`rating_${a.id}`).value) || 6.5;
+
           const yellow = Number(document.getElementById(`yellow_${a.id}`).value) || 0;
+
           const red = Number(document.getElementById(`red_${a.id}`).value) || 0;
+
+
 
           performances.push({ playerId: a.id, rating, yellow, red });
 
+
+
           a.matches = (a.matches || 0) + 1;
+
           a.ratingSum = (a.ratingSum || 0) + rating;
+
           a.yellow = (a.yellow || 0) + yellow;
+
           a.red = (a.red || 0) + red;
 
+
+
           if (oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes(a.pos)) {
+
             a.ssg = (a.ssg || 0) + 1;
+
           }
+
         }
+
       });
+
+
 
       goalDetails.forEach(g => {
+
         const scorer = state.athletes.find(a => a.id === g.scorerId);
+
         if (scorer) scorer.goals = (scorer.goals || 0) + 1;
+
         if (g.assistId) {
+
           const assister = state.athletes.find(a => a.id === g.assistId);
+
           if (assister) assister.assists = (assister.assists || 0) + 1;
+
         }
+
       });
 
+
+
       const matchRecord = {
+
         id: matchId,
+
         season: state.currentSeason,
+
         champId,
+
         champName: activeChamp ? activeChamp.name : '',
+
         opponent,
+
         location,
+
         myScore,
+
         oppScore,
+
         goals: goalDetails,
+
         performances,
+
         date: new Date().toLocaleDateString('pt-PT')
+
       };
 
+
+
       if (isEditing) {
+
         const idx = state.matches.findIndex(m => m.id === matchId);
+
         if (idx > -1) state.matches[idx] = matchRecord;
+
       } else {
+
         state.matches.unshift(matchRecord);
+
       }
+
+
 
       closeMatchModal();
+
       saveState();
+
       syncAllToCloud();
+
     }
+
+
 
     function deleteMatch(matchId) {
+
       if (confirm('Tem a certeza de que deseja eliminar esta partida? Suas estatísticas serão subtraídas dos atletas.')) {
+
         const match = state.matches.find(m => m.id === matchId);
+
         if (match) {
+
           (match.performances || []).forEach(p => {
+
             const a = state.athletes.find(ath => ath.id === p.playerId);
+
             if (a) {
+
               a.matches = Math.max(0, (a.matches || 0) - 1);
+
               a.ratingSum = Math.max(0, (a.ratingSum || 0) - (p.rating || 0));
+
               a.yellow = Math.max(0, (a.yellow || 0) - (p.yellow || 0));
+
               a.red = Math.max(0, (a.red || 0) - (p.red || 0));
+
               if (match.oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes(a.pos)) {
+
                 a.ssg = Math.max(0, (a.ssg || 0) - 1);
+
               }
+
             }
+
           });
+
+
 
           (match.goals || []).forEach(g => {
+
             if (g.scorerId) {
+
               const sc = state.athletes.find(ath => ath.id === g.scorerId);
+
               if (sc) sc.goals = Math.max(0, (sc.goals || 0) - 1);
+
             }
+
             if (g.assistId) {
+
               const as = state.athletes.find(ath => ath.id === g.assistId);
+
               if (as) as.assists = Math.max(0, (as.assists || 0) - 1);
+
             }
+
           });
+
         }
 
+
+
         state.matches = state.matches.filter(m => m.id !== matchId);
+
         saveState();
+
         syncAllToCloud();
+
       }
+
     }
 
+
+
     function renderMatchesList() {
+
       const list = document.getElementById('matchesList');
+
       const countLabel = document.getElementById('matchesCountLabel');
+
       const champMatches = state.matches.filter(m => m.champId === state.currentChampId && m.season === state.currentSeason);
+
+
 
       countLabel.textContent = `${champMatches.length} partidas nesta época`;
 
+
+
       if (champMatches.length === 0) {
+
         list.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 italic">Nenhum confronto registado neste torneio.</div>`;
+
         return;
+
       }
+
+
 
       list.innerHTML = champMatches.map(m => {
+
         const isWin = m.myScore > m.oppScore;
+
         const isDraw = m.myScore === m.oppScore;
+
         const badgeColor = isWin ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : (isDraw ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-rose-100 text-rose-800 border-rose-300');
+
         const badgeText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
 
+
+
         const scorersText = (m.goals || []).map(g => {
+
           const sc = state.athletes.find(a => a.id === g.scorerId)?.name || 'Autor';
+
           const as = g.assistId ? `(Ass: ${state.athletes.find(a => a.id === g.assistId)?.name || 'Passe'})` : '';
+
           return `${sc} ⚽ ${as}`;
+
         }).join(' • ');
 
+
+
         return `
+
           <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+
             <div class="space-y-1">
+
               <div class="flex items-center gap-2">
+
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${badgeText}</span>
+
                 <span class="text-xs font-semibold text-slate-500">${m.location} • ${m.date}</span>
+
               </div>
+
               <div class="text-base font-black text-slate-900 flex items-center gap-3 font-heading">
+
                 <span>${state.clubName}</span>
+
                 <span class="px-2.5 py-0.5 bg-white border border-slate-300 rounded text-emerald-700 shadow-xs">${m.myScore} - ${m.oppScore}</span>
+
                 <span class="text-slate-600">${m.opponent}</span>
+
               </div>
+
               ${scorersText ? `<div class="text-xs text-amber-700 font-semibold">${scorersText}</div>` : ''}
+
             </div>
+
             
+
             <div class="flex items-center gap-1 self-end sm:self-center">
+
               <button onclick="editMatch(${m.id})" class="p-2 text-indigo-600 hover:text-indigo-800 rounded hover:bg-indigo-50 transition" title="Editar Confronto">
+
                 <i class="fa-solid fa-pen-to-square"></i>
+
               </button>
+
               <button onclick="deleteMatch(${m.id})" class="p-2 text-rose-500 hover:text-rose-700 rounded hover:bg-rose-50 transition" title="Eliminar Jogo">
+
                 <i class="fa-solid fa-trash-can"></i>
+
               </button>
+
             </div>
+
           </div>
+
         `;
+
       }).join('');
+
     }
+
+
 
     // MANDO DE CAMPO
+
     function updateTourneyHomeAwayDashboard() {
+
       const homeMatches = state.matches.filter(m => m.location === 'CASA' && m.season === state.currentSeason);
+
       const awayMatches = state.matches.filter(m => m.location === 'FORA' && m.season === state.currentSeason);
 
+
+
       const calcStats = arr => {
+
         let v = 0, e = 0, d = 0, gp = 0, gc = 0;
+
         arr.forEach(m => {
+
           gp += Number(m.myScore) || 0;
+
           gc += Number(m.oppScore) || 0;
+
           if (m.myScore > m.oppScore) v++;
+
           else if (m.myScore === m.oppScore) e++;
+
           else d++;
+
         });
+
         const total = arr.length;
+
         const winRate = total > 0 ? Math.round((v / total) * 100) : 0;
+
         return { total, v, e, d, gp, gc, winRate };
+
       };
 
+
+
       const home = calcStats(homeMatches);
+
       const away = calcStats(awayMatches);
 
+
+
       document.getElementById('homeMatches').textContent = home.total;
+
       document.getElementById('homeRecord').textContent = `${home.v}-${home.e}-${home.d}`;
+
       document.getElementById('homeGoalsFor').textContent = home.gp;
+
       document.getElementById('homeGoalsAgainst').textContent = home.gc;
+
       document.getElementById('homeWinRate').textContent = `${home.winRate}% Vitórias`;
 
+
+
       document.getElementById('awayMatches').textContent = away.total;
+
       document.getElementById('awayRecord').textContent = `${away.v}-${away.e}-${away.d}`;
+
       document.getElementById('awayGoalsFor').textContent = away.gp;
+
       document.getElementById('awayGoalsAgainst').textContent = away.gc;
+
       document.getElementById('awayWinRate').textContent = `${away.winRate}% Vitórias`;
 
+
+
       const totalMatches = home.total + away.total;
+
       const totalWins = home.v + away.v;
+
       const globalRate = totalMatches > 0 ? Math.round((totalWins / totalMatches) * 100) : 0;
+
       document.getElementById('tourneyEfficiency').textContent = `Aproveitamento: ${globalRate}%`;
 
+
+
       const ctx = document.getElementById('homeAwayCompareChart')?.getContext('2d');
+
       if (homeAwayChartInstance) homeAwayChartInstance.destroy();
+
       if (ctx) {
+
         homeAwayChartInstance = new Chart(ctx, {
+
           type: 'bar',
+
           data: {
+
             labels: ['Vitórias', 'Empates', 'Derrotas', 'Gols Pró', 'Gols Sofridos'],
+
             datasets: [
+
               { label: 'Em Casa', data: [home.v, home.e, home.d, home.gp, home.gc], backgroundColor: '#10b981' },
+
               { label: 'Fora de Casa', data: [away.v, away.e, away.d, away.gp, away.gc], backgroundColor: '#6366f1' }
+
             ]
+
           },
+
           options: { responsive: true, maintainAspectRatio: false }
+
         });
+
       }
+
     }
+
+
 
     // TRANSFERÊNCIAS (COMPRA E VENDA)
+
     function openTransferModal(type = 'BUY') {
+
       document.getElementById('transCurrencySymbol').textContent = state.currency || '€';
+
       setTransferType(type);
+
       document.getElementById('transAmount').value = '';
+
       document.getElementById('transferModal').classList.remove('hidden');
+
     }
+
+
 
     function closeTransferModal() {
+
       document.getElementById('transferModal').classList.add('hidden');
+
     }
+
+
 
     function setTransferType(type) {
+
       document.getElementById('transType').value = type;
+
       const tabBuy = document.getElementById('tabBtnBuy');
+
       const tabSell = document.getElementById('tabBtnSell');
+
       const buySec = document.getElementById('transferBuySection');
+
       const sellSec = document.getElementById('transferSellSection');
+
       const submitBtn = document.getElementById('transSubmitBtn');
+
       const helper = document.getElementById('transHelperLabel');
 
+
+
       if (type === 'BUY') {
+
         tabBuy.className = 'flex-1 py-3 text-center border-b-2 border-emerald-600 text-emerald-700 bg-white transition flex items-center justify-center gap-2';
+
         tabSell.className = 'flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2';
+
         buySec.classList.remove('hidden');
+
         sellSec.classList.add('hidden');
+
         submitBtn.className = 'px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition';
+
         submitBtn.textContent = 'Confirmar Compra';
+
         helper.textContent = 'definirá o valor de mercado inicial';
+
       } else {
+
         tabSell.className = 'flex-1 py-3 text-center border-b-2 border-rose-600 text-rose-700 bg-white transition flex items-center justify-center gap-2';
+
         tabBuy.className = 'flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2';
+
         buySec.classList.add('hidden');
+
         sellSec.classList.remove('hidden');
+
         submitBtn.className = 'px-5 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition';
+
         submitBtn.textContent = 'Confirmar Venda';
+
         helper.textContent = 'acrescentará à verba de transferências';
+
         populateSellAthletesSelect();
+
       }
+
     }
+
+
 
     function populateSellAthletesSelect() {
+
       const select = document.getElementById('sellAthleteId');
+
       if (!select) return;
+
       if (state.athletes.length === 0) {
+
         select.innerHTML = '<option value="">Nenhum atleta no plantel</option>';
+
         document.getElementById('sellAthletePreview').classList.add('hidden');
+
         return;
+
       }
+
       select.innerHTML = state.athletes.map(a => `
+
         <option value="${a.id}">${a.name} (${a.pos}) - OVR ${a.currentOvr}</option>
+
       `).join('');
+
       onAthleteSellSelectChange();
+
     }
+
+
 
     function onAthleteSellSelectChange() {
+
       const athleteId = Number(document.getElementById('sellAthleteId').value);
+
       const athlete = state.athletes.find(a => a.id === athleteId);
+
       const preview = document.getElementById('sellAthletePreview');
 
+
+
       if (!athlete) {
+
         preview.classList.add('hidden');
+
         return;
+
       }
+
+
 
       preview.classList.remove('hidden');
+
       document.getElementById('sellPreviewName').textContent = `${athlete.name} • #${athlete.number || '-'}`;
+
       document.getElementById('sellPreviewDetails').textContent = `${athlete.pos} | ${athlete.age} anos | OVR ${athlete.currentOvr} | ${athlete.contractYears || 3} anos de contrato`;
+
       document.getElementById('sellPreviewMarketValue').textContent = `Valor de Mercado Atual: ${formatCurrency(athlete.marketValue)}`;
 
+
+
       if (!document.getElementById('transAmount').value) {
+
         document.getElementById('transAmount').value = athlete.marketValue || '';
+
       }
+
     }
 
+
+
     function handleTransferSubmit(e) {
+
       if (e && e.preventDefault) e.preventDefault();
 
+
+
       const type = document.getElementById('transType').value;
+
       const amount = Number(document.getElementById('transAmount').value) || 0;
+
       if (amount <= 0) return alert('Por favor, informe um valor de transferência válido!');
 
+
+
       if (state.budget === undefined) state.budget = 0;
+
       if (state.transferAcquired === undefined) state.transferAcquired = 0;
+
       if (!Array.isArray(state.transfersHistory)) state.transfersHistory = [];
-      if (!Array.isArray(state.departedAthletes)) state.departedAthletes = [];
+
+
 
       if (type === 'BUY') {
+
         const name = document.getElementById('buyName').value.trim();
+
         const originClub = document.getElementById('buyOriginClub').value.trim() || 'Mercado Externo';
+
         if (!name) return alert('Por favor, indique o nome do atleta!');
+
+
 
         state.budget -= amount;
 
+
+
         const newAthlete = {
+
           id: Date.now(),
+
           name: name,
+
           number: 0,
+
           pos: document.getElementById('buyPos').value,
+
           age: Number(document.getElementById('buyAge').value) || 22,
+
           nat: (document.getElementById('buyNat').value || 'ING').toUpperCase().trim(),
+
           role: 'Importante',
+
           initialOvr: Number(document.getElementById('buyOvr').value) || 75,
+
           currentOvr: Number(document.getElementById('buyOvr').value) || 75,
+
           contractYears: Number(document.getElementById('buyContract').value) || 3,
+
           loanStatus: 'NONE',
+
           loanClub: '',
+
           marketValue: amount,
+
           wage: Number(document.getElementById('buyWage').value) || 5000,
+
           matches: 0,
+
           goals: 0,
+
           assists: 0,
+
           ssg: 0,
+
           yellow: 0,
+
           red: 0,
+
           ratingSum: 0
+
         };
+
+
 
         state.athletes.push(newAthlete);
 
+
+
         state.transfersHistory.unshift({
+
           id: Date.now(),
+
           type: 'COMPRA',
+
           playerName: name,
+
           club: originClub,
+
           amount: amount,
+
           season: state.currentSeason,
+
           date: new Date().toLocaleDateString('pt-PT')
+
         });
 
+
+
         alert(`Contratação realizada! ${name} integrado ao plantel.`);
+
       } else {
+
         const athleteId = Number(document.getElementById('sellAthleteId').value);
+
         const destClub = document.getElementById('sellDestClub').value.trim() || 'Outro Clube';
+
         const athleteIndex = state.athletes.findIndex(a => a.id === athleteId);
+
+
 
         if (athleteIndex === -1) return alert('Atleta não selecionado ou inexistente!');
 
+
+
         const soldAthlete = state.athletes[athleteIndex];
 
+
+
         state.budget += amount;
+
         state.transferAcquired += amount;
 
-        // Guarda histórico para o Memorial dos Atletas
-        state.departedAthletes.push({
-          id: soldAthlete.id,
-          name: soldAthlete.name,
-          pos: soldAthlete.pos,
-          nat: soldAthlete.nat,
-          initialOvr: soldAthlete.initialOvr || soldAthlete.currentOvr,
-          currentOvr: soldAthlete.currentOvr,
-          destClub: destClub,
-          soldSeason: state.currentSeason,
-          transferAmount: amount,
-          careerMatches: Number(soldAthlete.matches) || 0,
-          careerGoals: Number(soldAthlete.goals) || 0,
-          careerAssists: Number(soldAthlete.assists) || 0,
-          careerSsg: Number(soldAthlete.ssg) || 0,
-          careerRatingSum: Number(soldAthlete.ratingSum) || 0
-        });
+
 
         state.transfersHistory.unshift({
+
           id: Date.now(),
+
           type: 'VENDA',
+
           playerName: soldAthlete.name,
+
           club: destClub,
+
           amount: amount,
+
           season: state.currentSeason,
+
           date: new Date().toLocaleDateString('pt-PT')
+
         });
 
+
+
         state.athletes.splice(athleteIndex, 1);
+
         alert(`Venda efetuada com sucesso! ${soldAthlete.name} transferido para ${destClub} por ${formatCurrency(amount)}.`);
+
       }
+
+
 
       closeTransferModal();
+
       saveState();
+
       syncAllToCloud();
+
     }
+
+
 
     // TORNEIOS & CLUBE
+
     function renderChampionshipsSelect() {
+
       const select = document.getElementById('champSelect');
+
       const modalSelect = document.getElementById('matchModalChamp');
+
       const optionsHtml = state.championships.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 
+
+
       select.innerHTML = optionsHtml;
+
       modalSelect.innerHTML = optionsHtml;
 
+
+
       if (!state.currentChampId && state.championships[0]) {
+
         state.currentChampId = state.championships[0].id;
+
       }
+
       select.value = state.currentChampId;
+
       updateTrophyDisplay();
+
     }
+
+
 
     function onChampSelectChange() {
+
       state.currentChampId = document.getElementById('champSelect').value;
+
       updateTrophyDisplay();
+
       renderMatchesList();
+
       updateTourneyHomeAwayDashboard();
+
     }
+
+
 
     function updateTrophyDisplay() {
+
       const activeChamp = state.championships.find(c => c.id === state.currentChampId);
+
       const img = document.getElementById('trophyImg');
+
       const def = document.getElementById('trophyDefaultIcon');
 
+
+
       if (activeChamp && activeChamp.trophyUrl && activeChamp.trophyUrl.trim() !== '') {
+
         img.src = activeChamp.trophyUrl;
+
         img.classList.remove('hidden');
+
         def.classList.add('hidden');
+
       } else {
+
         img.classList.add('hidden');
+
         def.classList.remove('hidden');
+
       }
+
     }
+
+
 
     function openNewChampModal() {
+
       document.getElementById('newChampName').value = '';
+
       document.getElementById('newChampTrophyUrl').value = '';
+
       document.getElementById('champModal').classList.remove('hidden');
+
     }
+
+
 
     function closeNewChampModal() {
+
       document.getElementById('champModal').classList.add('hidden');
+
     }
+
+
 
     function saveNewChamp() {
+
       const name = document.getElementById('newChampName').value.trim();
+
       const trophyUrl = document.getElementById('newChampTrophyUrl').value.trim();
+
       const format = document.getElementById('newChampFormat').value;
 
+
+
       if (!name) return alert('Informe o nome do torneio!');
+
       const newC = { id: 'c_' + Date.now(), name, format, trophyUrl };
+
       state.championships.push(newC);
+
       state.currentChampId = newC.id;
 
+
+
       closeNewChampModal();
+
       saveState();
+
       syncAllToCloud();
+
     }
+
+
 
     function openChangeClubModal() {
+
       document.getElementById('newClubNameInput').value = state.clubName;
+
       document.getElementById('newClubNicknameInput').value = state.clubNickname || '';
+
       document.getElementById('newClubMottoInput').value = state.clubMotto || '';
+
       document.getElementById('newClubLogoUrlInput').value = state.clubLogoUrl || '';
+
       document.getElementById('newClubStadiumUrlInput').value = state.clubStadiumUrl || '';
+
       document.getElementById('newClubCurrencyInput').value = state.currency || '€';
+
       document.getElementById('newClubBudgetInput').value = state.budget;
+
       document.getElementById('newClubWageInput').value = state.wageBudget;
+
       document.getElementById('changeClubModal').classList.remove('hidden');
+
     }
+
+
 
     function closeChangeClubModal() {
+
       document.getElementById('changeClubModal').classList.add('hidden');
+
     }
+
+
 
     function confirmChangeClub() {
+
       const name = document.getElementById('newClubNameInput').value.trim();
+
       if (!name) return alert('Introduza o nome do clube!');
 
+
+
       state.clubName = name;
+
       state.clubNickname = document.getElementById('newClubNicknameInput').value.trim();
+
       state.clubMotto = document.getElementById('newClubMottoInput').value.trim();
+
       state.clubLogoUrl = document.getElementById('newClubLogoUrlInput').value.trim();
+
       state.clubStadiumUrl = document.getElementById('newClubStadiumUrlInput').value.trim();
+
       state.currency = document.getElementById('newClubCurrencyInput').value;
+
       state.budget = Number(document.getElementById('newClubBudgetInput').value) || 0;
+
       state.wageBudget = Number(document.getElementById('newClubWageInput').value) || 0;
 
+
+
       closeChangeClubModal();
+
       saveState();
+
       syncAllToCloud();
+
     }
 
-    // ==========================================
-    // NOVO: MODAL DINÂMICO DE VIRADA & CLASSIFICAÇÕES
-    // ==========================================
+
+
     function openSeasonAdvanceModal() {
+
       const parts = state.currentSeason.split('/');
+
       if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+
         document.getElementById('nextSeasonNameInput').value = `${Number(parts[0])+1}/${Number(parts[1])+1}`;
+
       } else {
+
         document.getElementById('nextSeasonNameInput').value = '2026/2027';
-      }
 
-      document.getElementById('advanceCurrentSeasonLabel').textContent = state.currentSeason;
-
-      // Renderiza as opções de classificação para cada competição cadastrada
-      const container = document.getElementById('seasonTournamentsRankingContainer');
-      if (state.championships.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 italic">Nenhum campeonato cadastrado.</p>`;
-      } else {
-        container.innerHTML = state.championships.map(c => `
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 tourney-rank-card" data-champ-id="${c.id}" data-champ-name="${c.name}" data-trophy-url="${c.trophyUrl || ''}">
-            <div class="flex items-center gap-2.5">
-              <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0">
-                <i class="fa-solid fa-trophy"></i>
-              </div>
-              <div>
-                <span class="font-bold text-slate-900 text-xs block">${c.name}</span>
-                <span class="text-[10px] text-slate-500 font-semibold uppercase">${c.format === 'PONTOS' ? 'Pontos Corridos' : 'Eliminatória / Taça'}</span>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2 flex-wrap">
-              <div>
-                <label class="text-[10px] font-bold text-slate-500 block">Classificação Final:</label>
-                <select class="rank-position-select bg-white border border-slate-300 rounded-lg p-1.5 text-xs font-semibold text-slate-800">
-                  <option value="CAMPEAO" selected>🏆 Campeão (Título)</option>
-                  <option value="VICE">🥈 Vice-Campeão</option>
-                  <option value="3º Lugar">🥉 3º Lugar</option>
-                  <option value="4º Lugar">4º Lugar</option>
-                  <option value="5º Lugar">5º Lugar</option>
-                  <option value="Semifinal">Semifinalista</option>
-                  <option value="Quartas de Final">Quartas de Final</option>
-                  <option value="Oitavas de Final">Oitavas de Final</option>
-                  <option value="Fase de Grupos">Fase de Grupos</option>
-                  <option value="Meio de Tabela">Meio de Tabela</option>
-                  <option value="Zona de Rebaixamento">Despromovido / Rebaixado</option>
-                </select>
-              </div>
-
-              <div class="flex items-center gap-1.5 pt-4">
-                <input type="checkbox" id="wonTrophy_${c.id}" class="won-trophy-check w-4 h-4 accent-amber-600 rounded cursor-pointer" checked>
-                <label for="wonTrophy_${c.id}" class="text-[11px] font-bold text-amber-800 cursor-pointer">Adicionar Taça</label>
-              </div>
-            </div>
-          </div>
-        `).join('');
       }
 
       document.getElementById('seasonAdvanceModal').classList.remove('hidden');
+
     }
+
+
 
     function closeSeasonAdvanceModal() {
+
       document.getElementById('seasonAdvanceModal').classList.add('hidden');
+
     }
+
+
 
     function confirmAdvanceSeason() {
+
       const nextSeason = document.getElementById('nextSeasonNameInput').value.trim();
+
       if (!nextSeason) return alert('Defina a nova época!');
 
-      if (!Array.isArray(state.seasonsHistory)) state.seasonsHistory = [];
-      if (!Array.isArray(state.trophiesWon)) state.trophiesWon = [];
 
-      // 1. Coleta os resultados dos torneios e novos títulos
-      const rankings = [];
-      const newTrophiesThisSeason = [];
 
-      document.querySelectorAll('.tourney-rank-card').forEach(card => {
-        const champId = card.getAttribute('data-champ-id');
-        const champName = card.getAttribute('data-champ-name');
-        const trophyUrl = card.getAttribute('data-trophy-url');
-        const rankPos = card.querySelector('.rank-position-select').value;
-        const isTrophyChecked = card.querySelector('.won-trophy-check').checked;
-
-        rankings.push({
-          champId,
-          champName,
-          position: rankPos,
-          isChampion: rankPos === 'CAMPEAO'
-        });
-
-        if (isTrophyChecked && (rankPos === 'CAMPEAO' || rankPos.includes('Campeão'))) {
-          const trophyRecord = {
-            id: 'trophy_' + Date.now() + Math.random().toString(36).substring(7),
-            champId,
-            champName,
-            season: state.currentSeason,
-            trophyUrl: trophyUrl || '',
-            date: new Date().toLocaleDateString('pt-PT')
-          };
-          state.trophiesWon.push(trophyRecord);
-          newTrophiesThisSeason.push(trophyRecord);
-        }
-      });
-
-      // 2. Extrai métricas e desempenhos por setor da época atual
-      const seasonMatches = state.matches.filter(m => m.season === state.currentSeason);
-      let teamWins = 0, teamDraws = 0, teamLosses = 0, totalGp = 0, totalGc = 0;
-      seasonMatches.forEach(m => {
-        totalGp += Number(m.myScore) || 0;
-        totalGc += Number(m.oppScore) || 0;
-        if (m.myScore > m.oppScore) teamWins++;
-        else if (m.myScore === m.oppScore) teamDraws++;
-        else teamLosses++;
-      });
-      const totalGames = seasonMatches.length;
-      const winRate = totalGames > 0 ? Math.round((teamWins / totalGames) * 100) : 0;
-
-      // Setores
-      const defPlayers = state.athletes.filter(a => ['GOL', 'ZAG', 'LD', 'LE'].includes(a.pos));
-      const meiPlayers = state.athletes.filter(a => ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos));
-      const ataPlayers = state.athletes.filter(a => ['PD', 'PE', 'ATA', 'SA'].includes(a.pos));
-
-      const calcAvgOvr = arr => arr.length ? (arr.reduce((s, a) => s + Number(a.currentOvr), 0) / arr.length).toFixed(1) : '0.0';
-      const calcTotalGoals = arr => arr.reduce((s, a) => s + (Number(a.goals) || 0), 0);
-      const calcTotalSsg = arr => arr.reduce((s, a) => s + (Number(a.ssg) || 0), 0);
-
-      // Líderes e MVP
-      const bestScorer = [...state.athletes].sort((a, b) => (Number(b.goals) || 0) - (Number(a.goals) || 0))[0];
-      const bestAssister = [...state.athletes].sort((a, b) => (Number(b.assists) || 0) - (Number(a.assists) || 0))[0];
-
-      // 3. Monta o snapshot imutável da temporada encerrada
-      const seasonSnapshot = {
-        season: state.currentSeason,
-        closedAt: new Date().toLocaleDateString('pt-PT'),
-        clubName: state.clubName,
-        rankings: rankings,
-        stats: {
-          games: totalGames,
-          wins: teamWins,
-          draws: teamDraws,
-          losses: teamLosses,
-          goalsFor: totalGp,
-          goalsAgainst: totalGc,
-          winRate: winRate,
-          budgetFinal: state.budget,
-          wageFinal: state.athletes.reduce((s, a) => s + (Number(a.wage) || 0), 0)
-        },
-        sectors: {
-          defenseAvgOvr: calcAvgOvr(defPlayers),
-          defenseSsg: calcTotalSsg(defPlayers),
-          defenseGoalsAgainst: totalGc,
-          midfieldAvgOvr: calcAvgOvr(meiPlayers),
-          midfieldGoals: calcTotalGoals(meiPlayers),
-          attackAvgOvr: calcAvgOvr(ataPlayers),
-          attackGoals: calcTotalGoals(ataPlayers)
-        },
-        highlights: {
-          topScorer: bestScorer ? `${bestScorer.name} (${bestScorer.goals || 0} Gols)` : '-',
-          topAssister: bestAssister ? `${bestAssister.name} (${bestAssister.assists || 0} Ass.)` : '-'
-        },
-        squadSnapshot: state.athletes.map(a => ({
-          id: a.id,
-          name: a.name,
-          number: a.number,
-          pos: a.pos,
-          nat: a.nat,
-          finalOvr: a.currentOvr,
-          matches: Number(a.matches) || 0,
-          goals: Number(a.goals) || 0,
-          assists: Number(a.assists) || 0,
-          ssg: Number(a.ssg) || 0,
-          avgRating: a.matches > 0 ? (a.ratingSum / a.matches).toFixed(2) : '-'
-        }))
-      };
-
-      // Guarda snapshot nas temporadas anteriores
-      state.seasonsHistory.unshift(seasonSnapshot);
-
-      // 4. Executa a virada do plantel para a nova época
       state.currentSeason = nextSeason;
+
       state.athletes.forEach(a => {
+
         a.age += 1;
+
         a.initialOvr = a.currentOvr;
+
         a.contractYears = Math.max(0, (a.contractYears || 3) - 1);
+
         a.matches = 0;
+
         a.goals = 0;
+
         a.assists = 0;
+
         a.ssg = 0;
+
         a.yellow = 0;
+
         a.red = 0;
+
         a.ratingSum = 0;
+
       });
+
+
 
       closeSeasonAdvanceModal();
+
       saveState();
+
       syncAllToCloud();
 
-      alert(`Temporada arquivada no Memorial e nova época iniciada: ${nextSeason}! Títulos registrados: ${newTrophiesThisSeason.length}.`);
+      alert(`Virada de época confirmada para ${nextSeason}!`);
+
     }
 
-    // ==========================================
-    // NOVO: RENDERIZAÇÃO DA ABA DE HISTÓRICO & MEMORIAL
-    // ==========================================
-    function setPlayerHistoryFilter(f) {
-      currentHistPlayerFilter = f;
-      document.getElementById('filterHistAll').className = f === 'ALL' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200';
-      document.getElementById('filterHistCurrent').className = f === 'CURRENT' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200';
-      document.getElementById('filterHistPast').className = f === 'PAST' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200';
-      renderPlayerMemorialTable();
-    }
 
-    function renderHistoryTab() {
-      renderTrophyRoom();
-      renderHistoryCharts();
-      renderSectorHistoryTable();
-      renderPlayerMemorialTable();
-      renderClosedSeasonsCards();
-    }
 
-    function renderTrophyRoom() {
-      const grid = document.getElementById('trophyRoomGrid');
-      const countEl = document.getElementById('histTotalTrophiesCount');
-      if (!grid) return;
+    // SINCRONIZAÇÃO COMPLETA GOOGLE SHEETS (COLUNAS A ATÉ U)
 
-      const trophies = state.trophiesWon || [];
-      if (countEl) countEl.textContent = trophies.length;
+async function loadFromGoogleSheets() {
+  const statusEl = document.getElementById('syncStatus');
+  if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A sincronizar...`;
 
-      if (trophies.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full py-8 text-center text-xs text-amber-900/60 font-semibold bg-white/50 border border-amber-200/50 rounded-xl">
-            <i class="fa-solid fa-trophy text-amber-300 text-2xl mb-1 block"></i>
-            Ainda não foram arquivados títulos oficiais. Marque os títulos ao encerrar cada temporada!
-          </div>
-        `;
-        return;
+  try {
+    const res = await fetch(`${API_URL}?action=getAll`);
+    const json = await res.json();
+
+    if (json.status === 'success' && json.data) {
+      const remote = json.data;
+
+      // 1. Dados do Clube
+      if (remote.clube && remote.clube.length > 0) {
+        const cl = remote.clube[0];
+        state.clubName = cl.nome || state.clubName;
+        state.clubLogoUrl = cl.logo_url || state.clubLogoUrl;
+        state.currentSeason = cl.temporada || state.currentSeason;
+        state.budget = Number(cl.verba) || state.budget;
+        state.wageBudget = Number(cl.teto_salarial) || state.wageBudget;
       }
 
-      grid.innerHTML = trophies.map(t => `
-        <div class="bg-white border border-amber-200 p-3 rounded-xl text-center shadow-xs flex flex-col items-center justify-between hover:scale-102 transition">
-          <div class="w-12 h-12 flex items-center justify-center my-1">
-            ${t.trophyUrl ? `<img src="${t.trophyUrl}" class="max-h-full max-w-full object-contain" alt="Taça">` : `<i class="fa-solid fa-trophy text-amber-500 text-2xl"></i>`}
-          </div>
-          <div>
-            <span class="text-xs font-black text-slate-900 line-clamp-1" title="${t.champName}">${t.champName}</span>
-            <span class="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 mt-1 inline-block">${t.season}</span>
-          </div>
-        </div>
-      `).join('');
-    }
+      // 2. Mapeamento Rigoroso das 21 Colunas da Aba Atletas
+      if (Array.isArray(remote.atletas)) {
+        state.athletes = remote.atletas.map(a => {
+          // Garante leitura tanto por nome da propriedade quanto por índice de array
+          const id = a.id !== undefined ? Number(a.id) : (Number(a[0]) || Date.now());
+          const numero = a.numero !== undefined ? a.numero : (a[1] !== undefined ? a[1] : '-');
+          const nome = a.nome || a[2] || 'Sem Nome';
+          const pos = (a.pos || a[3] || 'MEI').toUpperCase().trim();
+          const idade = Number(a.idade !== undefined ? a.idade : a[4]) || 20;
+          const nat = (a.nat || a[5] || 'ENG').toUpperCase().trim();
+          const role = a.role || a[6] || 'IMPORTANTE';
+          const ovr_inicial = Number(a.ovr_inicial !== undefined ? a.ovr_inicial : a[7]) || 60;
+          const currentOvr = Number(a.ovr !== undefined ? a.ovr : a[8]) || ovr_inicial;
+          const contrato = Number(a.contrato !== undefined ? a.contrato : a[9]) || 2;
+          
+          const rawLoan = a.emprestimo_status !== undefined ? a.emprestimo_status : a[10];
+          const loanStatus = (rawLoan === 1 || rawLoan === '1' || rawLoan === 'LOAN_OUT') ? 'LOAN_OUT' : 'NONE';
+          const loanClub = a.emprestimo_clube || a[11] || '';
 
-    function renderHistoryCharts() {
-      const seasons = [...(state.seasonsHistory || [])].reverse();
-      
-      const labels = seasons.map(s => s.season);
-      const winRates = seasons.map(s => s.stats.winRate);
-      const goalsFor = seasons.map(s => s.stats.goalsFor);
-      const goalsAgainst = seasons.map(s => s.stats.goalsAgainst);
+          // VALORES MONETÁRIOS (Colunas M e N)
+          const marketValue = Number(a.valor_mercado !== undefined ? a.valor_mercado : a[12]) || 0;
+          const wage = Number(a.salario !== undefined ? a.salario : a[13]) || 0;
 
-      // Gráfico de Aproveitamento
-      const ctx1 = document.getElementById('seasonsWinRateChart')?.getContext('2d');
-      if (seasonsWinRateChartInstance) seasonsWinRateChartInstance.destroy();
-      if (ctx1) {
-        seasonsWinRateChartInstance = new Chart(ctx1, {
-          type: 'line',
-          data: {
-            labels: labels.length ? labels : ['Sem dados'],
-            datasets: [{
-              label: 'Aproveitamento (%)',
-              data: winRates.length ? winRates : [0],
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
-              fill: true,
-              tension: 0.3,
-              borderWidth: 2.5,
-              pointRadius: 4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: { y: { min: 0, max: 100 } }
-          }
+          // ESTATÍSTICAS REAIS (Colunas O até U)
+          const matches = Number(a.jogos !== undefined ? a.jogos : a[14]) || 0;
+          const goals = Number(a.gols !== undefined ? a.gols : a[15]) || 0;
+          const assists = Number(a.assists !== undefined ? a.assists : a[16]) || 0;
+          const ssg = Number(a.ssg !== undefined ? a.ssg : a[17]) || 0;
+          const yellow = Number(a.ca !== undefined ? a.ca : a[18]) || 0;
+          const red = Number(a.cv !== undefined ? a.cv : a[19]) || 0;
+          const ratingSum = Number(a.nota_soma !== undefined ? a.nota_soma : a[20]) || 0;
+
+          return {
+            id,
+            number: numero,
+            name: nome,
+            pos,
+            age: idade,
+            nat,
+            role,
+            initialOvr: ovr_inicial,
+            currentOvr,
+            contractYears: contrato,
+            loanStatus,
+            loanClub,
+            marketValue,
+            wage,
+            matches,
+            goals,
+            assists,
+            ssg,
+            yellow,
+            red,
+            ratingSum
+          };
         });
       }
 
-      // Gráfico de Gols Pró x Sofridos
-      const ctx2 = document.getElementById('seasonsGoalsChart')?.getContext('2d');
-      if (seasonsGoalsChartInstance) seasonsGoalsChartInstance.destroy();
-      if (ctx2) {
-        seasonsGoalsChartInstance = new Chart(ctx2, {
-          type: 'bar',
-          data: {
-            labels: labels.length ? labels : ['Sem dados'],
-            datasets: [
-              { label: 'Gols Pró', data: goalsFor.length ? goalsFor : [0], backgroundColor: '#3b82f6', borderRadius: 4 },
-              { label: 'Gols Sofridos', data: goalsAgainst.length ? goalsAgainst : [0], backgroundColor: '#f43f5e', borderRadius: 4 }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false
-          }
-        });
-      }
-    }
-
-    function renderSectorHistoryTable() {
-      const tbody = document.getElementById('sectorHistoryTableBody');
-      if (!tbody) return;
-
-      const seasons = state.seasonsHistory || [];
-      if (seasons.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-xs text-slate-400 italic">Nenhuma época encerrada registada no histórico.</td></tr>`;
-        return;
+      // 3. Partidas (Apenas as que vierem reais da planilha)
+      if (Array.isArray(remote.partidas)) {
+        state.matches = remote.partidas.map(m => ({
+          id: Number(m.id) || Date.now(),
+          season: m.temporada || state.currentSeason,
+          champId: m.campeonato || state.currentChampId,
+          opponent: m.adversario,
+          location: m.mando || 'CASA',
+          myScore: Number(m.gols_pro) || 0,
+          oppScore: Number(m.gols_contra) || 0,
+          date: m.data || '',
+          goals: typeof m.detalhes_gols === 'string' ? JSON.parse(m.detalhes_gols || '[]') : (m.detalhes_gols || []),
+          performances: typeof m.detalhes_notas === 'string' ? JSON.parse(m.detalhes_notas || '[]') : (m.detalhes_notas || [])
+        }));
+      } else {
+        state.matches = [];
       }
 
-      tbody.innerHTML = seasons.map(s => `
-        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-          <td class="py-2.5 px-3 font-bold text-slate-900">${s.season}</td>
-          <td class="py-2.5 px-3 text-center text-blue-900 font-bold">${s.sectors?.defenseAvgOvr || '-'}</td>
-          <td class="py-2.5 px-3 text-center text-rose-600 font-bold">${s.sectors?.defenseGoalsAgainst ?? s.stats.goalsAgainst}</td>
-          <td class="py-2.5 px-3 text-center text-amber-900 font-bold">${s.sectors?.midfieldAvgOvr || '-'}</td>
-          <td class="py-2.5 px-3 text-center text-amber-700 font-bold">${s.sectors?.midfieldGoals ?? '-'}</td>
-          <td class="py-2.5 px-3 text-center text-rose-900 font-bold">${s.sectors?.attackAvgOvr || '-'}</td>
-          <td class="py-2.5 px-3 text-center text-emerald-700 font-bold">${s.sectors?.attackGoals ?? '-'}</td>
-          <td class="py-2.5 px-3 text-center text-emerald-600 font-black">${s.sectors?.defenseSsg ?? '-'}</td>
-          <td class="py-2.5 px-3 text-right font-black text-slate-900">${s.stats.winRate}%</td>
-        </tr>
-      `).join('');
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
+      saveState();
+      updateUI();
     }
+  } catch (err) {
+    console.error('Erro na sincronização:', err);
+    if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Erro de Sincronização`;
+  }
+}
 
-    function renderPlayerMemorialTable() {
-      const tbody = document.getElementById('playerMemorialTableBody');
-      if (!tbody) return;
 
-      // Junta atletas atuais com os que saíram
-      const currentList = state.athletes.map(a => {
-        // Calcula somatório histórico de todas as épocas encerradas + atual
-        let histMatches = Number(a.matches) || 0;
-        let histGoals = Number(a.goals) || 0;
-        let histAssists = Number(a.assists) || 0;
-        let histSsg = Number(a.ssg) || 0;
-        let histRatingSum = Number(a.ratingSum) || 0;
-
-        (state.seasonsHistory || []).forEach(sh => {
-          const pastMe = (sh.squadSnapshot || []).find(p => p.id === a.id);
-          if (pastMe) {
-            histMatches += Number(pastMe.matches) || 0;
-            histGoals += Number(pastMe.goals) || 0;
-            histAssists += Number(pastMe.assists) || 0;
-            histSsg += Number(pastMe.ssg) || 0;
-          }
-        });
-
-        const avg = histMatches > 0 ? (histRatingSum / (Number(a.matches) || 1)).toFixed(2) : '-';
-
-        return {
-          id: a.id,
-          name: a.name,
-          pos: a.pos,
-          nat: a.nat,
-          isCurrent: true,
-          statusText: 'No Elenco',
-          statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-          initialOvr: a.initialOvr || a.currentOvr,
-          currentOvr: a.currentOvr,
-          matches: histMatches,
-          goals: histGoals,
-          assists: histAssists,
-          ssg: histSsg,
-          avg: avg,
-          trophiesCount: (state.trophiesWon || []).length // Participou das eras do clube
-        };
-      });
-
-      const departedList = (state.departedAthletes || []).map(d => {
-        return {
-          id: d.id,
-          name: d.name,
-          pos: d.pos,
-          nat: d.nat,
-          isCurrent: false,
-          statusText: `Vendido (${d.destClub || 'Outro'})`,
-          statusClass: 'bg-slate-100 text-slate-600 border-slate-200',
-          initialOvr: d.initialOvr,
-          currentOvr: d.currentOvr,
-          matches: d.careerMatches,
-          goals: d.careerGoals,
-          assists: d.careerAssists,
-          ssg: d.careerSsg,
-          avg: d.careerMatches > 0 ? (d.careerRatingSum / d.careerMatches).toFixed(2) : '-',
-          trophiesCount: '-'
-        };
-      });
-
-      let combined = [...currentList, ...departedList];
-      if (currentHistPlayerFilter === 'CURRENT') combined = combined.filter(p => p.isCurrent);
-      if (currentHistPlayerFilter === 'PAST') combined = combined.filter(p => !p.isCurrent);
-
-      // Ordena por maior número de jogos no clube
-      combined.sort((a, b) => b.matches - a.matches);
-
-      if (combined.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="11" class="p-6 text-center text-xs text-slate-400 italic">Nenhum atleta registrado no Memorial.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = combined.map(p => {
-        const flag = getCountryFlagImg(p.nat);
-        const ovrDiff = p.currentOvr - p.initialOvr;
-        const diffHtml = ovrDiff > 0 ? `<span class="text-emerald-600 font-bold text-[10px]">+${ovrDiff}</span>` : (ovrDiff < 0 ? `<span class="text-rose-600 font-bold text-[10px]">${ovrDiff}</span>` : '<span class="text-slate-400 text-[10px]">=</span>');
-
-        return `
-          <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-            <td class="py-3 px-3">
-              <div class="flex items-center gap-2">
-                ${flag}
-                <span class="font-extrabold text-slate-900 text-xs">${p.name}</span>
-              </div>
-            </td>
-            <td class="py-3 px-3 text-center">
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-800">${p.pos}</span>
-            </td>
-            <td class="py-3 px-3 text-center">
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${p.statusClass}">${p.statusText}</span>
-            </td>
-            <td class="py-3 px-3 text-center font-mono">
-              <span class="font-bold text-slate-800">${p.initialOvr}</span> 
-              <i class="fa-solid fa-arrow-right text-[9px] text-slate-400 mx-1"></i>
-              <span class="font-black text-slate-900">${p.currentOvr}</span>
-              (${diffHtml})
-            </td>
-            <td class="py-3 px-3 text-center font-semibold text-slate-500">${p.isCurrent ? 'Atual' : 'Passado'}</td>
-            <td class="py-3 px-2 text-center font-bold text-slate-900">${p.matches}</td>
-            <td class="py-3 px-2 text-center font-bold text-amber-600">${p.goals}</td>
-            <td class="py-3 px-2 text-center font-bold text-blue-600">${p.assists}</td>
-            <td class="py-3 px-2 text-center font-bold text-emerald-600">${p.ssg}</td>
-            <td class="py-3 px-2 text-center font-extrabold text-purple-700">${p.avg}</td>
-            <td class="py-3 px-3 text-center">
-              <span class="text-amber-600 font-extrabold"><i class="fa-solid fa-trophy mr-1 text-[10px]"></i> ${p.trophiesCount}</span>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function renderClosedSeasonsCards() {
-      const container = document.getElementById('closedSeasonsCardsContainer');
-      if (!container) return;
-
-      const seasons = state.seasonsHistory || [];
-      if (seasons.length === 0) {
-        container.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 italic bg-white border border-slate-200 rounded-xl">Nenhuma campanha anterior arquivada ainda. Ao avançar uma temporada pelo botão "Encerrar Temporada", o resumo aparecerá aqui.</div>`;
-        return;
-      }
-
-      container.innerHTML = seasons.map(s => {
-        const rankingsBadges = (s.rankings || []).map(r => {
-          const isChamp = r.position === 'CAMPEAO';
-          const bg = isChamp ? 'bg-amber-100 text-amber-900 border-amber-300 font-black' : 'bg-slate-100 text-slate-800 border-slate-300 font-bold';
-          return `<span class="px-2.5 py-1 rounded-lg border text-xs flex items-center gap-1.5 ${bg}">
-            ${isChamp ? '<i class="fa-solid fa-crown text-amber-600"></i>' : '<i class="fa-solid fa-medal text-slate-400"></i>'}
-            <strong>${r.champName}:</strong> ${r.position}
-          </span>`;
-        }).join('');
-
-        return `
-          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
-            <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-3">
-              <div class="flex items-center gap-3">
-                <span class="text-lg font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-xl border border-slate-200 font-heading">
-                  Época ${s.season}
-                </span>
-                <span class="text-xs text-slate-500 font-semibold">Fechada em ${s.closedAt}</span>
-              </div>
-              <div class="text-right">
-                <span class="text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                  ${s.stats.winRate}% Aproveitamento Global
-                </span>
-              </div>
-            </div>
-
-            <div class="space-y-1">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">Classificações Oficiais:</span>
-              <div class="flex items-center gap-2 flex-wrap">${rankingsBadges || '<span class="text-xs text-slate-400">Sem classificação salva</span>'}</div>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 text-center text-xs">
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
-                <span class="text-[10px] text-slate-500 block font-semibold">Jogos</span>
-                <span class="font-bold text-slate-900 text-sm">${s.stats.games}</span>
-              </div>
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
-                <span class="text-[10px] text-slate-500 block font-semibold">V - E - D</span>
-                <span class="font-bold text-slate-800 text-sm">${s.stats.wins}-${s.stats.draws}-${s.stats.losses}</span>
-              </div>
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
-                <span class="text-[10px] text-slate-500 block font-semibold">Gols Pró</span>
-                <span class="font-bold text-emerald-700 text-sm">${s.stats.goalsFor}</span>
-              </div>
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
-                <span class="text-[10px] text-slate-500 block font-semibold">Gols Sofridos</span>
-                <span class="font-bold text-rose-700 text-sm">${s.stats.goalsAgainst}</span>
-              </div>
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
-                <span class="text-[10px] text-slate-500 block font-semibold">Artilheiro</span>
-                <span class="font-bold text-slate-900 text-xs truncate block" title="${s.highlights.topScorer}">${s.highlights.topScorer}</span>
-              </div>
-              <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
-                <span class="text-[10px] text-slate-500 block font-semibold">Garçom</span>
-                <span class="font-bold text-slate-900 text-xs truncate block" title="${s.highlights.topAssister}">${s.highlights.topAssister}</span>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    // SINCRONIZAÇÃO COMPLETA GOOGLE SHEETS
-    async function loadFromGoogleSheets() {
-      const statusEl = document.getElementById('syncStatus');
-      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A sincronizar...`;
-
-      try {
-        const res = await fetch(`${API_URL}?action=getAll`);
-        const json = await res.json();
-
-        if (json.status === 'success' && json.data) {
-          const remote = json.data;
-
-          // 1. Dados do Clube
-          if (remote.clube && remote.clube.length > 0) {
-            const cl = remote.clube[0];
-            state.clubName = cl.nome || state.clubName;
-            state.clubLogoUrl = cl.logo_url || state.clubLogoUrl;
-            state.currentSeason = cl.temporada || state.currentSeason;
-            state.budget = Number(cl.verba) || state.budget;
-            state.wageBudget = Number(cl.teto_salarial) || state.wageBudget;
-          }
-
-          // 2. Mapeamento Rigoroso das 21 Colunas da Aba Atletas
-          if (Array.isArray(remote.atletas)) {
-            state.athletes = remote.atletas.map(a => {
-              const id = a.id !== undefined ? Number(a.id) : (Number(a[0]) || Date.now());
-              const numero = a.numero !== undefined ? a.numero : (a[1] !== undefined ? a[1] : '-');
-              const nome = a.nome || a[2] || 'Sem Nome';
-              const pos = (a.pos || a[3] || 'MEI').toUpperCase().trim();
-              const idade = Number(a.idade !== undefined ? a.idade : a[4]) || 20;
-              const nat = (a.nat || a[5] || 'ENG').toUpperCase().trim();
-              const role = a.role || a[6] || 'IMPORTANTE';
-              const ovr_inicial = Number(a.ovr_inicial !== undefined ? a.ovr_inicial : a[7]) || 60;
-              const currentOvr = Number(a.ovr !== undefined ? a.ovr : a[8]) || ovr_inicial;
-              const contrato = Number(a.contrato !== undefined ? a.contrato : a[9]) || 2;
-              
-              const rawLoan = a.emprestimo_status !== undefined ? a.emprestimo_status : a[10];
-              const loanStatus = (rawLoan === 1 || rawLoan === '1' || rawLoan === 'LOAN_OUT') ? 'LOAN_OUT' : 'NONE';
-              const loanClub = a.emprestimo_clube || a[11] || '';
-
-              const marketValue = Number(a.valor_mercado !== undefined ? a.valor_mercado : a[12]) || 0;
-              const wage = Number(a.salario !== undefined ? a.salario : a[13]) || 0;
-
-              const matches = Number(a.jogos !== undefined ? a.jogos : a[14]) || 0;
-              const goals = Number(a.gols !== undefined ? a.gols : a[15]) || 0;
-              const assists = Number(a.assists !== undefined ? a.assists : a[16]) || 0;
-              const ssg = Number(a.ssg !== undefined ? a.ssg : a[17]) || 0;
-              const yellow = Number(a.ca !== undefined ? a.ca : a[18]) || 0;
-              const red = Number(a.cv !== undefined ? a.cv : a[19]) || 0;
-              const ratingSum = Number(a.nota_soma !== undefined ? a.nota_soma : a[20]) || 0;
-
-              return {
-                id,
-                number: numero,
-                name: nome,
-                pos,
-                age: idade,
-                nat,
-                role,
-                initialOvr: ovr_inicial,
-                currentOvr,
-                contractYears: contrato,
-                loanStatus,
-                loanClub,
-                marketValue,
-                wage,
-                matches,
-                goals,
-                assists,
-                ssg,
-                yellow,
-                red,
-                ratingSum
-              };
-            });
-          }
-
-          // 3. Partidas
-          if (Array.isArray(remote.partidas)) {
-            state.matches = remote.partidas.map(m => ({
-              id: Number(m.id) || Date.now(),
-              season: m.temporada || state.currentSeason,
-              champId: m.campeonato || state.currentChampId,
-              opponent: m.adversario,
-              location: m.mando || 'CASA',
-              myScore: Number(m.gols_pro) || 0,
-              oppScore: Number(m.gols_contra) || 0,
-              date: m.data || '',
-              goals: typeof m.detalhes_gols === 'string' ? JSON.parse(m.detalhes_gols || '[]') : (m.detalhes_gols || []),
-              performances: typeof m.detalhes_notas === 'string' ? JSON.parse(m.detalhes_notas || '[]') : (m.detalhes_notas || [])
-            }));
-          } else {
-            state.matches = [];
-          }
-
-          if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
-          saveState();
-          updateUI();
-        }
-      } catch (err) {
-        console.error('Erro na sincronização:', err);
-        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Erro de Sincronização`;
-      }
-    }
 
     async function syncAllToCloud() {
+
       const statusEl = document.getElementById('syncStatus');
+
       if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse"></span> A guardar...`;
 
+
+
       const payload = {
+
         action: 'syncAll',
+
         data: {
+
           clube: [{
+
             nome: state.clubName,
+
             logo_url: state.clubLogoUrl || '',
+
             temporada: state.currentSeason,
+
             verba: Number(state.budget) || 0,
+
             teto_salarial: Number(state.wageBudget) || 0
+
           }],
+
           atletas: state.athletes.map(a => ({
+
             id: a.id,
+
             numero: a.number !== undefined && a.number !== '' ? a.number : '-',
+
             nome: a.name || 'Sem Nome',
+
             pos: a.pos || 'MEI',
+
             idade: Number(a.age) || 20,
+
             nat: a.nat || 'ING',
+
             role: a.role || 'Importante',
+
             ovr_inicial: Number(a.initialOvr) || Number(a.currentOvr) || 70,
+
             ovr: Number(a.currentOvr) || 70,
+
             contrato: Number(a.contractYears) || 3,
+
             emprestimo_status: (a.loanStatus === 'LOAN_OUT' || a.loanStatus === 1) ? 1 : 0,
+
             emprestimo_clube: a.loanClub || '',
+
             valor_mercado: Number(a.marketValue) || 0,
+
             salario: Number(a.wage) || 0,
+
             jogos: Number(a.matches) || 0,
+
             gols: Number(a.goals) || 0,
+
             assists: Number(a.assists) || 0,
+
             ssg: Number(a.ssg) || 0,
+
             ca: Number(a.yellow) || 0,
+
             cv: Number(a.red) || 0,
+
             nota_soma: Number(a.ratingSum) || 0
+
           })),
+
           campeonatos: state.championships.map(c => ({
+
             id: c.id,
+
             nome: c.name,
+
             formato: c.format,
+
             trophyUrl: c.trophyUrl || ''
+
           })),
+
           partidas: state.matches.map(m => ({
+
             id: m.id,
+
             temporada: m.season,
+
             campeonato: m.champId,
+
             adversario: m.opponent,
+
             mando: m.location,
+
             gols_pro: Number(m.myScore) || 0,
+
             gols_contra: Number(m.oppScore) || 0,
-            date: m.date,
+
+            data: m.date,
+
             detalhes_gols: JSON.stringify(m.goals || []),
+
             detalhes_notas: JSON.stringify(m.performances || [])
+
           }))
+
         }
+
       };
 
+
+
       try {
+
         const resp = await fetch(API_URL, {
+
           method: 'POST',
+
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+
           body: JSON.stringify(payload)
+
         });
+
         const res = await resp.json();
+
         if (res.status === 'success') {
+
           if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
+
         }
+
       } catch (err) {
+
         console.warn('Erro ao sincronizar:', err);
+
         if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Guardado localmente`;
+
       }
+
     }
+
+
 
     function exportData() {
+
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+
       const url = URL.createObjectURL(blob);
+
       const a = document.createElement('a');
+
       a.href = url;
+
       a.download = `ModoCarreira_${state.clubName}_${state.currentSeason.replace('/', '-')}.json`;
+
       a.click();
+
     }
+
+
 
     function updateUI() {
+
       document.getElementById('headerClubName').textContent = state.clubName;
+
       document.getElementById('headerSeason').textContent = state.currentSeason;
+
       document.getElementById('matchModalMyClubName').textContent = state.clubName;
 
+
+
       const nickEl = document.getElementById('headerClubNickname');
+
       const mottoEl = document.getElementById('headerClubMotto');
+
       const divEl = document.getElementById('headerMottoDivider');
 
+
+
       if (state.clubNickname) {
+
         nickEl.textContent = state.clubNickname;
+
         nickEl.classList.remove('hidden');
+
       } else {
+
         nickEl.classList.add('hidden');
+
       }
+
+
 
       if (state.clubMotto) {
+
         mottoEl.textContent = `"${state.clubMotto}"`;
+
         mottoEl.classList.remove('hidden');
+
         if (state.clubNickname) divEl.classList.remove('hidden');
+
       } else {
+
         mottoEl.classList.add('hidden');
+
         divEl.classList.add('hidden');
+
       }
 
+
+
       updateClubLogo();
+
       updateAthletesSummary();
+
       renderDashboardVisuals();
+
       renderBestAthletesByPosition();
+
       renderAthletesContainers();
+
       renderChampionshipsSelect();
+
       renderMatchesList();
+
       updateTourneyHomeAwayDashboard();
+
     }
 
+
+
     window.addEventListener('DOMContentLoaded', () => {
+
       updateUI();
+
       loadFromGoogleSheets();
+
     });
+
   </script>
+
 </body>
+
 </html>
