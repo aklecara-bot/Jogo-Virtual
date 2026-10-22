@@ -4478,177 +4478,112 @@
 
     // SINCRONIZAÇÃO COMPLETA GOOGLE SHEETS (COLUNAS A ATÉ U)
 
-    async function loadFromGoogleSheets() {
-
-      const statusEl = document.getElementById('syncStatus');
-
-      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A carregar folha...`;
-
-
-
-      try {
-
-        const res = await fetch(`${API_URL}?action=getAll`);
-
-        const json = await res.json();
-
-
-
-        if (json.status === 'success' && json.data) {
-
-          const remote = json.data;
-
-
-
-          if (remote.clube && remote.clube.length > 0) {
-
-            const cl = remote.clube[0];
-
-            state.clubName = cl.nome || state.clubName;
-
-            state.clubLogoUrl = cl.logo_url || state.clubLogoUrl;
-
-            state.currentSeason = cl.temporada || state.currentSeason;
-
-            state.budget = Number(cl.verba) || state.budget;
-
-            state.wageBudget = Number(cl.teto_salarial) || state.wageBudget;
-
-          }
-
-
-
-          if (Array.isArray(remote.atletas)) {
-
-            state.athletes = remote.atletas.map(a => {
-
-              const localAth = state.athletes.find(local => String(local.id) === String(a.id));
-
-              const rawOvr = Number(a.ovr);
-
-              const initialOvr = Number(a.ovr_inicial) || (localAth ? localAth.initialOvr : 70);
-
-              const currentOvr = (rawOvr && rawOvr > 0) ? rawOvr : (localAth ? localAth.currentOvr : initialOvr);
-
-              const safeName = (a.nome && a.nome !== 'Sem Nome') ? a.nome : (localAth ? localAth.name : 'Atleta');
-
-
-
-              return {
-
-                id: Number(a.id) || (localAth ? localAth.id : Date.now()),
-
-                number: a.numero !== undefined && a.numero !== '' ? a.numero : (localAth ? localAth.number : '-'),
-
-                name: safeName,
-
-                pos: (a.pos || (localAth ? localAth.pos : 'MEI')).toUpperCase().trim(),
-
-                age: Number(a.idade) || (localAth ? localAth.age : 20),
-
-                nat: (a.nat || (localAth ? localAth.nat : 'ING')).toUpperCase().trim(),
-
-                role: a.role || (localAth ? localAth.role : 'Importante'),
-
-                initialOvr: initialOvr,
-
-                currentOvr: currentOvr,
-
-                contractYears: Number(a.contrato) || (localAth ? localAth.contractYears : 3),
-
-                loanStatus: (a.emprestimo_status === 1 || a.emprestimo_status === 'LOAN_OUT') ? 'LOAN_OUT' : 'NONE',
-
-                loanClub: a.emprestimo_clube || (localAth ? localAth.loanClub : ''),
-
-                marketValue: Number(a.valor_mercado) || (localAth ? localAth.marketValue : 0),
-
-                wage: Number(a.salario) || (localAth ? localAth.wage : 0),
-
-                matches: Number(a.jogos) || (localAth ? localAth.matches : 0),
-
-                goals: Number(a.gols) || (localAth ? localAth.goals : 0),
-
-                assists: Number(a.assists) || (localAth ? localAth.assists : 0),
-
-                ssg: Number(a.ssg) || (localAth ? localAth.ssg : 0),
-
-                yellow: Number(a.ca) || (localAth ? localAth.yellow : 0),
-
-                red: Number(a.cv) || (localAth ? localAth.red : 0),
-
-                ratingSum: Number(a.nota_soma) || (localAth ? localAth.ratingSum : 0)
-
-              };
-
-            });
-
-          }
-
-
-
-          if (Array.isArray(remote.campeonatos) && remote.campeonatos.length > 0) {
-
-            state.championships = remote.campeonatos.map(c => ({
-
-              id: c.id,
-
-              name: c.nome,
-
-              format: c.formato,
-
-              trophyUrl: c.trophyUrl || c.trophy_url || ''
-
-            }));
-
-          }
-
-
-
-          if (Array.isArray(remote.partidas) && remote.partidas.length > 0) {
-
-            state.matches = remote.partidas.map(m => ({
-
-              id: Number(m.id) || Date.now(),
-
-              season: m.temporada || state.currentSeason,
-
-              champId: m.campeonato || state.currentChampId,
-
-              opponent: m.adversario,
-
-              location: m.mando || 'CASA',
-
-              myScore: Number(m.gols_pro) || 0,
-
-              oppScore: Number(m.gols_contra) || 0,
-
-              date: m.data || new Date().toLocaleDateString('pt-PT'),
-
-              goals: m.detalhes_gols ? JSON.parse(m.detalhes_gols) : [],
-
-              performances: m.detalhes_notas ? JSON.parse(m.detalhes_notas) : []
-
-            }));
-
-          }
-
-
-
-          if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
-
-          saveState();
-
-        }
-
-      } catch (err) {
-
-        console.warn('Erro ao ler a folha:', err);
-
-        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Guardado Localmente`;
-
+async function loadFromGoogleSheets() {
+  const statusEl = document.getElementById('syncStatus');
+  if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A sincronizar...`;
+
+  try {
+    const res = await fetch(`${API_URL}?action=getAll`);
+    const json = await res.json();
+
+    if (json.status === 'success' && json.data) {
+      const remote = json.data;
+
+      // 1. Dados do Clube
+      if (remote.clube && remote.clube.length > 0) {
+        const cl = remote.clube[0];
+        state.clubName = cl.nome || state.clubName;
+        state.clubLogoUrl = cl.logo_url || state.clubLogoUrl;
+        state.currentSeason = cl.temporada || state.currentSeason;
+        state.budget = Number(cl.verba) || state.budget;
+        state.wageBudget = Number(cl.teto_salarial) || state.wageBudget;
       }
 
+      // 2. Mapeamento Rigoroso das 21 Colunas da Aba Atletas
+      if (Array.isArray(remote.atletas)) {
+        state.athletes = remote.atletas.map(a => {
+          // Garante leitura tanto por nome da propriedade quanto por índice de array
+          const id = a.id !== undefined ? Number(a.id) : (Number(a[0]) || Date.now());
+          const numero = a.numero !== undefined ? a.numero : (a[1] !== undefined ? a[1] : '-');
+          const nome = a.nome || a[2] || 'Sem Nome';
+          const pos = (a.pos || a[3] || 'MEI').toUpperCase().trim();
+          const idade = Number(a.idade !== undefined ? a.idade : a[4]) || 20;
+          const nat = (a.nat || a[5] || 'ENG').toUpperCase().trim();
+          const role = a.role || a[6] || 'IMPORTANTE';
+          const ovr_inicial = Number(a.ovr_inicial !== undefined ? a.ovr_inicial : a[7]) || 60;
+          const currentOvr = Number(a.ovr !== undefined ? a.ovr : a[8]) || ovr_inicial;
+          const contrato = Number(a.contrato !== undefined ? a.contrato : a[9]) || 2;
+          
+          const rawLoan = a.emprestimo_status !== undefined ? a.emprestimo_status : a[10];
+          const loanStatus = (rawLoan === 1 || rawLoan === '1' || rawLoan === 'LOAN_OUT') ? 'LOAN_OUT' : 'NONE';
+          const loanClub = a.emprestimo_clube || a[11] || '';
+
+          // VALORES MONETÁRIOS (Colunas M e N)
+          const marketValue = Number(a.valor_mercado !== undefined ? a.valor_mercado : a[12]) || 0;
+          const wage = Number(a.salario !== undefined ? a.salario : a[13]) || 0;
+
+          // ESTATÍSTICAS REAIS (Colunas O até U)
+          const matches = Number(a.jogos !== undefined ? a.jogos : a[14]) || 0;
+          const goals = Number(a.gols !== undefined ? a.gols : a[15]) || 0;
+          const assists = Number(a.assists !== undefined ? a.assists : a[16]) || 0;
+          const ssg = Number(a.ssg !== undefined ? a.ssg : a[17]) || 0;
+          const yellow = Number(a.ca !== undefined ? a.ca : a[18]) || 0;
+          const red = Number(a.cv !== undefined ? a.cv : a[19]) || 0;
+          const ratingSum = Number(a.nota_soma !== undefined ? a.nota_soma : a[20]) || 0;
+
+          return {
+            id,
+            number: numero,
+            name: nome,
+            pos,
+            age: idade,
+            nat,
+            role,
+            initialOvr: ovr_inicial,
+            currentOvr,
+            contractYears: contrato,
+            loanStatus,
+            loanClub,
+            marketValue,
+            wage,
+            matches,
+            goals,
+            assists,
+            ssg,
+            yellow,
+            red,
+            ratingSum
+          };
+        });
+      }
+
+      // 3. Partidas (Apenas as que vierem reais da planilha)
+      if (Array.isArray(remote.partidas)) {
+        state.matches = remote.partidas.map(m => ({
+          id: Number(m.id) || Date.now(),
+          season: m.temporada || state.currentSeason,
+          champId: m.campeonato || state.currentChampId,
+          opponent: m.adversario,
+          location: m.mando || 'CASA',
+          myScore: Number(m.gols_pro) || 0,
+          oppScore: Number(m.gols_contra) || 0,
+          date: m.data || '',
+          goals: typeof m.detalhes_gols === 'string' ? JSON.parse(m.detalhes_gols || '[]') : (m.detalhes_gols || []),
+          performances: typeof m.detalhes_notas === 'string' ? JSON.parse(m.detalhes_notas || '[]') : (m.detalhes_notas || [])
+        }));
+      } else {
+        state.matches = [];
+      }
+
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
+      saveState();
+      updateUI();
     }
+  } catch (err) {
+    console.error('Erro na sincronização:', err);
+    if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Erro de Sincronização`;
+  }
+}
 
 
 
