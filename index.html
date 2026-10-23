@@ -102,7 +102,7 @@
       <!-- Card MVP da Temporada -->
       <div class="bg-gradient-to-r from-amber-500/15 via-amber-200/20 to-white border border-amber-300 p-5 rounded-2xl shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shrink-0">
+          <div id="mvpAvatarContainer" class="w-16 h-16 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md shrink-0 overflow-hidden border-2 border-amber-300 bg-cover bg-center">
             <i class="fa-solid fa-award"></i>
           </div>
           <div>
@@ -229,46 +229,52 @@
       <!-- Destaques Individuais -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center text-lg"><i class="fa-solid fa-futbol"></i></div>
-          <div>
+          <div id="bestScorerAvatar" class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center text-lg shrink-0 overflow-hidden">
+            <i class="fa-solid fa-futbol"></i>
+          </div>
+          <div class="min-w-0">
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Artilheiro</div>
-            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[120px]" id="bestScorer">-</div>
+            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" id="bestScorer">-</div>
             <div class="text-xs font-semibold text-amber-700" id="bestScorerGols">0 Gols</div>
           </div>
         </div>
 
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center text-lg">
+          <div id="bestAssisterAvatar" class="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 flex items-center justify-center text-lg shrink-0 overflow-hidden">
             <i class="fa-solid fa-shoe-prints"></i>
           </div>
-          <div>
+          <div class="min-w-0">
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Assistências</div>
-            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[120px]" id="bestAssister">-</div>
+            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" id="bestAssister">-</div>
             <div class="text-xs font-semibold text-blue-700" id="bestAssisterCount">0 Ass.</div>
           </div>
         </div>
 
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center text-lg"><i class="fa-solid fa-shield-halved"></i></div>
-          <div>
+          <div id="bestSsgAvatar" class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center text-lg shrink-0 overflow-hidden">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="min-w-0">
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Paredão (SSG)</div>
-            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[120px]" id="bestSsgPlayer">-</div>
+            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" id="bestSsgPlayer">-</div>
             <div class="text-xs font-semibold text-emerald-700" id="bestSsgCount">0 Jogos</div>
           </div>
         </div>
 
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center text-lg"><i class="fa-solid fa-star"></i></div>
-          <div>
+          <div id="bestRatingAvatar" class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center text-lg shrink-0 overflow-hidden">
+            <i class="fa-solid fa-star"></i>
+          </div>
+          <div class="min-w-0">
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Nota Média</div>
-            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate max-w-[120px]" id="bestRatingPlayer">-</div>
+            <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" id="bestRatingPlayer">-</div>
             <div class="text-xs font-semibold text-purple-700" id="bestRatingVal">-</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ==================== ABA 2: ATLETAS & PLANTEL (SISTÊMICA) ==================== -->
+    <!-- ==================== ABA 2: ATLETAS & PLANTEL ==================== -->
     <section id="tab-athletes" class="hidden space-y-6">
       <!-- Painel de Contadores e Status do Elenco -->
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -305,7 +311,7 @@
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-orange"></i> Laterais/Meias</span>
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-blue"></i> Zagueiros</span>
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-red"></i> MC / VOL</span>
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-black"></i>Atacantes</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-black"></i> Atacantes</span>
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-gray"></i> Pontas (PD/PE)</span>
         <span class="flex items-center gap-1.5 font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
           <i class="fa-solid fa-shoe-prints icon-boot-gold"></i> Top 11 (Ouro)
@@ -335,7 +341,7 @@
             <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200 tracking-wider">
               <tr>
                 <th class="py-3 px-3 text-center w-12">Nº</th>
-                <th class="py-3 px-3 min-w-[180px]">ATLETA & PAPEL</th>
+                <th class="py-3 px-3 min-w-[200px]">ATLETA & PAPEL</th>
                 <th class="py-3 px-3 text-center">POSIÇÃO</th>
                 <th class="py-3 px-3 text-center">IDADE</th>
                 <th class="py-3 px-3 text-center">OVR</th>
@@ -468,7 +474,6 @@
 
     <!-- ==================== ABA 4: HISTÓRICO GLOBAL & MEMORIAL ==================== -->
     <section id="tab-history" class="hidden space-y-6">
-      
       <!-- SALA DE TROFÉUS DO CLUBE -->
       <div class="bg-gradient-to-r from-amber-600/10 via-amber-400/10 to-amber-600/5 border border-amber-300 rounded-2xl p-5 shadow-xs space-y-4">
         <div class="flex items-center justify-between flex-wrap gap-2 border-b border-amber-200/80 pb-3">
@@ -489,9 +494,7 @@
           </div>
         </div>
 
-        <div id="trophyRoomGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          <!-- Renderizado via JS -->
-        </div>
+        <div id="trophyRoomGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
       </div>
 
       <!-- COMPARAÇÃO GLOBAL ENTRE TEMPORADAS (GRÁFICOS) -->
@@ -544,9 +547,7 @@
                 <th class="py-2.5 px-3 text-right">Aproveitamento</th>
               </tr>
             </thead>
-            <tbody id="sectorHistoryTableBody" class="divide-y divide-slate-100 font-semibold text-slate-700">
-              <!-- Renderizado via JS -->
-            </tbody>
+            <tbody id="sectorHistoryTableBody" class="divide-y divide-slate-100 font-semibold text-slate-700"></tbody>
           </table>
         </div>
       </div>
@@ -585,9 +586,7 @@
                 <th class="py-3 px-3 text-center">Títulos</th>
               </tr>
             </thead>
-            <tbody id="playerMemorialTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
-              <!-- Renderizado via JS -->
-            </tbody>
+            <tbody id="playerMemorialTableBody" class="divide-y divide-slate-100 font-medium text-slate-700"></tbody>
           </table>
         </div>
       </div>
@@ -597,11 +596,8 @@
         <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
           <i class="fa-solid fa-scroll text-slate-500"></i> Livro de Ouro das Campanhas Encerradas
         </h3>
-        <div id="closedSeasonsCardsContainer" class="space-y-4">
-          <!-- Renderizado via JS -->
-        </div>
+        <div id="closedSeasonsCardsContainer" class="space-y-4"></div>
       </div>
-
     </section>
   </main>
 
@@ -617,14 +613,52 @@
 
       <form id="athleteForm" onsubmit="saveAthleteData(event)" class="space-y-3 text-xs">
         <input type="hidden" id="athId">
+        
+        <!-- BUSCA AUTOMÁTICA DE ATLETA -->
+        <div class="bg-indigo-50/70 border border-indigo-200 p-3 rounded-xl space-y-2">
+          <label class="block font-bold text-indigo-950 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> Busca Automática (EA FC)
+            </span>
+            <span class="text-[10px] font-semibold text-indigo-600 lowercase">digite o nome e clique em buscar</span>
+          </label>
+          <div class="flex gap-2">
+            <input type="text" id="athName" required placeholder="Ex: Arrascaeta, Memphis, Yeremay..." class="flex-1 bg-white border border-indigo-300 rounded-lg p-2 font-bold text-slate-900 focus:outline-none focus:border-indigo-600" onkeydown="if(event.key==='Enter'){event.preventDefault(); searchPlayerAuto();}">
+            <button type="button" onclick="searchPlayerAuto()" id="btnSearchPlayer" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-xs flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-magnifying-glass"></i> Buscar
+            </button>
+          </div>
+          <!-- Dropdown / Lista de Resultados Encontrados -->
+          <div id="playerSearchResults" class="hidden bg-white border border-indigo-200 rounded-lg max-h-40 overflow-y-auto divide-y divide-slate-100 shadow-sm mt-1"></div>
+        </div>
+
         <div class="grid grid-cols-3 gap-2">
           <div class="col-span-2">
-            <label class="block mb-1 font-semibold text-slate-700">Nome do Atleta</label>
-            <input type="text" id="athName" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900 focus:outline-none focus:border-slate-800">
-          </div>
-          <div>
             <label class="block mb-1 font-semibold text-slate-700">Nº Camisa</label>
             <input type="number" id="athNumber" min="1" max="99" value="10" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+          </div>
+          <div class="flex items-center justify-center pt-5">
+            <div id="athPreviewAvatar" class="w-11 h-11 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center overflow-hidden shadow-2xs text-base font-bold text-slate-600">
+              ?
+            </div>
+          </div>
+        </div>
+
+        <!-- ID EA FC 26 & URL DA FOTO (PREENCHIDOS AUTOMATICAMENTE) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-id-badge text-emerald-600"></i> ID EA FC 26 (player_id)
+            </label>
+            <input type="text" id="athEaId" placeholder="Preenchido pela busca" oninput="updateModalPreviewFace()" class="w-full bg-white border border-slate-300 rounded-lg p-2 font-mono text-slate-900">
+            <span class="text-[10px] text-slate-400">Puxa o rosto oficial automaticamente</span>
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold text-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-image text-blue-600"></i> URL Foto Personalizada
+            </label>
+            <input type="url" id="athPhotoUrl" placeholder="https://.../foto.png" oninput="updateModalPreviewFace()" class="w-full bg-white border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
+            <span class="text-[10px] text-slate-400">Opcional</span>
           </div>
         </div>
 
@@ -1080,7 +1114,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL: VIRADA DE ÉPOCA & CONFIRMAÇÃO DE RESULTADOS ==================== -->
+  <!-- ==================== MODAL: VIRADA DE ÉPOCA & CONFIRMAÇÃO ==================== -->
   <div id="seasonAdvanceModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3">
     <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-2xl shadow-2xl p-5 space-y-4 max-h-[92vh] flex flex-col overflow-hidden">
       
@@ -1098,29 +1132,24 @@
       </div>
 
       <div class="p-1 overflow-y-auto space-y-4 flex-1 text-xs">
-        <!-- Aviso / Resumo dos impactos -->
         <div class="bg-amber-50/70 border border-amber-200 p-3 rounded-xl space-y-1 text-slate-700">
           <div class="font-bold text-amber-900 flex items-center gap-1.5 text-xs">
             <i class="fa-solid fa-circle-exclamation text-amber-600"></i> O que acontece ao confirmar o encerramento:
           </div>
           <p class="leading-relaxed text-[11px]">
-            • Um snapshot completo e imutável de todas as partidas, estatísticas do elenco e notas por setor será arquivado no <strong>Histórico Global</strong>.<br>
+            • Um snapshot completo de todas as partidas, estatísticas do elenco e notas por setor será arquivado no <strong>Histórico Global</strong>.<br>
             • Os títulos marcados como <strong>CAMPEÃO</strong> serão adicionados à Galeria de Troféus oficial.<br>
             • No novo ano, as estatísticas são reiniciadas, todos os atletas envelhecem <strong>+1 ano</strong> e os contratos reduzem <strong>-1 ano</strong>.
           </p>
         </div>
 
-        <!-- Classificações por Torneio Disputado -->
         <div class="space-y-2">
           <label class="font-bold uppercase tracking-wide text-slate-700 block text-[11px] flex items-center gap-1.5">
             <i class="fa-solid fa-ranking-star text-indigo-600"></i> Desempenho e Classificação nos Torneios da Época (<span id="advanceCurrentSeasonLabel">2025/2026</span>):
           </label>
-          <div id="seasonTournamentsRankingContainer" class="space-y-2.5">
-            <!-- Gerado via JS de acordo com os campeonatos -->
-          </div>
+          <div id="seasonTournamentsRankingContainer" class="space-y-2.5"></div>
         </div>
 
-        <!-- Nome da Nova Época -->
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
           <label class="block text-slate-700 font-bold uppercase tracking-wider text-[11px]">Identificação da Nova Temporada</label>
           <input type="text" id="nextSeasonNameInput" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-slate-900 font-black text-sm focus:border-slate-800">
@@ -1173,11 +1202,8 @@
       athletes: [],
       matches: [],
       transfersHistory: [],
-      // NOVO: Histórico global imutável das temporadas encerradas
       seasonsHistory: [],
-      // NOVO: Memorial de ex-jogadores e hall da fama
       departedAthletes: [],
-      // NOVO: Troféus oficiais conquistados
       trophiesWon: []
     };
 
@@ -1211,12 +1237,229 @@
       return `${sym} ${Number(val || 0).toLocaleString('pt-PT')}`;
     }
 
-    // BANDEIRAS COM SUPORTE REAL FLAGCDN
+    // BANDEIRAS COM SUPORTE FLAGCDN
     function getCountryFlagImg(natCode) {
       if (!natCode) return `<span class="text-xs">🌐</span>`;
       const clean = String(natCode).toUpperCase().trim();
       const iso2 = countryIsoMap[clean] || clean.toLowerCase();
       return `<img src="https://flagcdn.com/24x18/${iso2}.png" alt="${clean}" title="${clean}" class="w-5 h-3.5 object-cover rounded-[2px] shadow-xs inline-block align-middle border border-slate-200" onerror="this.onerror=null; this.outerHTML='<span class=\\'font-bold text-[10px] text-slate-700 uppercase\\'>${clean}</span>';">`;
+    }
+
+    // BASE LOCAL EXPANDIDA DE JOGADORES PARA BUSCA INSTANTÂNEA
+    const COMMON_PLAYERS_DATABASE = [
+      { name: "Giorgian de Arrascaeta", aliases: ["arrascaeta", "de arrascaeta"], eaId: "216460", pos: "MEI", age: 30, nat: "URU", ovr: 81 },
+      { name: "Memphis Depay", aliases: ["memphis", "depay"], eaId: "202556", pos: "ATA", age: 30, nat: "NED", ovr: 80 },
+      { name: "Yeremay Hernández", aliases: ["yeremay", "yeremay hernandez", "peke"], eaId: "264259", pos: "PE", age: 21, nat: "ESP", ovr: 74 },
+      { name: "Mario Soriano", aliases: ["mario soriano", "soriano"], eaId: "258943", pos: "MEI", age: 22, nat: "ESP", ovr: 72 },
+      { name: "David Mella", aliases: ["david mella", "mella"], eaId: "270634", pos: "PD", age: 19, nat: "ESP", ovr: 71 },
+      { name: "Diego Villares", aliases: ["diego villares", "villares"], eaId: "262332", pos: "MC", age: 28, nat: "ESP", ovr: 71 },
+      { name: "Sebastián Cáceres", aliases: ["sebastian caceres", "caceres"], eaId: "246187", pos: "ZAG", age: 25, nat: "URU", ovr: 74 },
+      { name: "Lucas Noubi", aliases: ["lucas noubi", "noubi"], eaId: "268307", pos: "ZAG", age: 19, nat: "BEL", ovr: 68 },
+      { name: "Luis Chávez", aliases: ["luis chavez", "chavez"], eaId: "233419", pos: "MC", age: 28, nat: "MEX", ovr: 77 },
+      { name: "Giacomo Quagliata", aliases: ["quagliata", "giacomo quagliata"], eaId: "256877", pos: "LE", age: 24, nat: "ITA", ovr: 69 },
+      { name: "Ximo Navarro", aliases: ["ximo navarro", "navarro"], eaId: "200842", pos: "LD", age: 34, nat: "ESP", ovr: 70 },
+      { name: "Adrià Altimira", aliases: ["altimira", "adria altimira"], eaId: "269553", pos: "LD", age: 23, nat: "ESP", ovr: 69 },
+      { name: "Miguel Loureiro", aliases: ["miguel loureiro", "loureiro"], eaId: "240317", pos: "ZAG", age: 27, nat: "ESP", ovr: 70 },
+      { name: "José Ángel", aliases: ["jose angel", "cote"], eaId: "210940", pos: "VOL", age: 32, nat: "ESP", ovr: 69 },
+      { name: "José Gragera", aliases: ["jose gragera", "gragera"], eaId: "253982", pos: "VOL", age: 24, nat: "ESP", ovr: 72 },
+      { name: "Charlie Patiño", aliases: ["patino", "charlie patino"], eaId: "264356", pos: "MC", age: 20, nat: "ENG", ovr: 68 },
+      { name: "Germán Parreño", aliases: ["german parreno", "parreno"], eaId: "211244", pos: "GOL", age: 31, nat: "ESP", ovr: 68 },
+      { name: "Álvaro Ferllo", aliases: ["alvaro ferllo", "ferllo", "aceves"], eaId: "267807", pos: "GOL", age: 21, nat: "ESP", ovr: 66 },
+      { name: "Erling Haaland", aliases: ["haaland", "erling"], eaId: "239085", pos: "ATA", age: 24, nat: "NOR", ovr: 91 },
+      { name: "Kylian Mbappé", aliases: ["mbappe", "kylian"], eaId: "231747", pos: "ATA", age: 25, nat: "FRA", ovr: 91 },
+      { name: "Vinícius Jr.", aliases: ["vinicius jr", "vini jr", "vinicius"], eaId: "238794", pos: "PE", age: 24, nat: "BRA", ovr: 90 },
+      { name: "Rodri", aliases: ["rodri", "rodrigo"], eaId: "231866", pos: "VOL", age: 28, nat: "ESP", ovr: 91 },
+      { name: "Jude Bellingham", aliases: ["bellingham", "jude"], eaId: "252371", pos: "MEI", age: 21, nat: "ENG", ovr: 90 },
+      { name: "Lamine Yamal", aliases: ["yamal", "lamine yamal"], eaId: "277640", pos: "PD", age: 17, nat: "ESP", ovr: 81 },
+      { name: "Neymar Jr", aliases: ["neymar", "neymar jr"], eaId: "190871", pos: "PE", age: 32, nat: "BRA", ovr: 87 },
+      { name: "Cristiano Ronaldo", aliases: ["cr7", "ronaldo", "cristiano"], eaId: "20801", pos: "ATA", age: 39, nat: "POR", ovr: 86 },
+      { name: "Lionel Messi", aliases: ["messi", "lionel"], eaId: "158023", pos: "PD", age: 37, nat: "ARG", ovr: 88 }
+    ];
+
+    // BUSCA AUTOMÁTICA DE ATLETA
+    async function searchPlayerAuto() {
+      const input = document.getElementById('athName');
+      const query = (input?.value || '').trim().toLowerCase();
+      const resultsContainer = document.getElementById('playerSearchResults');
+      const btn = document.getElementById('btnSearchPlayer');
+
+      if (!query) {
+        alert('Por favor, digite o nome de um jogador para pesquisar.');
+        return;
+      }
+
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i>`;
+      btn.disabled = true;
+
+      // 1. Procura na base rápida interna
+      let matches = COMMON_PLAYERS_DATABASE.filter(p => {
+        return p.name.toLowerCase().includes(query) || p.aliases.some(a => a.includes(query));
+      });
+
+      // 2. Se não achou na base local rápida, tenta a API pública do EA FC
+      if (matches.length === 0) {
+        try {
+          const res = await fetch(`https://api.msmc.cc/api/fc25/player/name/${encodeURIComponent(query)}`);
+          if (res.ok) {
+            const data = await res.json();
+            const list = Array.isArray(data) ? data : [data];
+            list.slice(0, 5).forEach(item => {
+              if (item && item.ID) {
+                matches.push({
+                  name: item.Name || item.name || query,
+                  eaId: String(item.ID),
+                  pos: (item.POS || item.pos || item.Position || 'MEI').toUpperCase(),
+                  age: Number(item.Age || item.age) || 24,
+                  nat: (item.Nation || item.nation || item.Nationality || 'BRA').slice(0, 3).toUpperCase(),
+                  ovr: Number(item.OVR || item.ovr) || 75
+                });
+              }
+            });
+          }
+        } catch (e) {
+          console.log("Busca remota offline, usando busca aproximada.");
+        }
+      }
+
+      btn.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> Buscar`;
+      btn.disabled = false;
+
+      if (!resultsContainer) return;
+
+      if (matches.length === 0) {
+        resultsContainer.innerHTML = `
+          <div class="p-3 text-center text-xs text-slate-500">
+            Nenhum jogador encontrado com "<strong>${query}</strong>". Você pode preencher os campos manualmente.
+          </div>
+        `;
+        resultsContainer.classList.remove('hidden');
+        return;
+      }
+
+      resultsContainer.innerHTML = matches.map((p, idx) => {
+        const faceUrl = `https://media.ea.com/content/dam/ea/easportsfc/common/player-headshots/p${p.eaId}.png`;
+        return `
+          <div onclick="selectFoundPlayer(${idx})" class="p-2.5 hover:bg-indigo-50 cursor-pointer flex items-center justify-between gap-3 transition">
+            <div class="flex items-center gap-2.5">
+              <img src="${faceUrl}" class="w-8 h-8 rounded-full object-contain bg-slate-100 border border-slate-200" onerror="this.src='https://placehold.co/32x32/e2e8f0/475569?text=⚽'">
+              <div>
+                <span class="font-bold text-slate-900 block text-xs">${p.name}</span>
+                <span class="text-[10px] text-slate-500 font-semibold">${p.pos} • ${p.age} anos • ${p.nat}</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">OVR ${p.ovr}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      window._currentSearchMatches = matches;
+      resultsContainer.classList.remove('hidden');
+    }
+
+    function selectFoundPlayer(index) {
+      const p = window._currentSearchMatches ? window._currentSearchMatches[index] : null;
+      if (!p) return;
+
+      document.getElementById('athName').value = p.name;
+      document.getElementById('athEaId').value = p.eaId;
+      document.getElementById('athPos').value = p.pos;
+      document.getElementById('athAge').value = p.age;
+      document.getElementById('athNat').value = p.nat;
+      document.getElementById('athOvr').value = p.ovr;
+      document.getElementById('athInitialOvr').value = p.ovr;
+
+      updateModalPreviewFace();
+
+      const results = document.getElementById('playerSearchResults');
+      if (results) results.classList.add('hidden');
+    }
+
+    function updateModalPreviewFace() {
+      const eaId = document.getElementById('athEaId').value.trim();
+      const photoUrl = document.getElementById('athPhotoUrl').value.trim();
+      const preview = document.getElementById('athPreviewAvatar');
+      if (!preview) return;
+
+      let imgUrl = photoUrl;
+      if (!imgUrl && eaId) {
+        imgUrl = `https://media.ea.com/content/dam/ea/easportsfc/common/player-headshots/p${eaId}.png`;
+      }
+
+      if (imgUrl) {
+        preview.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-contain scale-110" onerror="this.parentElement.innerText='?'">`;
+      } else {
+        preview.innerText = '?';
+      }
+    }
+
+  // ROSTO DO ATLETA: EA SPORTS FC 26 HEADSHOTS OU URL OU FALLBACK
+  function getPlayerFaceUrl(player) {
+  if (!player) return '';
+  if (player.photoUrl && player.photoUrl.trim() !== '') return player.photoUrl.trim();
+  
+  if (player.eaId && String(player.eaId).trim() !== '') {
+    const rawId = String(player.eaId).trim();
+    // Garante o formato de 6 dígitos do Futbin (ex: 14941 vira 014941)
+    const paddedId = rawId.padStart(6, '0');
+    return `https://cdn.futbin.com/content/ea/fifa25/img/players/${paddedId}.png`;
+  }
+  return '';
+}
+
+function renderPlayerAvatarHtml(player, sizeClass = 'w-9 h-9', roundedClass = 'rounded-full') {
+  const rawId = player && player.eaId ? String(player.eaId).trim() : '';
+  const photoUrl = player && player.photoUrl ? player.photoUrl.trim() : '';
+  const initial = (player && player.name) ? player.name.charAt(0).toUpperCase() : '?';
+
+  if (photoUrl) {
+    return `
+      <div class="${sizeClass} ${roundedClass} bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-2xs flex items-center justify-center relative">
+        <img src="${photoUrl}" alt="${player.name}" class="w-full h-full object-contain transform scale-110 translate-y-0.5" 
+             onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'font-bold text-xs text-slate-700\\'>${initial}</span>';">
+      </div>
+    `;
+  }
+
+  if (rawId) {
+    const paddedId = rawId.padStart(6, '0');
+    // Futbin FC 25 / FC 24
+    const futbinUrl = `https://cdn.futbin.com/content/ea/fifa25/img/players/${paddedId}.png`;
+    const futbinBackup = `https://cdn.futbin.com/content/fifa24/img/players/${paddedId}.png`;
+
+    return `
+      <div class="${sizeClass} ${roundedClass} bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-2xs flex items-center justify-center relative">
+        <img src="${futbinUrl}" alt="${player.name}" class="w-full h-full object-contain transform scale-110 translate-y-0.5" 
+             onerror="this.onerror=null; this.src='${futbinBackup}'; this.onerror=function(){ this.parentElement.innerHTML='<span class=\\'font-bold text-xs text-slate-700\\'>${initial}</span>'; };">
+      </div>
+    `;
+  }
+
+  return `
+    <div class="${sizeClass} ${roundedClass} bg-slate-200 border border-slate-300 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+      ${initial}
+    </div>
+  `;
+}
+
+    function renderPlayerAvatarHtml(player, sizeClass = 'w-9 h-9', roundedClass = 'rounded-full') {
+      const faceUrl = getPlayerFaceUrl(player);
+      const initial = (player && player.name) ? player.name.charAt(0).toUpperCase() : '?';
+
+      if (faceUrl) {
+        return `
+          <div class="${sizeClass} ${roundedClass} bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-2xs flex items-center justify-center relative">
+            <img src="${faceUrl}" alt="${player.name}" class="w-full h-full object-contain transform scale-110 translate-y-0.5" 
+                 onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'font-bold text-xs text-slate-700\\'>${initial}</span>';">
+          </div>
+        `;
+      }
+      return `
+        <div class="${sizeClass} ${roundedClass} bg-slate-200 border border-slate-300 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+          ${initial}
+        </div>
+      `;
     }
 
     // CONTROLO DE ABAS
@@ -1296,8 +1539,11 @@
 
     // DASHBOARD & MVP RIGOROSO
     function calculateMVP() {
+      const mvpContainer = document.getElementById('mvpAvatarContainer');
+
       if (state.athletes.length === 0) {
         document.getElementById('mvpName').textContent = 'Nenhum atleta';
+        if (mvpContainer) mvpContainer.innerHTML = `<i class="fa-solid fa-award"></i>`;
         return;
       }
 
@@ -1308,6 +1554,7 @@
         document.getElementById('mvpGA').textContent = '0';
         document.getElementById('mvpRating').textContent = '-';
         document.getElementById('mvpScore').textContent = '0.0';
+        if (mvpContainer) mvpContainer.innerHTML = `<i class="fa-solid fa-award"></i>`;
         return;
       }
 
@@ -1331,12 +1578,22 @@
         document.getElementById('mvpGA').textContent = mvp.ga;
         document.getElementById('mvpRating').textContent = mvp.avg > 0 ? mvp.avg.toFixed(2) : '-';
         document.getElementById('mvpScore').textContent = mvp.mvpScore.toFixed(1);
+
+        const face = getPlayerFaceUrl(mvp);
+        if (mvpContainer) {
+          if (face) {
+            mvpContainer.innerHTML = `<img src="${face}" class="w-full h-full object-contain scale-125 translate-y-1" alt="${mvp.name}" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-award\\'></i>'">`;
+          } else {
+            mvpContainer.innerHTML = `<i class="fa-solid fa-award"></i>`;
+          }
+        }
       } else {
         document.getElementById('mvpName').textContent = 'Sem jogos disputados';
         document.getElementById('mvpDetails').textContent = 'Aguardando registo de partidas';
         document.getElementById('mvpGA').textContent = '0';
         document.getElementById('mvpRating').textContent = '-';
         document.getElementById('mvpScore').textContent = '0.0';
+        if (mvpContainer) mvpContainer.innerHTML = `<i class="fa-solid fa-award"></i>`;
       }
     }
 
@@ -1363,11 +1620,16 @@
         })[0];
 
         const avg = best.matches > 0 ? (best.ratingSum / best.matches).toFixed(2) : '-';
+        const face = getPlayerFaceUrl(best);
+        const avatarHtml = face 
+          ? `<img src="${face}" class="w-8 h-8 rounded-full object-contain mx-auto bg-white border border-slate-200 mb-1" onerror="this.classList.add('hidden')">` 
+          : '';
 
         return `
           <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-center shadow-2xs hover:border-amber-300 transition">
             <span class="text-[10px] font-extrabold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded uppercase">${pos}</span>
-            <div class="font-bold text-slate-900 text-xs truncate mt-1.5" title="${best.name}">${best.name}</div>
+            <div class="mt-1">${avatarHtml}</div>
+            <div class="font-bold text-slate-900 text-xs truncate mt-0.5" title="${best.name}">${best.name}</div>
             <div class="text-[10px] text-slate-500 font-semibold">OVR ${best.currentOvr} • Nota ${avg}</div>
           </div>
         `;
@@ -1421,15 +1683,19 @@
 
       document.getElementById('bestScorer').textContent = bestScorer ? bestScorer.name : '-';
       document.getElementById('bestScorerGols').textContent = bestScorer ? `${bestScorer.goals} Gols` : '0 Gols';
+      if (bestScorer) updateMiniAvatar('bestScorerAvatar', bestScorer, 'fa-futbol');
 
       document.getElementById('bestAssister').textContent = bestAssister ? bestAssister.name : '-';
       document.getElementById('bestAssisterCount').textContent = bestAssister ? `${bestAssister.assists} Ass.` : '0 Ass.';
+      if (bestAssister) updateMiniAvatar('bestAssisterAvatar', bestAssister, 'fa-shoe-prints');
 
       document.getElementById('bestSsgPlayer').textContent = bestSsg ? bestSsg.name : '-';
       document.getElementById('bestSsgCount').textContent = bestSsg ? `${bestSsg.ssg} Jogos` : '0 Jogos';
+      if (bestSsg) updateMiniAvatar('bestSsgAvatar', bestSsg, 'fa-shield-halved');
 
       document.getElementById('bestRatingPlayer').textContent = bestRating ? bestRating.name : '-';
       document.getElementById('bestRatingVal').textContent = bestRating ? (bestRating.ratingSum / bestRating.matches).toFixed(2) : '-';
+      if (bestRating) updateMiniAvatar('bestRatingAvatar', bestRating, 'fa-star');
 
       // Gráficos
       const natMap = {};
@@ -1463,6 +1729,17 @@
           },
           options: { responsive: true, maintainAspectRatio: false }
         });
+      }
+    }
+
+    function updateMiniAvatar(elemId, player, defaultIconClass) {
+      const el = document.getElementById(elemId);
+      if (!el) return;
+      const face = getPlayerFaceUrl(player);
+      if (face) {
+        el.innerHTML = `<img src="${face}" class="w-full h-full object-contain scale-110" alt="${player.name}" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid ${defaultIconClass}\\'></i>'">`;
+      } else {
+        el.innerHTML = `<i class="fa-solid ${defaultIconClass}"></i>`;
       }
     }
 
@@ -1525,10 +1802,10 @@
         const iconHtml = getPlayerShoeOrGloveIcon(a, isTop11);
         const flagHtml = getCountryFlagImg(a.nat);
         const roleBadge = getRoleBadge(a.role);
+        const avatarHtml = renderPlayerAvatarHtml(a, 'w-8 h-8', 'rounded-full');
         const matches = Number(a.matches) || 0;
         const avg = matches > 0 ? (Number(a.ratingSum) / matches).toFixed(2) : '-';
 
-        // Analytics de Potencial e Margem
         const ovr = Number(a.currentOvr) || 70;
         const age = Number(a.age) || 20;
         let pot = ovr;
@@ -1544,9 +1821,12 @@
             
             <td class="py-3 px-3">
               <div class="flex items-center gap-2.5">
-                ${flagHtml}
+                ${avatarHtml}
                 <div>
-                  <div class="font-extrabold text-slate-900 text-xs">${a.name}</div>
+                  <div class="flex items-center gap-1.5">
+                    ${flagHtml}
+                    <span class="font-extrabold text-slate-900 text-xs">${a.name}</span>
+                  </div>
                   <div class="mt-0.5">${roleBadge}</div>
                 </div>
               </div>
@@ -1586,9 +1866,9 @@
 
             <td class="py-3 px-3 text-right">
               <div class="flex items-center justify-end gap-1">
-                <button onclick="openStatsModal(${a.id})" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100" title="Editar Estatísticas (Jogos, Gols, Notas)"><i class="fa-solid fa-chart-simple"></i></button>
-                <button onclick="editAthlete(${a.id})" class="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="Editar Atleta"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button onclick="deleteAthlete(${a.id})" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100" title="Remover"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" onclick="openStatsModal('${a.id}')" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100" title="Editar Estatísticas"><i class="fa-solid fa-chart-simple"></i></button>
+                <button type="button" onclick="editAthlete('${a.id}')" class="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="Editar Atleta"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button type="button" onclick="deleteAthlete('${a.id}')" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100" title="Remover"><i class="fa-solid fa-trash"></i></button>
               </div>
             </td>
           </tr>
@@ -1600,37 +1880,52 @@
     function openAthleteModal() {
       document.getElementById('athleteForm').reset();
       document.getElementById('athId').value = "";
+      document.getElementById('athEaId').value = "";
+      document.getElementById('athPhotoUrl').value = "";
+      document.getElementById('athPreviewAvatar').innerText = "?";
+      document.getElementById('playerSearchResults')?.classList.add('hidden');
       document.getElementById('athleteModalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-emerald-600"></i> Cadastrar Atleta`;
       document.getElementById('athleteModal').classList.remove('hidden');
     }
 
     function closeAthleteModal() {
       document.getElementById('athleteModal').classList.add('hidden');
+      document.getElementById('playerSearchResults')?.classList.add('hidden');
     }
 
     function toggleLoanClubInput() {
       const status = document.getElementById('athLoanStatus').value;
-      document.getElementById('loanClubContainer').classList.toggle('hidden', status === 'NONE');
+      const container = document.getElementById('loanClubContainer');
+      if (container) {
+        if (status === 'NONE') {
+          container.classList.add('hidden');
+        } else {
+          container.classList.remove('hidden');
+        }
+      }
     }
 
     function editAthlete(id) {
-      const a = state.athletes.find(p => p.id === id);
+      const a = state.athletes.find(p => String(p.id) === String(id));
       if (!a) return;
       document.getElementById('athId').value = a.id;
-      document.getElementById('athName').value = a.name;
-      document.getElementById('athNumber').value = a.number || '';
-      document.getElementById('athPos').value = a.pos;
-      document.getElementById('athAge').value = a.age;
-      document.getElementById('athNat').value = a.nat;
-      document.getElementById('athOvr').value = a.currentOvr;
-      document.getElementById('athInitialOvr').value = a.initialOvr;
-      document.getElementById('athContract').value = a.contractYears || 3;
+      document.getElementById('athName').value = a.name || '';
+      document.getElementById('athNumber').value = (a.number !== undefined && a.number !== '-') ? a.number : '';
+      document.getElementById('athEaId').value = a.eaId || '';
+      document.getElementById('athPhotoUrl').value = a.photoUrl || '';
+      document.getElementById('athPos').value = a.pos || 'MEI';
+      document.getElementById('athAge').value = a.age || 20;
+      document.getElementById('athNat').value = a.nat || 'ING';
+      document.getElementById('athOvr').value = a.currentOvr || 70;
+      document.getElementById('athInitialOvr').value = (a.initialOvr !== undefined) ? a.initialOvr : a.currentOvr;
+      document.getElementById('athContract').value = (a.contractYears !== undefined) ? a.contractYears : 3;
       document.getElementById('athRole').value = a.role || 'Importante';
       document.getElementById('athMarketValue').value = a.marketValue || 0;
       document.getElementById('athWage').value = a.wage || 0;
       document.getElementById('athLoanStatus').value = a.loanStatus || 'NONE';
       document.getElementById('athLoanClub').value = a.loanClub || '';
       toggleLoanClubInput();
+      updateModalPreviewFace();
 
       document.getElementById('athleteModalTitle').innerHTML = `<i class="fa-solid fa-user-pen text-indigo-600"></i> Editar Atleta`;
       document.getElementById('athleteModal').classList.remove('hidden');
@@ -1639,7 +1934,8 @@
     function saveAthleteData(e) {
       if (e && e.preventDefault) e.preventDefault();
       const idVal = document.getElementById('athId').value;
-      const id = idVal ? Number(idVal) : Date.now();
+      const isExisting = Boolean(idVal);
+      const id = isExisting ? (isNaN(idVal) ? idVal : Number(idVal)) : Date.now();
 
       const ovr = Number(document.getElementById('athOvr').value) || 70;
       const initialOvr = Number(document.getElementById('athInitialOvr').value) || ovr;
@@ -1647,8 +1943,10 @@
 
       const athleteObj = {
         id: id,
-        name: document.getElementById('athName').value.trim(),
-        number: rawNumber !== '' ? rawNumber : '-',
+        name: document.getElementById('athName').value.trim() || 'Sem Nome',
+        number: (rawNumber !== '' && rawNumber !== undefined) ? rawNumber : '-',
+        eaId: document.getElementById('athEaId').value.trim(),
+        photoUrl: document.getElementById('athPhotoUrl').value.trim(),
         pos: document.getElementById('athPos').value,
         age: Number(document.getElementById('athAge').value) || 20,
         nat: (document.getElementById('athNat').value || 'ING').toUpperCase().trim(),
@@ -1662,7 +1960,7 @@
         loanClub: document.getElementById('athLoanClub').value.trim()
       };
 
-      const existingIndex = state.athletes.findIndex(a => a.id === id);
+      const existingIndex = state.athletes.findIndex(a => String(a.id) === String(id));
       if (existingIndex > -1) {
         const old = state.athletes[existingIndex];
         state.athletes[existingIndex] = Object.assign({}, old, athleteObj);
@@ -1685,23 +1983,23 @@
 
     function deleteAthlete(id) {
       if (confirm('Tem a certeza de que deseja remover este atleta?')) {
-        state.athletes = state.athletes.filter(a => a.id !== id);
+        state.athletes = state.athletes.filter(a => String(a.id) !== String(id));
         saveState();
         syncAllToCloud();
       }
     }
 
     function openStatsModal(id) {
-      const a = state.athletes.find(p => p.id === id);
+      const a = state.athletes.find(p => String(p.id) === String(id));
       if (!a) return;
       document.getElementById('statsPlayerId').value = a.id;
       document.getElementById('statsModalPlayerName').textContent = `${a.name} (${a.pos}) - OVR ${a.currentOvr}`;
-      document.getElementById('statsMatches').value = a.matches;
-      document.getElementById('statsGoals').value = a.goals;
-      document.getElementById('statsAssists').value = a.assists;
-      document.getElementById('statsSsg').value = a.ssg;
-      document.getElementById('statsYellow').value = a.yellow;
-      document.getElementById('statsRed').value = a.red;
+      document.getElementById('statsMatches').value = a.matches || 0;
+      document.getElementById('statsGoals').value = a.goals || 0;
+      document.getElementById('statsAssists').value = a.assists || 0;
+      document.getElementById('statsSsg').value = a.ssg || 0;
+      document.getElementById('statsYellow').value = a.yellow || 0;
+      document.getElementById('statsRed').value = a.red || 0;
       document.getElementById('statsAvgRating').value = a.matches > 0 ? (a.ratingSum / a.matches).toFixed(2) : '6.50';
       document.getElementById('statsModal').classList.remove('hidden');
     }
@@ -1712,8 +2010,8 @@
 
     function saveAthleteStats(e) {
       if (e && e.preventDefault) e.preventDefault();
-      const pId = Number(document.getElementById('statsPlayerId').value);
-      const a = state.athletes.find(p => p.id === pId);
+      const pId = document.getElementById('statsPlayerId').value;
+      const a = state.athletes.find(p => String(p.id) === String(pId));
       if (!a) return;
 
       const m = Number(document.getElementById('statsMatches').value) || 0;
@@ -2020,7 +2318,7 @@
     function renderMatchesList() {
       const list = document.getElementById('matchesList');
       const countLabel = document.getElementById('matchesCountLabel');
-      const champMatches = state.matches.filter(m => m.champId === state.currentChampId && m.season === state.currentSeason);
+      const champMatches = state.matches.filter(m => String(m.champId) === String(state.currentChampId) && m.season === state.currentSeason);
 
       countLabel.textContent = `${champMatches.length} partidas nesta época`;
 
@@ -2030,28 +2328,39 @@
       }
 
       list.innerHTML = champMatches.map(m => {
-        const isWin = m.myScore > m.oppScore;
-        const isDraw = m.myScore === m.oppScore;
+        const myScore = Number(m.myScore) || 0;
+        const oppScore = Number(m.oppScore) || 0;
+        const opponentName = (m.opponent && m.opponent !== 'Adversário') ? m.opponent : (m.adversario || 'Adversário');
+        const isWin = myScore > oppScore;
+        const isDraw = myScore === oppScore;
         const badgeColor = isWin ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : (isDraw ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-rose-100 text-rose-800 border-rose-300');
         const badgeText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
 
         const scorersText = (m.goals || []).map(g => {
-          const sc = state.athletes.find(a => a.id === g.scorerId)?.name || 'Autor';
-          const as = g.assistId ? `(Ass: ${state.athletes.find(a => a.id === g.assistId)?.name || 'Passe'})` : '';
+          const sc = state.athletes.find(a => String(a.id) === String(g.scorerId))?.name || 'Autor';
+          const as = g.assistId ? `(Ass: ${state.athletes.find(a => String(a.id) === String(g.assistId))?.name || 'Passe'})` : '';
           return `${sc} ⚽ ${as}`;
         }).join(' • ');
+
+        // Exibição correta do Mando de Campo: Se FORA, o adversário joga em casa (à esquerda)
+        const isAway = (m.location || '').toUpperCase().trim() === 'FORA';
+        const homeTeam = isAway ? opponentName : state.clubName;
+        const awayTeam = isAway ? state.clubName : opponentName;
+        const homeScore = isAway ? oppScore : myScore;
+        const awayScore = isAway ? myScore : oppScore;
 
         return `
           <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
             <div class="space-y-1">
               <div class="flex items-center gap-2">
                 <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}">${badgeText}</span>
-                <span class="text-xs font-semibold text-slate-500">${m.location} • ${m.date}</span>
+                <span class="text-xs font-semibold text-slate-500 uppercase">${m.location} • ${m.date}</span>
+                <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.2 rounded border border-indigo-200">${opponentName}</span>
               </div>
               <div class="text-base font-black text-slate-900 flex items-center gap-3 font-heading">
-                <span>${state.clubName}</span>
-                <span class="px-2.5 py-0.5 bg-white border border-slate-300 rounded text-emerald-700 shadow-xs">${m.myScore} - ${m.oppScore}</span>
-                <span class="text-slate-600">${m.opponent}</span>
+                <span class="${!isAway ? 'text-slate-950 font-black' : 'text-slate-600'}">${homeTeam}</span>
+                <span class="px-2.5 py-0.5 bg-white border border-slate-300 rounded text-emerald-700 shadow-xs font-mono">${homeScore} - ${awayScore}</span>
+                <span class="${isAway ? 'text-slate-950 font-black' : 'text-slate-600'}">${awayTeam}</span>
               </div>
               ${scorersText ? `<div class="text-xs text-amber-700 font-semibold">${scorersText}</div>` : ''}
             </div>
@@ -2223,6 +2532,8 @@
           id: Date.now(),
           name: name,
           number: 0,
+          eaId: '',
+          photoUrl: '',
           pos: document.getElementById('buyPos').value,
           age: Number(document.getElementById('buyAge').value) || 22,
           nat: (document.getElementById('buyNat').value || 'ING').toUpperCase().trim(),
@@ -2268,10 +2579,11 @@
         state.budget += amount;
         state.transferAcquired += amount;
 
-        // Guarda histórico para o Memorial dos Atletas
         state.departedAthletes.push({
           id: soldAthlete.id,
           name: soldAthlete.name,
+          eaId: soldAthlete.eaId || '',
+          photoUrl: soldAthlete.photoUrl || '',
           pos: soldAthlete.pos,
           nat: soldAthlete.nat,
           initialOvr: soldAthlete.initialOvr || soldAthlete.currentOvr,
@@ -2402,9 +2714,7 @@
       syncAllToCloud();
     }
 
-    // ==========================================
-    // NOVO: MODAL DINÂMICO DE VIRADA & CLASSIFICAÇÕES
-    // ==========================================
+    // ENCERRAMENTO DE ÉPOCA
     function openSeasonAdvanceModal() {
       const parts = state.currentSeason.split('/');
       if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
@@ -2415,7 +2725,6 @@
 
       document.getElementById('advanceCurrentSeasonLabel').textContent = state.currentSeason;
 
-      // Renderiza as opções de classificação para cada competição cadastrada
       const container = document.getElementById('seasonTournamentsRankingContainer');
       if (state.championships.length === 0) {
         container.innerHTML = `<p class="text-xs text-slate-400 italic">Nenhum campeonato cadastrado.</p>`;
@@ -2473,7 +2782,6 @@
       if (!Array.isArray(state.seasonsHistory)) state.seasonsHistory = [];
       if (!Array.isArray(state.trophiesWon)) state.trophiesWon = [];
 
-      // 1. Coleta os resultados dos torneios e novos títulos
       const rankings = [];
       const newTrophiesThisSeason = [];
 
@@ -2505,7 +2813,6 @@
         }
       });
 
-      // 2. Extrai métricas e desempenhos por setor da época atual
       const seasonMatches = state.matches.filter(m => m.season === state.currentSeason);
       let teamWins = 0, teamDraws = 0, teamLosses = 0, totalGp = 0, totalGc = 0;
       seasonMatches.forEach(m => {
@@ -2518,7 +2825,6 @@
       const totalGames = seasonMatches.length;
       const winRate = totalGames > 0 ? Math.round((teamWins / totalGames) * 100) : 0;
 
-      // Setores
       const defPlayers = state.athletes.filter(a => ['GOL', 'ZAG', 'LD', 'LE'].includes(a.pos));
       const meiPlayers = state.athletes.filter(a => ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos));
       const ataPlayers = state.athletes.filter(a => ['PD', 'PE', 'ATA', 'SA'].includes(a.pos));
@@ -2527,11 +2833,9 @@
       const calcTotalGoals = arr => arr.reduce((s, a) => s + (Number(a.goals) || 0), 0);
       const calcTotalSsg = arr => arr.reduce((s, a) => s + (Number(a.ssg) || 0), 0);
 
-      // Líderes e MVP
       const bestScorer = [...state.athletes].sort((a, b) => (Number(b.goals) || 0) - (Number(a.goals) || 0))[0];
       const bestAssister = [...state.athletes].sort((a, b) => (Number(b.assists) || 0) - (Number(a.assists) || 0))[0];
 
-      // 3. Monta o snapshot imutável da temporada encerrada
       const seasonSnapshot = {
         season: state.currentSeason,
         closedAt: new Date().toLocaleDateString('pt-PT'),
@@ -2565,6 +2869,8 @@
           id: a.id,
           name: a.name,
           number: a.number,
+          eaId: a.eaId || '',
+          photoUrl: a.photoUrl || '',
           pos: a.pos,
           nat: a.nat,
           finalOvr: a.currentOvr,
@@ -2576,10 +2882,8 @@
         }))
       };
 
-      // Guarda snapshot nas temporadas anteriores
       state.seasonsHistory.unshift(seasonSnapshot);
 
-      // 4. Executa a virada do plantel para a nova época
       state.currentSeason = nextSeason;
       state.athletes.forEach(a => {
         a.age += 1;
@@ -2601,9 +2905,7 @@
       alert(`Temporada arquivada no Memorial e nova época iniciada: ${nextSeason}! Títulos registrados: ${newTrophiesThisSeason.length}.`);
     }
 
-    // ==========================================
-    // NOVO: RENDERIZAÇÃO DA ABA DE HISTÓRICO & MEMORIAL
-    // ==========================================
+    // HISTÓRICO & MEMORIAL
     function setPlayerHistoryFilter(f) {
       currentHistPlayerFilter = f;
       document.getElementById('filterHistAll').className = f === 'ALL' ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white' : 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200';
@@ -2659,7 +2961,6 @@
       const goalsFor = seasons.map(s => s.stats.goalsFor);
       const goalsAgainst = seasons.map(s => s.stats.goalsAgainst);
 
-      // Gráfico de Aproveitamento
       const ctx1 = document.getElementById('seasonsWinRateChart')?.getContext('2d');
       if (seasonsWinRateChartInstance) seasonsWinRateChartInstance.destroy();
       if (ctx1) {
@@ -2686,7 +2987,6 @@
         });
       }
 
-      // Gráfico de Gols Pró x Sofridos
       const ctx2 = document.getElementById('seasonsGoalsChart')?.getContext('2d');
       if (seasonsGoalsChartInstance) seasonsGoalsChartInstance.destroy();
       if (ctx2) {
@@ -2736,9 +3036,7 @@
       const tbody = document.getElementById('playerMemorialTableBody');
       if (!tbody) return;
 
-      // Junta atletas atuais com os que saíram
       const currentList = state.athletes.map(a => {
-        // Calcula somatório histórico de todas as épocas encerradas + atual
         let histMatches = Number(a.matches) || 0;
         let histGoals = Number(a.goals) || 0;
         let histAssists = Number(a.assists) || 0;
@@ -2760,6 +3058,8 @@
         return {
           id: a.id,
           name: a.name,
+          eaId: a.eaId || '',
+          photoUrl: a.photoUrl || '',
           pos: a.pos,
           nat: a.nat,
           isCurrent: true,
@@ -2772,7 +3072,7 @@
           assists: histAssists,
           ssg: histSsg,
           avg: avg,
-          trophiesCount: (state.trophiesWon || []).length // Participou das eras do clube
+          trophiesCount: (state.trophiesWon || []).length
         };
       });
 
@@ -2780,6 +3080,8 @@
         return {
           id: d.id,
           name: d.name,
+          eaId: d.eaId || '',
+          photoUrl: d.photoUrl || '',
           pos: d.pos,
           nat: d.nat,
           isCurrent: false,
@@ -2800,7 +3102,6 @@
       if (currentHistPlayerFilter === 'CURRENT') combined = combined.filter(p => p.isCurrent);
       if (currentHistPlayerFilter === 'PAST') combined = combined.filter(p => !p.isCurrent);
 
-      // Ordena por maior número de jogos no clube
       combined.sort((a, b) => b.matches - a.matches);
 
       if (combined.length === 0) {
@@ -2810,6 +3111,7 @@
 
       tbody.innerHTML = combined.map(p => {
         const flag = getCountryFlagImg(p.nat);
+        const avatar = renderPlayerAvatarHtml(p, 'w-6 h-6', 'rounded-full');
         const ovrDiff = p.currentOvr - p.initialOvr;
         const diffHtml = ovrDiff > 0 ? `<span class="text-emerald-600 font-bold text-[10px]">+${ovrDiff}</span>` : (ovrDiff < 0 ? `<span class="text-rose-600 font-bold text-[10px]">${ovrDiff}</span>` : '<span class="text-slate-400 text-[10px]">=</span>');
 
@@ -2817,6 +3119,7 @@
           <tr class="hover:bg-slate-50 transition border-b border-slate-100">
             <td class="py-3 px-3">
               <div class="flex items-center gap-2">
+                ${avatar}
                 ${flag}
                 <span class="font-extrabold text-slate-900 text-xs">${p.name}</span>
               </div>
@@ -2919,244 +3222,247 @@
       }).join('');
     }
 
-    // SINCRONIZAÇÃO COMPLETA GOOGLE SHEETS
-async function loadFromGoogleSheets() {
-  const statusEl = document.getElementById('syncStatus');
-  if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A sincronizar...`;
+    // SINCRONIZAÇÃO COMPLETA COM GOOGLE SHEETS
+    async function loadFromGoogleSheets() {
+      const statusEl = document.getElementById('syncStatus');
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-ping"></span> A sincronizar...`;
 
-  try {
-    const res = await fetch(`${API_URL}?action=getAll`);
-    const json = await res.json();
+      try {
+        const res = await fetch(`${API_URL}?action=getAll`);
+        const json = await res.json();
 
-    if (json.status === 'success' && json.data) {
-      const remote = json.data;
+        if (json.status === 'success' && json.data) {
+          const remote = json.data;
 
-      // 1. Dados do Clube
-      if (remote.clube && remote.clube.length > 0) {
-        const cl = remote.clube[0];
-        state.clubName = cl.nome || state.clubName;
-        state.clubLogoUrl = cl.logo_url || state.clubLogoUrl;
-        state.currentSeason = cl.temporada || state.currentSeason;
-        state.budget = Number(cl.verba) || state.budget;
-        state.wageBudget = Number(cl.teto_salarial) || state.wageBudget;
+          // 1. Clube
+          if (remote.clube && remote.clube.length > 0) {
+            const cl = remote.clube[0];
+            state.clubName = cl.nome || state.clubName;
+            state.clubLogoUrl = cl.logo_url || state.clubLogoUrl;
+            state.currentSeason = cl.temporada || state.currentSeason;
+            state.budget = Number(cl.verba) || state.budget;
+            state.wageBudget = Number(cl.teto_salarial) || state.wageBudget;
+          }
+
+          // 2. Mapeamento Rigoroso de Atletas (incluindo eaId e photoUrl)
+          if (Array.isArray(remote.atletas)) {
+            state.athletes = remote.atletas.map(a => {
+              const id = a.id !== undefined ? Number(a.id) : (Number(a[0]) || Date.now());
+              const numero = a.numero !== undefined && a.numero !== '' ? a.numero : (a[1] !== undefined ? a[1] : '-');
+              const nome = a.nome || a[2] || 'Sem Nome';
+              const pos = (a.pos || a[3] || 'MEI').toUpperCase().trim();
+              const idade = Number(a.idade !== undefined ? a.idade : a[4]) || 20;
+              const nat = (a.nat || a[5] || 'ENG').toUpperCase().trim();
+              const role = a.role || a[6] || 'IMPORTANTE';
+              const ovr_inicial = Number(a.ovr_inicial !== undefined ? a.ovr_inicial : a[7]) || 60;
+              const currentOvr = Number(a.ovr !== undefined ? a.ovr : a[8]) || ovr_inicial;
+              let contrato = Number(a.contrato !== undefined ? a.contrato : a[9]) || 3;
+              
+              const rawLoan = a.emprestimo_status !== undefined ? a.emprestimo_status : a[10];
+              const loanStatus = (rawLoan === 1 || rawLoan === '1' || rawLoan === 'LOAN_OUT') ? 'LOAN_OUT' : 'NONE';
+              const loanClub = a.emprestimo_clube || a[11] || '';
+
+              let marketValue = Number(a.valor_mercado !== undefined ? a.valor_mercado : a[12]) || 0;
+              let wage = Number(a.salario !== undefined ? a.salario : a[13]) || 0;
+
+              let matches = Number(a.jogos !== undefined ? a.jogos : a[14]) || 0;
+              let goals = Number(a.gols !== undefined ? a.gols : a[15]) || 0;
+              let assists = Number(a.assists !== undefined ? a.assists : a[16]) || 0;
+              let ssg = Number(a.ssg !== undefined ? a.ssg : a[17]) || 0;
+              let yellow = Number(a.ca !== undefined ? a.ca : a[18]) || 0;
+              let red = Number(a.cv !== undefined ? a.cv : a[19]) || 0;
+              let ratingSum = Number(a.nota_soma !== undefined ? a.nota_soma : a[20]) || 0;
+
+              // AUTO-CURA CONTRA DESLOCAMENTO DE COLUNAS
+              if (ssg > 500 && (!marketValue || marketValue <= 100)) {
+                marketValue = ssg;
+                ssg = 0;
+              }
+              if (yellow >= 50 && (!wage || wage <= 100)) {
+                wage = yellow;
+                yellow = 0;
+              }
+              if (wage <= 100 && yellow >= 50) {
+                wage = yellow;
+                yellow = 0;
+              }
+              if (contrato <= 0 && red > 0 && red <= 10) {
+                contrato = red;
+                red = 0;
+              }
+              if (ratingSum > 0 && matches > 0 && (ratingSum / matches) < 1.0) {
+                ratingSum = matches * 6.5;
+              }
+
+              // Leitura segura do eaId e photoUrl vindos da planilha
+              const localAth = state.athletes.find(loc => loc.id === id);
+              const eaId = a.eaId !== undefined ? String(a.eaId).trim() : (a[21] !== undefined ? String(a[21]).trim() : (localAth ? localAth.eaId : ''));
+              const photoUrl = a.photoUrl !== undefined ? String(a.photoUrl).trim() : (a[22] !== undefined ? String(a[22]).trim() : (localAth ? localAth.photoUrl : ''));
+
+              return {
+                id,
+                number: numero,
+                name: nome,
+                eaId: eaId || '',
+                photoUrl: photoUrl || '',
+                pos,
+                age: idade,
+                nat,
+                role,
+                initialOvr: ovr_inicial,
+                currentOvr,
+                contractYears: contrato,
+                loanStatus,
+                loanClub,
+                marketValue,
+                wage,
+                matches,
+                goals,
+                assists,
+                ssg,
+                yellow,
+                red,
+                ratingSum
+              };
+            });
+          }
+
+          // 3. Campeonatos
+          if (Array.isArray(remote.campeonatos) && remote.campeonatos.length > 0) {
+            state.championships = remote.campeonatos.map(c => ({
+              id: c.id,
+              name: c.nome || c.name || 'Torneio',
+              format: (c.formato || c.format || 'PONTOS').toUpperCase(),
+              trophyUrl: c.trophyUrl || c.trophy_url || ''
+            }));
+          }
+
+          // 4. Partidas
+          if (Array.isArray(remote.partidas)) {
+            state.matches = remote.partidas.map(m => {
+              const rawGp = m.gols_pro !== undefined ? m.gols_pro : (m.myScore !== undefined ? m.myScore : m[6]);
+              const rawGc = m.gols_contra !== undefined ? m.gols_contra : (m.oppScore !== undefined ? m.oppScore : m[7]);
+
+              let parsedGoals = [];
+              if (typeof m.detalhes_gols === 'string') {
+                try { parsedGoals = JSON.parse(m.detalhes_gols || '[]'); } catch(e) { parsedGoals = []; }
+              } else if (Array.isArray(m.detalhes_gols)) {
+                parsedGoals = m.detalhes_gols;
+              }
+
+              let parsedPerf = [];
+              if (typeof m.detalhes_notas === 'string') {
+                try { parsedPerf = JSON.parse(m.detalhes_notas || '[]'); } catch(e) { parsedPerf = []; }
+              } else if (Array.isArray(m.detalhes_notas)) {
+                parsedPerf = m.detalhes_notas;
+              }
+
+              return {
+                id: Number(m.id) || Date.now(),
+                season: m.temporada || m.season || state.currentSeason,
+                champId: m.campeonato || m.champId || state.currentChampId,
+                champName: m.nome_campeonato || m.champName || '',
+                opponent: m.adversario || m.opponent || 'Adversário',
+                location: (m.mando || m.location || 'CASA').toUpperCase().trim(),
+                myScore: (rawGp !== undefined && rawGp !== null && !isNaN(rawGp)) ? Number(rawGp) : 0,
+                oppScore: (rawGc !== undefined && rawGc !== null && !isNaN(rawGc)) ? Number(rawGc) : 0,
+                date: m.data || m.date || new Date().toLocaleDateString('pt-PT'),
+                goals: parsedGoals,
+                performances: parsedPerf
+              };
+            });
+          } else {
+            state.matches = [];
+          }
+
+          if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
+          saveState();
+          updateUI();
+        }
+      } catch (err) {
+        console.error('Erro na sincronização:', err);
+        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Erro de Sincronização`;
       }
+    }
 
-      // 2. Mapeamento Rigoroso com Auto-Cura da Aba Atletas (21 Colunas)
-      if (Array.isArray(remote.atletas)) {
-        state.athletes = remote.atletas.map(a => {
-          const id = a.id !== undefined ? Number(a.id) : (Number(a[0]) || Date.now());
-          const numero = a.numero !== undefined && a.numero !== '' ? a.numero : (a[1] !== undefined ? a[1] : '-');
-          const nome = a.nome || a[2] || 'Sem Nome';
-          const pos = (a.pos || a[3] || 'MEI').toUpperCase().trim();
-          const idade = Number(a.idade !== undefined ? a.idade : a[4]) || 20;
-          const nat = (a.nat || a[5] || 'ENG').toUpperCase().trim();
-          const role = a.role || a[6] || 'IMPORTANTE';
-          const ovr_inicial = Number(a.ovr_inicial !== undefined ? a.ovr_inicial : a[7]) || 60;
-          const currentOvr = Number(a.ovr !== undefined ? a.ovr : a[8]) || ovr_inicial;
-          let contrato = Number(a.contrato !== undefined ? a.contrato : a[9]) || 3;
-          
-          const rawLoan = a.emprestimo_status !== undefined ? a.emprestimo_status : a[10];
-          const loanStatus = (rawLoan === 1 || rawLoan === '1' || rawLoan === 'LOAN_OUT') ? 'LOAN_OUT' : 'NONE';
-          const loanClub = a.emprestimo_clube || a[11] || '';
+    async function syncAllToCloud() {
+      const statusEl = document.getElementById('syncStatus');
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse"></span> A guardar...`;
 
-          // Valores Financeiros
-          let marketValue = Number(a.valor_mercado !== undefined ? a.valor_mercado : a[12]) || 0;
-          let wage = Number(a.salario !== undefined ? a.salario : a[13]) || 0;
+      const payload = {
+        action: 'syncAll',
+        data: {
+          clube: [{
+            nome: state.clubName,
+            logo_url: state.clubLogoUrl || '',
+            temporada: state.currentSeason,
+            verba: Number(state.budget) || 0,
+            teto_salarial: Number(state.wageBudget) || 0
+          }],
+          atletas: state.athletes.map(a => ({
+            id: a.id,
+            numero: a.number !== undefined && a.number !== '' ? a.number : '-',
+            nome: a.name || 'Sem Nome',
+            eaId: a.eaId || '',
+            photoUrl: a.photoUrl || '',
+            pos: a.pos || 'MEI',
+            idade: Number(a.age) || 20,
+            nat: a.nat || 'ING',
+            role: a.role || 'Importante',
+            ovr_inicial: Number(a.initialOvr) || Number(a.currentOvr) || 70,
+            ovr: Number(a.currentOvr) || 70,
+            contrato: Number(a.contractYears) || 3,
+            emprestimo_status: (a.loanStatus === 'LOAN_OUT' || a.loanStatus === 1) ? 1 : 0,
+            emprestimo_clube: a.loanClub || '',
+            valor_mercado: Number(a.marketValue) || 0,
+            salario: Number(a.wage) || 0,
+            jogos: Number(a.matches) || 0,
+            gols: Number(a.goals) || 0,
+            assists: Number(a.assists) || 0,
+            ssg: Number(a.ssg) || 0,
+            ca: Number(a.yellow) || 0,
+            cv: Number(a.red) || 0,
+            nota_soma: Number(a.ratingSum) || 0
+          })),
+          campeonatos: state.championships.map(c => ({
+            id: c.id,
+            nome: c.name,
+            formato: c.format,
+            trophyUrl: c.trophyUrl || ''
+          })),
+          partidas: state.matches.map(m => ({
+            id: m.id,
+            temporada: m.season,
+            campeonato: m.champId,
+            nome_campeonato: m.champName || '',
+            adversario: m.opponent,
+            mando: m.location,
+            gols_pro: Number(m.myScore) || 0,
+            gols_contra: Number(m.oppScore) || 0,
+            data: m.date || '',
+            date: m.date || '',
+            detalhes_gols: JSON.stringify(m.goals || []),
+            detalhes_notas: JSON.stringify(m.performances || [])
+          }))
+        }
+      };
 
-          // Estatísticas
-          let matches = Number(a.jogos !== undefined ? a.jogos : a[14]) || 0;
-          let goals = Number(a.gols !== undefined ? a.gols : a[15]) || 0;
-          let assists = Number(a.assists !== undefined ? a.assists : a[16]) || 0;
-          let ssg = Number(a.ssg !== undefined ? a.ssg : a[17]) || 0;
-          let yellow = Number(a.ca !== undefined ? a.ca : a[18]) || 0;
-          let red = Number(a.cv !== undefined ? a.cv : a[19]) || 0;
-          let ratingSum = Number(a.nota_soma !== undefined ? a.nota_soma : a[20]) || 0;
-
-          // AUTO-CURA CONTRA DESLOCAMENTO DE COLUNAS DO SHEETS:
-          // Se SSG veio com valor de mercado (ex: 160000 ou 375000)
-          if (ssg > 500 && (!marketValue || marketValue <= 100)) {
-            marketValue = ssg;
-            ssg = 0;
-          }
-          // Se Cartão Amarelo veio com valor de salário semanal (ex: 400 ou 650)
-          if (yellow >= 50 && (!wage || wage <= 100)) {
-            wage = yellow;
-            yellow = 0;
-          }
-          if (wage <= 100 && yellow >= 50) {
-            wage = yellow;
-            yellow = 0;
-          }
-          if (contrato <= 0 && red > 0 && red <= 10) {
-            contrato = red;
-            red = 0;
-          }
-          if (ratingSum > 0 && matches > 0 && (ratingSum / matches) < 1.0) {
-            ratingSum = matches * 6.5;
-          }
-
-          return {
-            id,
-            number: numero,
-            name: nome,
-            pos,
-            age: idade,
-            nat,
-            role,
-            initialOvr: ovr_inicial,
-            currentOvr,
-            contractYears: contrato,
-            loanStatus,
-            loanClub,
-            marketValue,
-            wage,
-            matches,
-            goals,
-            assists,
-            ssg,
-            yellow,
-            red,
-            ratingSum
-          };
+      try {
+        const resp = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
         });
+        const res = await resp.json();
+        if (res.status === 'success') {
+          if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
+        }
+      } catch (err) {
+        console.warn('Erro ao sincronizar:', err);
+        if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Guardado localmente`;
       }
-
-      // 3. Campeonatos
-      if (Array.isArray(remote.campeonatos) && remote.campeonatos.length > 0) {
-        state.championships = remote.campeonatos.map(c => ({
-          id: c.id,
-          name: c.nome || c.name || 'Torneio',
-          format: (c.formato || c.format || 'PONTOS').toUpperCase(),
-          trophyUrl: c.trophyUrl || c.trophy_url || ''
-        }));
-      }
-
-      // 4. Partidas (Tratamento Robusto de Gols do Adversário e Formato)
-      if (Array.isArray(remote.partidas)) {
-        state.matches = remote.partidas.map(m => {
-          // Garante leitura de gols_pro e gols_contra mesmo se vierem como número 0 ou texto
-          const rawGp = m.gols_pro !== undefined ? m.gols_pro : (m.myScore !== undefined ? m.myScore : m[6]);
-          const rawGc = m.gols_contra !== undefined ? m.gols_contra : (m.oppScore !== undefined ? m.oppScore : m[7]);
-
-          let parsedGoals = [];
-          if (typeof m.detalhes_gols === 'string') {
-            try { parsedGoals = JSON.parse(m.detalhes_gols || '[]'); } catch(e) { parsedGoals = []; }
-          } else if (Array.isArray(m.detalhes_gols)) {
-            parsedGoals = m.detalhes_gols;
-          }
-
-          let parsedPerf = [];
-          if (typeof m.detalhes_notas === 'string') {
-            try { parsedPerf = JSON.parse(m.detalhes_notas || '[]'); } catch(e) { parsedPerf = []; }
-          } else if (Array.isArray(m.detalhes_notas)) {
-            parsedPerf = m.detalhes_notas;
-          }
-
-          return {
-            id: Number(m.id) || Date.now(),
-            season: m.temporada || m.season || state.currentSeason,
-            champId: m.campeonato || m.champId || state.currentChampId,
-            champName: m.nome_campeonato || m.champName || '',
-            opponent: m.adversario || m.opponent || 'Adversário',
-            location: (m.mando || m.location || 'CASA').toUpperCase().trim(),
-            myScore: (rawGp !== undefined && rawGp !== null && !isNaN(rawGp)) ? Number(rawGp) : 0,
-            oppScore: (rawGc !== undefined && rawGc !== null && !isNaN(rawGc)) ? Number(rawGc) : 0,
-            date: m.data || m.date || new Date().toLocaleDateString('pt-PT'),
-            goals: parsedGoals,
-            performances: parsedPerf
-          };
-        });
-      } else {
-        state.matches = [];
-      }
-
-      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
-      saveState();
-      updateUI();
     }
-  } catch (err) {
-    console.error('Erro na sincronização:', err);
-    if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Erro de Sincronização`;
-  }
-}
 
-async function syncAllToCloud() {
-  const statusEl = document.getElementById('syncStatus');
-  if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block animate-pulse"></span> A guardar...`;
-
-  const payload = {
-    action: 'syncAll',
-    data: {
-      clube: [{
-        nome: state.clubName,
-        logo_url: state.clubLogoUrl || '',
-        temporada: state.currentSeason,
-        verba: Number(state.budget) || 0,
-        teto_salarial: Number(state.wageBudget) || 0
-      }],
-      atletas: state.athletes.map(a => ({
-        id: a.id,
-        numero: a.number !== undefined && a.number !== '' ? a.number : '-',
-        nome: a.name || 'Sem Nome',
-        pos: a.pos || 'MEI',
-        idade: Number(a.age) || 20,
-        nat: a.nat || 'ING',
-        role: a.role || 'Importante',
-        ovr_inicial: Number(a.initialOvr) || Number(a.currentOvr) || 70,
-        ovr: Number(a.currentOvr) || 70,
-        contrato: Number(a.contractYears) || 3,
-        emprestimo_status: (a.loanStatus === 'LOAN_OUT' || a.loanStatus === 1) ? 1 : 0,
-        emprestimo_clube: a.loanClub || '',
-        valor_mercado: Number(a.marketValue) || 0,
-        salario: Number(a.wage) || 0,
-        jogos: Number(a.matches) || 0,
-        gols: Number(a.goals) || 0,
-        assists: Number(a.assists) || 0,
-        ssg: Number(a.ssg) || 0,
-        ca: Number(a.yellow) || 0,
-        cv: Number(a.red) || 0,
-        nota_soma: Number(a.ratingSum) || 0
-      })),
-      campeonatos: state.championships.map(c => ({
-        id: c.id,
-        nome: c.name,
-        formato: c.format,
-        trophyUrl: c.trophyUrl || ''
-      })),
-      partidas: state.matches.map(m => ({
-        id: m.id,
-        temporada: m.season,
-        campeonato: m.champId,
-        nome_campeonato: m.champName || '',
-        adversario: m.opponent,
-        mando: m.location,
-        gols_pro: Number(m.myScore) || 0,
-        gols_contra: Number(m.oppScore) || 0, // Garante envio numérico do placar adversário
-        data: m.date || '',                  // Envia 'data' conforme a planilha espera
-        date: m.date || '',                  // Mantém retrocompatibilidade caso o backend leia 'date'
-        detalhes_gols: JSON.stringify(m.goals || []),
-        detalhes_notas: JSON.stringify(m.performances || [])
-      }))
-    }
-  };
-
-  try {
-    const resp = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    });
-    const res = await resp.json();
-    if (res.status === 'success') {
-      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
-    }
-  } catch (err) {
-    console.warn('Erro ao sincronizar:', err);
-    if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Guardado localmente`;
-  }
-}
-
-    
     function exportData() {
       const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
