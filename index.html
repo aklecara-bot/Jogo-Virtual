@@ -3678,13 +3678,13 @@
 
 
 
-      countLabel.textContent = `${champMatches.length} partidas nesta época`;
+      countLabel.textContent = `${champMatches.length} partidas nesta temporada`;
 
 
 
       if (champMatches.length === 0) {
 
-        list.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 italic">Nenhum confronto registado neste torneio.</div>`;
+        list.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 italic">Nenhum confronto registrado neste torneio.</div>`;
 
         return;
 
@@ -4575,7 +4575,7 @@ async function loadFromGoogleSheets() {
         state.matches = [];
       }
 
-      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Ligado ao Google Sheets`;
+      if (statusEl) statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Carregadob`;
       saveState();
       updateUI();
     }
