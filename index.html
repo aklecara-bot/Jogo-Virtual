@@ -531,6 +531,43 @@
         </div>
 
       </div>
+      <!-- TABELA / RANKING COMPLETO DE MVPs DA TEMPORADA -->
+<div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
+  <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
+    <div>
+      <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2 font-heading">
+        <i class="fa-solid fa-ranking-star text-amber-500"></i> Ranking da Corrida pelo MVP
+      </h3>
+      <p class="text-xs text-slate-500 font-medium">Classificação dos atletas pelo Índice de Desempenho ponderado (Notas, Gols, Assistências e Defesa)</p>
+    </div>
+    <span class="text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 px-3 py-1 rounded-full" id="mvpListCount">
+      0 atletas pontuados
+    </span>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-xs text-slate-700 border-collapse">
+      <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200 tracking-wider">
+        <tr>
+          <th class="py-2.5 px-3 text-center w-12">Pos.</th>
+          <th class="py-2.5 px-3 min-w-[180px]">Atleta</th>
+          <th class="py-2.5 px-2 text-center">Posição</th>
+          <th class="py-2.5 px-2 text-center">Jogos</th>
+          <th class="py-2.5 px-2 text-center text-amber-600">Gols</th>
+          <th class="py-2.5 px-2 text-center text-blue-600">Assists</th>
+          <th class="py-2.5 px-2 text-center text-emerald-600">SSG</th>
+          <th class="py-2.5 px-2 text-center text-purple-600">Nota Média</th>
+          <th class="py-2.5 px-3 text-right text-emerald-700 font-black">Índice MVP</th>
+        </tr>
+      </thead>
+      <tbody id="mvpRankingTableBody" class="divide-y divide-slate-100 font-medium">
+        <tr>
+          <td colspan="9" class="p-6 text-center text-slate-400 italic">Aguardando dados dos atletas...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
     </section>
 
@@ -717,15 +754,10 @@
       <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
 
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-
           <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-
-            <i class="fa-solid fa-chart-pie text-emerald-600"></i> Desempenho em Torneios (Mandante vs Visitante)
-
+            <i class="fa-solid fa-chart-pie text-emerald-600"></i> Desempenho: <span id="homeAwayChampTitle" class="text-emerald-700 font-extrabold uppercase ml-1">LaLiga Hyper</span> <span class="text-slate-400 font-normal">(Mandante vs Visitante)</span>
           </h3>
-
           <span class="text-xs text-slate-500 font-semibold" id="tourneyEfficiency">Aproveitamento: 0%</span>
-
         </div>
 
 
@@ -2887,6 +2919,7 @@
         renderDashboardVisuals();
 
         renderBestAthletesByPosition();
+        renderMvpRankingList();
 
       }
 
@@ -3191,7 +3224,7 @@
       calculateMVP();
 
       renderBestAthletesByPosition();
-
+      renderMvpRankingList();
 
 
       document.getElementById('dashBudget').textContent = formatCurrency(state.budget);
@@ -4822,128 +4855,95 @@
 
 
 
-    function updateTourneyHomeAwayDashboard() {
+    // MANDO DE CAMPO FILTRADO PELO TORNEIO SELECIONADO
+function updateTourneyHomeAwayDashboard() {
+  const activeChamp = state.championships.find(c => c.id === state.currentChampId);
+  const champName = activeChamp ? activeChamp.name : 'Torneio';
 
-      const homeMatches = state.matches.filter(m => (m.location || m.mando || 'CASA') === 'CASA' && m.season === state.currentSeason);
+  // Atualiza o título visual do card com o nome do torneio ativo
+  const titleEl = document.getElementById('homeAwayChampTitle');
+  if (titleEl) titleEl.textContent = champName;
 
-      const awayMatches = state.matches.filter(m => (m.location || m.mando || 'CASA') === 'FORA' && m.season === state.currentSeason);
+  // Filtra APENAS os jogos do campeonato selecionado e da temporada atual
+  const homeMatches = state.matches.filter(m => 
+    m.location === 'CASA' && 
+    m.season === state.currentSeason && 
+    m.champId === state.currentChampId
+  );
 
+  const awayMatches = state.matches.filter(m => 
+    m.location === 'FORA' && 
+    m.season === state.currentSeason && 
+    m.champId === state.currentChampId
+  );
 
+  const calcStats = arr => {
+    let v = 0, e = 0, d = 0, gp = 0, gc = 0;
+    arr.forEach(m => {
+      gp += Number(m.myScore) || 0;
+      gc += Number(m.oppScore) || 0;
+      if (m.myScore > m.oppScore) v++;
+      else if (m.myScore === m.oppScore) e++;
+      else d++;
+    });
+    const total = arr.length;
+    const winRate = total > 0 ? Math.round((v / total) * 100) : 0;
+    return { total, v, e, d, gp, gc, winRate };
+  };
 
-      const calcStats = arr => {
+  const home = calcStats(homeMatches);
+  const away = calcStats(awayMatches);
 
-        let v = 0, e = 0, d = 0, gp = 0, gc = 0;
+  // Cards Em Casa
+  document.getElementById('homeMatches').textContent = home.total;
+  document.getElementById('homeRecord').textContent = `${home.v}-${home.e}-${home.d}`;
+  document.getElementById('homeGoalsFor').textContent = home.gp;
+  document.getElementById('homeGoalsAgainst').textContent = home.gc;
+  document.getElementById('homeWinRate').textContent = `${home.winRate}% Vitórias`;
 
-        arr.forEach(m => {
+  // Cards Fora de Casa
+  document.getElementById('awayMatches').textContent = away.total;
+  document.getElementById('awayRecord').textContent = `${away.v}-${away.e}-${away.d}`;
+  document.getElementById('awayGoalsFor').textContent = away.gp;
+  document.getElementById('awayGoalsAgainst').textContent = away.gc;
+  document.getElementById('awayWinRate').textContent = `${away.winRate}% Vitórias`;
 
-          gp += Number(m.myScore) || 0;
+  // Aproveitamento global do torneio
+  const totalMatches = home.total + away.total;
+  const totalWins = home.v + away.v;
+  const globalRate = totalMatches > 0 ? Math.round((totalWins / totalMatches) * 100) : 0;
+  document.getElementById('tourneyEfficiency').textContent = `Aproveitamento: ${globalRate}%`;
 
-          gc += Number(m.oppScore) || 0;
-
-          if (m.myScore > m.oppScore) v++;
-
-          else if (m.myScore === m.oppScore) {
-
-            if (m.desempate === 'PENALTIES') {
-
-              if (Number(m.penaltis_pro) > Number(m.penaltis_contra)) v++;
-
-              else d++;
-
-            } else {
-
-              e++;
-
+  // Gráfico Comparativo do Torneio Selecionado
+  const ctx = document.getElementById('homeAwayCompareChart')?.getContext('2d');
+  if (homeAwayChartInstance) homeAwayChartInstance.destroy();
+  if (ctx) {
+    homeAwayChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Vitórias', 'Empates', 'Derrotas', 'Gols Pró', 'Gols Sofridos'],
+        datasets: [
+          { label: 'Em Casa', data: [home.v, home.e, home.d, home.gp, home.gc], backgroundColor: '#10b981' },
+          { label: 'Fora de Casa', data: [away.v, away.e, away.d, away.gp, away.gc], backgroundColor: '#6366f1' }
+        ]
+      },
+      options: { 
+        responsive: true, 
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: {
+              title: function(items) {
+                return `${champName} - ${items[0].label}`;
+              }
             }
-
-          } else d++;
-
-        });
-
-        const total = arr.length;
-
-        const winRate = total > 0 ? Math.round((v / total) * 100) : 0;
-
-        return { total, v, e, d, gp, gc, winRate };
-
-      };
-
-
-
-      const home = calcStats(homeMatches);
-
-      const away = calcStats(awayMatches);
-
-
-
-      document.getElementById('homeMatches').textContent = home.total;
-
-      document.getElementById('homeRecord').textContent = `${home.v}-${home.e}-${home.d}`;
-
-      document.getElementById('homeGoalsFor').textContent = home.gp;
-
-      document.getElementById('homeGoalsAgainst').textContent = home.gc;
-
-      document.getElementById('homeWinRate').textContent = `${home.winRate}% Vitórias`;
-
-
-
-      document.getElementById('awayMatches').textContent = away.total;
-
-      document.getElementById('awayRecord').textContent = `${away.v}-${away.e}-${away.d}`;
-
-      document.getElementById('awayGoalsFor').textContent = away.gp;
-
-      document.getElementById('awayGoalsAgainst').textContent = away.gc;
-
-      document.getElementById('awayWinRate').textContent = `${away.winRate}% Vitórias`;
-
-
-
-      const totalMatches = home.total + away.total;
-
-      const totalWins = home.v + away.v;
-
-      const globalRate = totalMatches > 0 ? Math.round((totalWins / totalMatches) * 100) : 0;
-
-      document.getElementById('tourneyEfficiency').textContent = `Aproveitamento: ${globalRate}%`;
-
-
-
-      const ctx = document.getElementById('homeAwayCompareChart')?.getContext('2d');
-
-      if (homeAwayChartInstance) homeAwayChartInstance.destroy();
-
-      if (ctx) {
-
-        homeAwayChartInstance = new Chart(ctx, {
-
-          type: 'bar',
-
-          data: {
-
-            labels: ['Vitórias', 'Empates', 'Derrotas', 'Gols Pró', 'Gols Sofridos'],
-
-            datasets: [
-
-              { label: 'Em Casa', data: [home.v, home.e, home.d, home.gp, home.gc], backgroundColor: '#10b981' },
-
-              { label: 'Fora de Casa', data: [away.v, away.e, away.d, away.gp, away.gc], backgroundColor: '#6366f1' }
-
-            ]
-
-          },
-
-          options: { responsive: true, maintainAspectRatio: false }
-
-        });
-
+          }
+        }
       }
-
-    }
-
-
-
+    });
+  }
+}
     function openTransferModal(type = 'BUY') {
 
       document.getElementById('transCurrencySymbol').textContent = state.currency || '€';
@@ -6378,7 +6378,94 @@
 
     }
 
+    function renderMvpRankingList() {
+  const tbody = document.getElementById('mvpRankingTableBody');
+  const countBadge = document.getElementById('mvpListCount');
+  if (!tbody) return;
 
+  if (!state.athletes || state.athletes.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Nenhum atleta cadastrado.</td></tr>`;
+    if (countBadge) countBadge.textContent = '0 atletas';
+    return;
+  }
+
+  // Calcula os pontos de MVP de todos os atletas
+  const ranked = state.athletes.map(a => {
+    const jogos = Number(a.matches) || 0;
+    const gols = Number(a.goals) || 0;
+    const assists = Number(a.assists) || 0;
+    const ssg = Number(a.ssg) || 0;
+    const notaSoma = Number(a.ratingSum) || 0;
+    const avg = jogos > 0 ? (notaSoma / jogos) : 0;
+    const isDef = ['GOL', 'ZAG', 'LD', 'LE', 'LAT', 'DEF'].includes((a.pos || '').toUpperCase().trim());
+
+    // Fórmula do índice MVP
+    const score = jogos > 0 ? ((avg * 10) + ((gols + assists) * 2) + (isDef ? (ssg * 1.5) : 0)) : 0;
+
+    return {
+      ...a,
+      jogos,
+      gols,
+      assists,
+      ssg,
+      avg,
+      mvpScore: score
+    };
+  })
+  // Ordena pelo maior Índice MVP; em empate, desempata pela nota e depois por gols+assistências
+  .sort((a, b) => b.mvpScore - a.mvpScore || b.avg - a.avg || (b.gols + b.assists) - (a.gols + a.assists));
+
+  // Filtra ou conta atletas que já jogaram pelo menos 1 partida
+  const activePlayers = ranked.filter(a => a.jogos > 0);
+  if (countBadge) countBadge.textContent = `${activePlayers.length} atletas pontuando`;
+
+  if (activePlayers.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400 italic">Nenhum atleta atuou em partidas até o momento.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = ranked.map((a, index) => {
+    const posBadge = index === 0 
+      ? '<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 font-black inline-flex items-center justify-center text-xs shadow-xs"><i class="fa-solid fa-crown text-[10px]"></i></span>'
+      : (index === 1 
+          ? '<span class="w-6 h-6 rounded-full bg-slate-300 text-slate-800 font-bold inline-flex items-center justify-center text-xs">2</span>'
+          : (index === 2 
+              ? '<span class="w-6 h-6 rounded-full bg-amber-600/30 text-amber-900 font-bold inline-flex items-center justify-center text-xs">3</span>'
+              : `<span class="text-slate-400 font-mono font-bold">${index + 1}</span>`));
+
+    const avgFormatted = a.jogos > 0 ? a.avg.toFixed(2) : '-';
+    const scoreFormatted = a.jogos > 0 ? a.mvpScore.toFixed(1) : '0.0';
+
+    return `
+      <tr class="hover:bg-slate-50 transition border-b border-slate-100 ${index === 0 ? 'bg-amber-50/40' : ''}">
+        <td class="py-2.5 px-3 text-center">${posBadge}</td>
+        
+        <td class="py-2.5 px-3">
+          <div class="flex items-center gap-2">
+            ${typeof getCountryFlagImg === 'function' ? getCountryFlagImg(a.nat) : ''}
+            <div>
+              <span class="font-extrabold text-slate-900 text-xs">${a.name}</span>
+              <span class="text-[10px] text-slate-400 ml-1">#${a.number || '-'}</span>
+            </div>
+          </div>
+        </td>
+
+        <td class="py-2.5 px-2 text-center">
+          <span class="px-2 py-0.5 rounded font-bold text-[10px] bg-slate-100 text-slate-700 border border-slate-200">
+            ${a.pos}
+          </span>
+        </td>
+
+        <td class="py-2.5 px-2 text-center font-bold text-slate-800">${a.jogos}</td>
+        <td class="py-2.5 px-2 text-center font-bold text-amber-600">${a.gols}</td>
+        <td class="py-2.5 px-2 text-center font-bold text-blue-600">${a.assists}</td>
+        <td class="py-2.5 px-2 text-center font-bold text-emerald-600">${a.ssg}</td>
+        <td class="py-2.5 px-2 text-center font-extrabold text-purple-600">${avgFormatted}</td>
+        <td class="py-2.5 px-3 text-right font-black text-emerald-700 text-sm font-heading">${scoreFormatted}</td>
+      </tr>
+    `;
+  }).join('');
+}
 
     function renderClosedSeasonsCards() {
 
@@ -7031,6 +7118,7 @@
       renderMatchesList();
 
       updateTourneyHomeAwayDashboard();
+      renderMvpRankingList();
 
     }
 
