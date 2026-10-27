@@ -246,28 +246,16 @@
             <div class="text-xs font-semibold text-emerald-700" id="bestSsgCount">0 Jogos</div>
           </div>
         </div>
-
-
         <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex items-center gap-3">
-
           <div id="bestRatingAvatar" class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center text-lg shrink-0 overflow-hidden">
-
             <i class="fa-solid fa-star"></i>
-
           </div>
-
           <div class="min-w-0">
-
             <div class="text-[10px] font-semibold text-slate-500 uppercase">Nota Média</div>
-
             <div class="font-bold text-slate-900 text-xs sm:text-sm truncate" id="bestRatingPlayer">-</div>
-
             <div class="text-xs font-semibold text-purple-700" id="bestRatingVal">-</div>
-
           </div>
-
         </div>
-
       </div>
       <!-- TABELA / RANKING COMPLETO DE MVPs DA TEMPORADA -->
 <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
@@ -282,7 +270,6 @@
       0 atletas pontuados
     </span>
   </div>
-
   <div class="overflow-x-auto">
     <table class="w-full text-left text-xs text-slate-700 border-collapse">
       <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200 tracking-wider">
@@ -306,135 +293,65 @@
     </table>
   </div>
 </div>
-
     </section>
-
-
-
     <!-- ABA 2: ATLETAS & PLANTEL -->
-
     <section id="tab-athletes" class="hidden space-y-6">
-
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-
         <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-xs text-center">
-
           <div class="text-[10px] font-bold text-slate-500 uppercase">Total Atletas</div>
-
           <div class="text-xl font-black text-slate-900 mt-0.5" id="totalAthletesCount">0</div>
-
         </div>
-
         <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl shadow-xs text-center">
-
           <div class="text-[10px] font-bold text-blue-700 uppercase">Defesa (GOL/DEF)</div>
-
           <div class="text-xl font-black text-blue-900 mt-0.5" id="countDefense">0</div>
-
         </div>
-
         <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl shadow-xs text-center">
-
           <div class="text-[10px] font-bold text-amber-700 uppercase">Meio-Campo</div>
-
           <div class="text-xl font-black text-amber-900 mt-0.5" id="countMidfield">0</div>
-
         </div>
-
         <div class="bg-rose-50 border border-rose-200 p-3 rounded-xl shadow-xs text-center">
-
           <div class="text-[10px] font-bold text-rose-700 uppercase">Ataque</div>
-
           <div class="text-xl font-black text-rose-900 mt-0.5" id="countAttack">0</div>
-
         </div>
-
         <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl shadow-xs text-center">
-
           <div class="text-[10px] font-bold text-emerald-700 uppercase">Disponíveis</div>
-
           <div class="text-xl font-black text-emerald-900 mt-0.5" id="countUsable">0</div>
-
         </div>
-
         <div class="bg-purple-50 border border-purple-200 p-3 rounded-xl shadow-xs text-center">
-
           <div class="text-[10px] font-bold text-purple-700 uppercase">Emprestados</div>
-
           <div class="text-xl font-black text-purple-900 mt-0.5" id="countLoaned">0</div>
-
         </div>
-
       </div>
-
-
-
       <div class="bg-white border border-slate-200 rounded-xl p-3 shadow-xs flex flex-wrap items-center gap-3 text-xs text-slate-700">
-
         <span class="font-bold text-slate-900 uppercase text-[11px] flex items-center gap-1.5"><i class="fa-solid fa-circle-info text-slate-400"></i> Calçado Tático:</span>
-
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-mitten icon-glove-yellow"></i> Guarda-Redes</span>
-
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-orange"></i> Laterais/Meias</span>
-
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-blue"></i> Zagueiros</span>
-
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-red"></i> MC / VOL</span>
-
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-black"></i> Atacantes</span>
-
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints icon-boot-gray"></i> Pontas (PD/PE)</span>
-
         <span class="flex items-center gap-1.5 font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-
           <i class="fa-solid fa-shoe-prints icon-boot-gold"></i> Top 11 (Ouro)
-
         </span>
-
       </div>
-
-
-
       <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-xl border border-slate-200 shadow-xs">
-
         <div class="flex items-center gap-2 flex-wrap">
-
           <button onclick="setPosFilter('TODOS')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white" data-pos="TODOS">Todos</button>
-
           <button onclick="setPosFilter('GOL')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="GOL">Goleiros</button>
-
           <button onclick="setPosFilter('DEF')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="DEF">Defesa</button>
-
           <button onclick="setPosFilter('MEI')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="MEI">Meio-Campo</button>
-
           <button onclick="setPosFilter('ATA')" class="pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200" data-pos="ATA">Ataque</button>
-
           <input type="text" id="playerSearch" oninput="renderAthletesContainers()" placeholder="Pesquisar por nome ou país..." class="bg-slate-50 border border-slate-300 text-xs px-3 py-1.5 rounded-lg text-slate-900 focus:outline-none focus:border-slate-800">
-
         </div>
-
-
-
         <button onclick="openAthleteModal()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition">
-
           <i class="fa-solid fa-user-plus"></i> Novo Atleta
-
         </button>
-
       </div>
-
-
-
       <div class="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
-
         <div class="overflow-x-auto">
-
           <table class="w-full text-left text-xs text-slate-700 border-collapse">
-
             <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200 tracking-wider">
-
               <tr>
-
                 <th class="py-3 px-3 text-center w-12">Nº</th>
 
                 <th class="py-3 px-3 min-w-[200px]">ATLETA & PAPEL</th>
