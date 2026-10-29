@@ -1397,7 +1397,593 @@ Painel & Tabela Geral de MVP
 .col-min-athlete {
   min-width: 180px;                      /* min-w-[180px] */
 }
-  </style>
+
+.card-custom {
+  background: linear-gradient(to right, rgba(4, 99, 24, 0.466), rgba(7, 165, 20, 0.2), #ffffff);
+  border-width: 1px;
+  border-style: solid;
+  border-color: #2c5f37;            
+  border-radius: 0.75rem;         
+  padding: 1.25rem;                
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+}
+
+
+.card-custom > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1rem;                
+  margin-bottom: 0;
+}
+
+.header-row-custom {
+  display: flex;                  
+  align-items: center;             
+  justify-content: space-between;  
+  border-bottom-width: 1px;       
+  border-bottom-color: #f1f5f9;    
+  padding-bottom: 0.75rem;         
+}
+
+.title-badge-custom {
+  font-size: 0.75rem;             
+  line-height: 1rem;               
+  font-weight: 900;               
+  color: #0f172a;                  
+  text-transform: uppercase;      
+  letter-spacing: 0.05em;          
+  display: flex;                   
+  align-items: center;             
+  gap: 0.5rem;                    
+}
+
+.icon-emerald {
+  color: #059669; 
+}
+
+
+.icon-chart-pie {
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", sans-serif;
+  font-weight: 900;      
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+  color: #059669;        
+}
+
+.icon-chart-pie::before {
+  content: "\f200";       
+}
+
+.champ-title-highlight {
+  color: #047857;          /* text-emerald-700 */
+  font-weight: 900;        /* font-extrabold */
+  text-transform: uppercase; /* uppercase */
+  margin-left: 0.25rem;    /* ml-1 = 4px */
+}
+
+.subtitle-muted-custom {
+  color: #3824ee;       /* text-slate-400 */
+  font-weight: 800;     /* font-normal */
+}
+
+.caption-muted-semibold {
+  font-size: 0.95rem;          /* text-xs = 12px */
+  line-height: 1rem;           /* line-height padrão de text-xs (16px) */
+  color: #078b33;              /* text-slate-500 */
+  font-weight: 900;            /* font-semibold */
+}
+
+.grid-responsive-2col {
+  display: grid;                                /* grid */
+  grid-template-columns: repeat(1, minmax(0, 1fr)); /* grid-cols-1 (mobile) */
+  gap: 1rem;                                    /* gap-4 = 16px */
+}
+
+/* Breakpoint 'md' do Tailwind (min-width: 768px) */
+@media (min-width: 768px) {
+  .grid-responsive-2col {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* md:grid-cols-2 */
+  }
+}
+
+.card-home-performance {
+  background-color: rgba(96, 136, 117, 0.288); /* bg-emerald-50 (#ecfdf5) com 60% de opacidade */
+  border-width: 1px;                          /* border */
+  border-style: solid;
+  border-color: #08942b;                      /* border-emerald-200 */
+  border-radius: 0.75rem;                     /* rounded-xl = 12px */
+  padding: 1rem;                              /* p-4 = 16px */
+}
+
+.flex-center {
+  display: flex;                  /* flex */
+  align-items: center;            /* items-center */
+  justify-content: space-between; /* justify-between */
+}
+
+.badge-home-title {
+  font-size: 0.75rem;          /* text-xs = 12px */
+  line-height: 1rem;           /* line-height padrão de text-xs (16px) */
+  font-weight: 900;            /* font-bold */
+  color: #f5f5f5;              /* text-emerald-950 */
+  text-transform: uppercase;   /* uppercase */
+  display: flex;               /* flex */
+  align-items: center;         /* items-center */
+  gap: 0.375rem;               /* gap-1.5 = 6px */
+}
+
+.icon-emerald-house {
+  color: #059669; /* text-emerald-600 */
+}
+
+.stat-highlight-e {
+  font-size: 0.75rem;     /* text-xs = 12px */
+  line-height: 1rem;      /* line-height padrão de text-xs (16px) */
+  font-weight: 800;       /* font-extrabold */
+  color: #024230;         /* text-emerald-700 */
+}
+
+.stat-label-muted {
+  font-size: 10px;           /* text-[10px] = 0.625rem */
+  line-height: 0.875rem;     /* 14px (altura de linha recomendada para 10px) */
+  color: #07080a;            /* text-slate-500 */
+  font-weight: 600;          /* font-semibold */
+}
+
+.card-mini-emerald {
+  background-color: #ffffff;      /* bg-white */
+  padding: 0.5rem;                /* p-2 = 8px */
+  border-radius: 0.5rem;          /* rounded-lg = 8px */
+  border-width: 1px;              /* border */
+  border-style: solid;
+  border-color: #025e2e;          /* border-emerald-100 */
+}
+
+.stat-value-slate {
+  font-size: 1rem;            /* text-base = 16px */
+  line-height: 1.5rem;        /* line-height padrão de text-base (24px) */
+  font-weight: 700;           /* font-bold */
+  color: #000102;             /* text-slate-800 */
+}
+
+.stat-value-emerald {
+  font-size: 1rem;            /* text-base = 16px */
+  line-height: 1.5rem;        /* line-height padrão de text-base (24px) */
+  font-weight: 900;           /* font-bold */
+  color: #047857;             /* text-emerald-700 */
+}
+
+.stat-value-rose {
+  font-size: 1rem;            /* text-base = 16px */
+  line-height: 1.5rem;        /* line-height padrão de text-base (24px) */
+  font-weight: 900;           /* font-bold */
+  color: #c90c0c;             /* text-rose-700 */
+}
+
+.card-away-performance {
+  background-color: rgba(25, 28, 175, 0.178); 
+  border-width: 1px;                          
+  border-style: solid;
+  border-color: #031f8d;                     
+  border-radius: 0.75rem;                     
+  padding: 1rem;                              
+}
+
+.badge-away-title {
+  font-size: 0.75rem;          /* text-xs = 12px */
+  line-height: 1rem;           /* line-height padrão de text-xs (16px) */
+  font-weight: 900;            /* font-bold */
+  color: #ffffff;              /* text-indigo-950 */
+  text-transform: uppercase;   /* uppercase */
+  display: flex;               /* flex */
+  align-items: center;         /* items-center */
+  gap: 0.375rem;               /* gap-1.5 = 6px */
+}
+
+.icon-indigo-plane {
+  color: #4f46e5; /* text-indigo-600 */
+}
+
+.stat-highlight-indigo {
+  font-size: 0.75rem;     
+  line-height: 1rem;      
+  font-weight: 800;       
+  color: #1e1394;         
+}
+
+.stat-grid-4col-centered {
+  display: grid;                                
+  grid-template-columns: repeat(4, minmax(0, 1fr)); 
+  gap: 0.5rem;                                  
+  margin-top: 0.75rem;                         
+  text-align: center;                      
+}
+
+.card-mini-indigo {
+  background-color: #ffffff;      
+  padding: 0.5rem;                
+  border-radius: 0.5rem;          
+  border-width: 1px;             
+  border-style: solid;
+  border-color: #04207e;         
+}
+
+.toolbar-container-custom {
+  display: flex;                                  /* flex */
+  flex-wrap: wrap;                                /* flex-wrap */
+  align-items: center;                            /* items-center */
+  justify-content: space-between;                 /* justify-between */
+  gap: 0.75rem;                                   /* gap-3 = 12px */
+  background-color: rgba(96, 136, 117, 0.288);
+  padding: 1rem;                                  /* p-4 = 16px */
+  border-radius: 0.75rem;                         /* rounded-xl = 12px */
+  border-width: 1px;                              /* border */
+  border-style: solid;
+  border-color: #00050a;                          /* border-slate-200 */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);   /* shadow-xs */
+}
+
+.flexcomp {
+  display: flex;          /* flex */
+  align-items: center;    /* items-center */
+  gap: 0.75rem;           /* gap-3 = 12px */
+  flex-wrap: wrap;        /* flex-wrap */
+}
+
+.badge-container-custom {
+  width: 3rem;                                    /* w-12 = 48px */
+  height: 3rem;                                   /* h-12 = 48px */
+  border-radius: 0.75rem;                         /* rounded-xl = 12px */
+  background-color: #f8fafc;                      /* bg-slate-50 */
+  border-width: 1px;                              /* border */
+  border-style: solid;
+  border-color: #e2e8f0;                          /* border-slate-200 */
+  display: flex;                                  /* flex */
+  align-items: center;                            /* items-center */
+  justify-content: center;                       /* justify-center */
+  overflow: hidden;                               /* overflow-hidden */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);   /* shadow-xs */
+}
+
+.icon-trophy-amber {
+  color: #f59e0b;          /* text-amber-500 */
+  font-size: 1.125rem;     /* text-lg = 18px */
+  line-height: 1.75rem;    /* line-height padrão de text-lg (28px) */
+}
+
+.label-uppercase-muted {
+  font-size: 10px;               /* text-[10px] = 0.625rem */
+  line-height: 0.875rem;         /* 14px (altura de linha recomendada para 10px) */
+  font-weight: 900;              /* font-semibold */
+  color: #000000;                /* text-slate-500 */
+  text-transform: uppercase;     /* uppercase */
+  letter-spacing: 0.05em;        /* tracking-wider */
+  display: block;                /* block */
+}
+
+.select-champ-input {
+  background-color: #f8fafc;       /* bg-slate-50 */
+  border: 1px solid #030c16;       /* border border-slate-300 */
+  border-radius: 0.5rem;           /* rounded-lg = 8px */
+  padding: 0.375rem 0.75rem;       /* py-1.5 (6px) px-3 (12px) */
+  font-size: 0.75rem;              /* text-xs = 12px */
+  line-height: 1rem;               /* line-height padrão de text-xs (16px) */
+  font-weight: 700;                /* font-bold */
+  color: #000000;                  /* text-slate-900 */
+  outline: none;                   /* remove o contorno padrão do navegador */
+  transition: border-color 0.15s ease-in-out;
+}
+
+.select-champ-input:focus {
+  border-color: #1e293b;           
+}
+
+.btn-secondary-slate {
+  padding: 0.375rem 0.75rem;                       
+  border-radius: 0.5rem;                          
+  background-color: #f1f5f9;                       
+  color: #334155;                                  
+  font-size: 0.75rem;                             
+  line-height: 1rem;                               
+  font-weight: 600;                                
+  border: 1px solid #cbd5e1;                       
+  align-self: flex-end;                            
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;                                   
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;                      
+}
+
+.btn-secondary-slate:hover {
+  background-color: #e2e8f0;                      
+}
+
+.icon-spacing-right {
+  margin-right: 0.25rem; /* mr-1 = 4px */
+}
+
+.btn-primary-emerald {
+  padding: 0.5rem 1rem;                             /* px-4 (16px) py-2 (8px) */
+  border-radius: 0.5rem;                           /* rounded-lg = 8px */
+  background-color: #059669;                       /* bg-emerald-600 */
+  color: #ffffff;                                  /* text-white */
+  font-weight: 600;                                /* font-semibold */
+  font-size: 0.75rem;                              /* text-xs = 12px */
+  line-height: 1rem;                               /* line-height padrão de text-xs (16px) */
+  display: inline-flex;                            /* flex */
+  align-items: center;                             /* items-center */
+  gap: 0.5rem;                                     /* gap-2 = 8px */
+  border: none;                                    /* remove bordas padrões de botão */
+  cursor: pointer;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);   /* shadow-xs */
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;                      /* transition padrão */
+}
+
+.btn-primary-emerald:hover {
+  background-color: #047857;                       /* hover:bg-emerald-700 */
+}
+
+.icon-clipboard-check {
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", sans-serif;
+  font-weight: 900;       /* Obrigatório para estilo Solid */
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+.icon-clipboard-check::before {
+  content: "\f46c";       /* Código unicode do fa-clipboard-check */
+}
+
+.card-panel-base {
+  background: linear-gradient(to right, rgba(4, 99, 24, 0.466), rgba(7, 165, 20, 0.2), #ffffff);
+  border-width: 1px;                            /* border */
+  border-style: solid;
+  border-color: #030405;                        /* border-slate-200 */
+  border-radius: 0.75rem;                       /* rounded-xl = 12px */
+  padding: 1rem;                                /* p-4 = 16px */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-xs */
+}
+
+.btn-primary-emerald {
+  display: inline-flex;                             /* flex */
+  align-items: center;                              /* items-center */
+  gap: 0.5rem;                                      /* gap-2 = 8px */
+  padding: 0.5rem 1rem;                             /* py-2 (8px) px-4 (16px) */
+  background-color: #059669;                        /* bg-emerald-600 */
+  color: #ffffff;                                   /* text-white */
+  font-size: 0.75rem;                               /* text-xs = 12px */
+  line-height: 1rem;                                /* line-height padrão de text-xs (16px) */
+  font-weight: 600;                                 /* font-semibold */
+  border-radius: 0.5rem;                            /* rounded-lg = 8px */
+  border: 1px solid transparent;                    /* normalização de borda */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);    /* shadow-xs */
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  transition-property: color, background-color, border-color, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;                       /* transition padrão */
+}
+
+.btn-primary-emerald:hover {
+  background-color: #ffffff;
+  color: #047857;
+  font-weight: 900;
+  border-color: #047857;                        
+}
+
+.btn-primary-emerald:focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+}
+
+.btn-primary-emerald:active {
+  background-color: #065f46;                        /* emerald-800 para resposta tátil ao clique */
+}
+
+.card-section-header {
+  font-size: 0.875rem;          /* text-sm = 14px */
+  line-height: 1.25rem;         /* line-height padrão de text-sm (20px) */
+  font-weight: 700;             /* font-bold */
+  color: #034d15;               /* text-slate-900 */
+  margin-bottom: 1rem;          /* mb-4 = 16px */
+  display: flex;                /* flex */
+  align-items: center;          /* items-center */
+  justify-content: space-between;/* justify-between */
+  border-bottom: 1px solid #f1f5f9; /* border-b border-slate-100 */
+  padding-bottom: 0.5rem;       /* pb-2 = 8px */
+}
+
+.icon-history-clock-custom {
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", sans-serif;
+  font-weight: 900;        /* Obrigatório para fa-solid */
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+  margin-right: 0.5rem;    /* mr-2 = 8px */
+  color: #17723d;          /* text-slate-800 */
+}
+
+.icon-history-clock-custom::before {
+  content: "\f1da";        /* Código unicode do fa-clock-rotate-left */
+}
+
+.stat-counter-muted {
+  font-size: 0.75rem;     /* text-xs = 12px */
+  line-height: 1rem;      /* line-height padrão de text-xs (16px) */
+  font-weight: 900;       /* font-normal */
+  color: #000408;         /* text-slate-500 */
+}
+
+.list-stack-gap3 {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* 12px */
+}
+
+.match-card-item {
+  background: linear-gradient(to right, #ffffff, rgba(238, 241, 238, 0.61), rgba(4, 99, 25, 0.322) );
+  border: 1px solid #03060a;                    
+  padding: 1rem;                                
+  border-radius: 0.75rem;                       
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); 
+  display: flex;                                
+  flex-direction: column;                       
+  justify-content: space-between;               
+  gap: 0.75rem;                                 
+}
+
+/* sm: (min-width: 640px) */
+@media (min-width: 640px) {
+  .match-card-item {
+    flex-direction: row;                        /* sm:flex-row */
+    align-items: center;                        /* sm:items-center */
+  }
+}
+
+.flexgap2 {
+  display: flex;       /* flex */
+  align-items: center; /* items-center */
+  gap: 0.5rem;         /* gap-2 = 8px */
+  flex-wrap: wrap;     /* flex-wrap */
+}
+
+.badge-match-status {
+  font-size: 9px;              
+  line-height: 0.875rem;         
+  font-weight: 900;              
+  text-transform: uppercase;     
+  padding: 0.125rem 0.5rem;      
+  border-radius: 0.5rem;        
+  border-width: 0.5px;             
+  border-style: solid;
+  display: inline-block;
+  letter-spacing: 0.025em;
+}
+
+.badge-match-win {
+  background-color: #038b4c;    
+  border-color: #046e4b;        
+  color: #ffffff;               
+}
+
+.badge-match-draw {
+  background-color: #f5f230;     
+  border-color: #f59e0b;        
+  color: #f3f3f3;
+}
+
+.badge-match-loss {
+  background-color: #ee081b;     
+  border-color: #a10b0b;         
+  color: #ffffff;
+}
+
+.badge-stage-amber {
+  font-size: 10px;               /* text-[10px] = 0.625rem */
+  line-height: 0.875rem;         /* 14px */
+  font-weight: 700;              /* font-bold */
+  color: #030100;                /* text-amber-800 */
+  background-color: #fffbeb;     /* bg-amber-50 */
+  padding: 0.125rem 0.5rem;      /* py-0.5 (2px) px-2 (8px) */
+  border-radius: 0.25rem;        /* rounded = 4px */
+  border-width: 1px;             /* border */
+  border-style: solid;
+  border-color: #048816;         /* border-amber-200 */
+  display: inline-block;
+  letter-spacing: 0.025em;
+}
+
+.stat-meta-slate {
+  font-size: 0.75rem;     
+  line-height: 1rem;  
+  background-color: #e2ece1;
+  color: #012009;         
+  font-weight: 900;       
+}
+
+.match-scoreline-row {
+  font-size: 1rem;          /* text-base = 16px */
+  line-height: 1.5rem;      /* line-height padrão de text-base (24px) */
+  font-weight: 700;         /* font-black */
+  color: #03060f;           /* text-slate-900 */
+  display: flex;            /* flex */
+  align-items: center;      /* items-center */
+  gap: 0.75rem;             /* gap-3 = 12px */
+}
+
+.score-badge-mono {
+  padding: 0.125rem 0.625rem;                                /* py-0.5 (2px) px-2.5 (10px) */
+  background-color: #03751f;                                 /* bg-slate-100 */
+  border: 1px solid #000000;                                 /* border border-slate-300 */
+  border-radius: 0.5rem;                                    /* rounded = 4px */
+  color: #ffffff;                                            /* text-slate-900 */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",                monospace;                                    /* font-mono */
+  font-size: 0.875rem;                                       /* text-sm = 14px (padrão de placar mono) */
+  line-height: 1.25rem;
+  display: inline-block;
+  font-weight: 700;
+  text-align: center;
+}
+
+.stat-highlight-amber {
+  font-size: 0.6rem;     /* text-xs = 12px */
+  line-height: 1rem;      /* line-height padrão de text-xs (16px) */
+  color: #683005;         /* text-amber-700 */
+  font-weight: 500;       /* font-medium */
+}
+
+.match-actions-group {
+  display: flex;             /* flex */
+  align-items: center;       /* items-center */
+  gap: 0.25rem;              /* gap-1 = 4px */
+  align-self: flex-end;      /* self-end */
+}
+
+/* sm: (min-width: 640px) */
+@media (min-width: 640px) {
+  .match-actions-group {
+    align-self: center;      /* sm:self-center */
+  }
+}
+
+.btn-action-edit {
+  padding: 0.5rem;                                /* p-2 = 8px */
+  color: #4f46e5;                                 /* text-indigo-600 */
+  border-radius: 0.5rem;                          /* rounded-lg = 8px */
+  background-color: transparent;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 1;
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;                     /* transition padrão */
+}
+
+.btn-action-edit:hover {
+  background-color: #eef2ff;                      /* hover:bg-indigo-50 */
+}
+
+.btn-action-edit:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+</style>
 </head>
 <body class="app-container">
   <!-- CABEÇALHO PRINCIPAL -->
@@ -1715,218 +2301,125 @@ Painel & Tabela Geral de MVP
             <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200 tracking-wider">
               <tr>
                 <th class="py-3 px-3 text-center w-12">Nº</th>
-
                 <th class="py-3 px-3 min-w-[200px]">ATLETA & PAPEL</th>
-
                 <th class="py-3 px-3 text-center">POSIÇÃO</th>
-
                 <th class="py-3 px-3 text-center">IDADE</th>
-
                 <th class="py-3 px-3 text-center">OVR</th>
-
                 <th class="py-3 px-3">V. MERCADO</th>
-
                 <th class="py-3 px-3">SALÁRIO</th>
-
                 <th class="py-3 px-3 text-center">CONTRATO</th>
-
                 <th class="py-3 px-3 text-center">AVALIAÇÃO</th>
-
                 <th class="py-3 px-2 text-center" title="Jogos">JOGOS</th>
-
                 <th class="py-3 px-2 text-center text-amber-600" title="Gols">GOLS</th>
-
                 <th class="py-3 px-2 text-center text-blue-600" title="Assistências">ASS</th>
-
                 <th class="py-3 px-2 text-center text-emerald-600" title="Clean Sheets">SSG</th>
-
                 <th class="py-3 px-2 text-center text-yellow-600" title="Cartões Amarelos">CA</th>
-
                 <th class="py-3 px-2 text-center text-rose-600" title="Cartões Vermelhos">CV</th>
-
                 <th class="py-3 px-2 text-center text-purple-600 font-extrabold" title="Nota Média">NOTA</th>
-
                 <th class="py-3 px-3 text-right">AÇÕES</th>
-
               </tr>
-
             </thead>
-
             <tbody id="athletesTableBody" class="divide-y divide-slate-100 font-medium"></tbody>
-
           </table>
-
         </div>
-
       </div>
-
     </section>
-
-
 
     <!-- ABA 3: CAMPEONATOS & RESULTADOS -->
 
     <section id="tab-matches" class="hidden space-y-6">
-
-      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
-
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-            <i class="fa-solid fa-chart-pie text-emerald-600"></i> Desempenho: <span id="homeAwayChampTitle" class="text-emerald-700 font-extrabold uppercase ml-1">LaLiga Hyper</span> <span class="text-slate-400 font-normal">(Mandante vs Visitante)</span>
+      <div class="card-custom">
+        <div class="header-row-custom">
+          <h3 class="title-badge-custom">
+            <i class="icon-chart-pie"></i> Desempenho: <span id="homeAwayChampTitle" class="champ-title-highligh">LaLiga Hyper</span> <span class="subtitle-muted-custo">(Mandante vs Visitante)</span>
           </h3>
-          <span class="text-xs text-slate-500 font-semibold" id="tourneyEfficiency">Aproveitamento: 0%</span>
+          <span class="caption-muted-semibold" id="tourneyEfficiency">Aproveitamento: 0%</span>
         </div>
-
-
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-          <div class="bg-emerald-50/60 border border-emerald-200 rounded-xl p-4">
-
-            <div class="flex items-center justify-between">
-
-              <span class="text-xs font-bold text-emerald-950 uppercase flex items-center gap-1.5">
-
-                <i class="fa-solid fa-house text-emerald-600"></i> Em Casa
-
+        <div class="grid-responsive-2col">
+          <div class="card-home-performance">
+            <div class="flex-center">
+              <span class="badge-home-title">
+                <i class="icon-emerald-house"></i> Em Casa
               </span>
-
-              <span class="text-xs font-extrabold text-emerald-700" id="homeWinRate">0% Vitórias</span>
-
+              <span class="stat-highlight-e" id="homeWinRate">0% Vitórias</span>
             </div>
-
             <div class="grid grid-cols-4 gap-2 mt-3 text-center">
-
-              <div class="bg-white p-2 rounded-lg border border-emerald-100">
-
-                <div class="text-[10px] text-slate-500 font-semibold">Jogos</div>
-
-                <div class="text-base font-bold text-slate-800" id="homeMatches">0</div>
-
+              <div class="card-mini-emerald">
+                <div class="stat-label-muted">Jogos</div>
+                <div class="stat-value-slate" id="homeMatches">0</div>
               </div>
-
-              <div class="bg-white p-2 rounded-lg border border-emerald-100">
-
-                <div class="text-[10px] text-slate-500 font-semibold">V - E - D</div>
-
-                <div class="text-base font-bold text-slate-800" id="homeRecord">0-0-0</div>
-
+              <div class="card-mini-emerald">
+                <div class="stat-label-muted">V - E - D</div>
+                <div class="stat-value-slate" id="homeRecord">0-0-0</div>
               </div>
-
-              <div class="bg-white p-2 rounded-lg border border-emerald-100">
-
-                <div class="text-[10px] text-slate-500 font-semibold">Gols Pró</div>
-
-                <div class="text-base font-bold text-emerald-700" id="homeGoalsFor">0</div>
-
+              <div class="card-mini-emerald">
+                <div class="stat-label-muted">Gols Pró</div>
+                <div class="stat-value-emerald" id="homeGoalsFor">0</div>
               </div>
-
-              <div class="bg-white p-2 rounded-lg border border-emerald-100">
-
-                <div class="text-[10px] text-slate-500 font-semibold">Gols Contra</div>
-
-                <div class="text-base font-bold text-rose-700" id="homeGoalsAgainst">0</div>
-
+              <div class="card-mini-emerald">
+                <div class="stat-label-muted">Gols Contra</div>
+                <div class="stat-value-rose" id="homeGoalsAgainst">0</div>
               </div>
-
             </div>
-
           </div>
-
-
-
-          <div class="bg-indigo-50/60 border border-indigo-200 rounded-xl p-4">
-
-            <div class="flex items-center justify-between">
-
-              <span class="text-xs font-bold text-indigo-950 uppercase flex items-center gap-1.5">
-
-                <i class="fa-solid fa-plane-departure text-indigo-600"></i> Fora de Casa
-
+          <div class="card-away-performance">
+            <div class="flex-center">
+              <span class="badge-away-title">
+                <i class="icon-indigo-plane"></i> Fora de Casa
               </span>
-
-              <span class="text-xs font-extrabold text-indigo-700" id="awayWinRate">0% Vitórias</span>
-
+              <span class="stat-highlight-indigo" id="awayWinRate">0% Vitórias</span>
             </div>
-
-            <div class="grid grid-cols-4 gap-2 mt-3 text-center">
-
-              <div class="bg-white p-2 rounded-lg border border-indigo-100">
-
-                <div class="text-[10px] text-slate-500 font-semibold">Jogos</div>
-
-                <div class="text-base font-bold text-slate-800" id="awayMatches">0</div>
-
+            <div class="stat-grid-4col-centered">
+              <div class="card-mini-indigo">
+                <div class="stat-label-muted">Jogos</div>
+                <div class="stat-value-slate" id="awayMatches">0</div>
               </div>
-
-              <div class="bg-white p-2 rounded-lg border border-indigo-100">
-
-                <div class="text-[10px] text-slate-500 font-semibold">V - E - D</div>
-
-                <div class="text-base font-bold text-slate-800" id="awayRecord">0-0-0</div>
-
+              <div class="card-mini-indigo">
+                <div class="stat-label-muted">V - E - D</div>
+                <div class="stat-value-slate" id="awayRecord">0-0-0</div>
               </div>
-
-              <div class="bg-white p-2 rounded-lg border border-indigo-100">
-
-                <div class="text-[10px] text-slate-500 font-semibold">Gols Pró</div>
-
-                <div class="text-base font-bold text-emerald-700" id="awayGoalsFor">0</div>
-
+              <div class="card-mini-indigo">
+                <div class="stat-label-muted">Gols Pró</div>
+                <div class="stat-value-emerald" id="awayGoalsFor">0</div>
               </div>
-
-              <div class="bg-white p-2 rounded-lg border border-indigo-100">
-
-                <div class="text-[10px] text-slate-500 font-semibold">Gols Contra</div>
-
-                <div class="text-base font-bold text-rose-700" id="awayGoalsAgainst">0</div>
-
+              <div class="card-mini-indigo">
+                <div class="stat-label-muted">Gols Contra</div>
+                <div class="stat-value-rose" id="awayGoalsAgainst">0</div>
               </div>
-
             </div>
-
           </div>
-
         </div>
         <div class="h-44">
           <canvas id="homeAwayCompareChart"></canvas>
         </div>
       </div>
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+      <div class="toolbar-container-custom">
 
-        <div class="flex items-center gap-3 flex-wrap">
-          <div id="champTrophyPreview" class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center overflow-hidden shadow-xs">
+        <div class="flexcomp">
+          <div id="champTrophyPreview" class="badge-container-custom">
             <img id="trophyImg" src="" alt="Taça" class="media-contain-hidden" onerror="this.classList.add('hidden'); document.getElementById('trophyDefaultIcon').classList.remove('hidden');">
-            <i id="trophyDefaultIcon" class="fa-solid fa-trophy text-amber-500 text-lg"></i>
+            <i id="trophyDefaultIcon" class="icon-trophy-amber"></i>
           </div>
           <div>
-            <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">Competição Selecionada:</label>
-            <select id="champSelect" onchange="onChampSelectChange()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-900 focus:border-slate-800"></select>
+            <label class="label-uppercase-muted">Competição Selecionada:</label>
+            <select id="champSelect" onchange="onChampSelectChange()" class="select-champ-input"></select>
           </div>
-          <button onclick="openNewChampModal()" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-300 self-end transition">
-            <i class="fa-solid fa-plus mr-1"></i> Novo Torneio
+          <button onclick="openNewChampModal()" class="btn-secondary-slate">
+            <i class="icon-spacing-right"></i> Novo Torneio
           </button>
           <div id="champPointsBadge" class="hidden self-end"></div>
         </div>
-        <button onclick="openMatchModal()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition">
-          <i class="fa-solid fa-clipboard-check"></i> Registar Resultado
+        <button onclick="openMatchModal()" class="btn-primary-emerald">
+          <i class="icon-clipboard-check"></i> Registar Resultado
         </button>
       </div>
-
-      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
-
-        <h3 class="text-sm font-bold text-slate-900 mb-4 flex items-center justify-between border-b border-slate-100 pb-2">
-
-          <span><i class="fa-solid fa-clock-rotate-left mr-2 text-slate-400"></i> Histórico de Jogos</span>
-
-          <span class="text-xs font-normal text-slate-500" id="matchesCountLabel">0 partidas</span>
-
+      <div class="card-panel-base">
+        <h3 class="card-section-header">
+          <span><i class="icon-history-clock-custom"></i> Histórico de Jogos</span>
+          <span class="stat-counter-muted" id="matchesCountLabel">0 partidas</span>
         </h3>
-
-        <div id="matchesList" class="space-y-3"></div>
-
+        <div id="matchesList" class="list-stack-gap3"></div>
       </div>
-
     </section>
 
 
@@ -1934,277 +2427,133 @@ Painel & Tabela Geral de MVP
     <!-- ABA 4: HISTÓRICO GLOBAL & MEMORIAL -->
 
     <section id="tab-history" class="hidden space-y-6">
-
       <div class="bg-gradient-to-r from-amber-600/10 via-amber-400/10 to-amber-600/5 border border-amber-300 rounded-2xl p-5 shadow-xs space-y-4">
-
         <div class="flex items-center justify-between flex-wrap gap-2 border-b border-amber-200/80 pb-3">
-
           <div class="flex items-center gap-3">
-
             <div class="w-12 h-12 rounded-xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-md">
-
               <i class="fa-solid fa-trophy"></i>
-
             </div>
-
             <div>
-
               <h2 class="text-base font-black uppercase tracking-wide text-slate-900 flex items-center gap-2">
-
                 Galeria de Títulos & Sala de Troféus
-
               </h2>
-
               <p class="text-xs text-slate-600 font-medium">As maiores glórias e conquistas oficiais da história do clube</p>
-
             </div>
-
           </div>
-
           <div class="text-right">
-
             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Total de Conquistas</span>
-
             <span class="text-2xl font-black text-amber-700" id="histTotalTrophiesCount">0</span>
-
           </div>
-
         </div>
-
-
-
         <div id="trophyRoomGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
-
       </div>
-
-
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
         <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
-
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-
             <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-
               <i class="fa-solid fa-chart-line text-emerald-600"></i> Evolução de Aproveitamento (%)
-
             </h3>
-
             <span class="text-[11px] font-semibold text-slate-400">Por Época</span>
-
           </div>
-
           <div class="relative h-64 flex items-center justify-center">
-
             <canvas id="seasonsWinRateChart"></canvas>
-
           </div>
-
         </div>
-
-
-
         <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
-
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-
             <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-
               <i class="fa-solid fa-futbol text-blue-600"></i> Gols Pró vs Sofridos por Época
-
             </h3>
-
             <span class="text-[11px] font-semibold text-slate-400">Comparativo Global</span>
-
           </div>
-
           <div class="relative h-64 flex items-center justify-center">
-
             <canvas id="seasonsGoalsChart"></canvas>
-
           </div>
-
         </div>
-
       </div>
-
-
-
       <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-4">
-
         <div class="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
-
           <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-
             <i class="fa-solid fa-arrows-split-up-and-left text-indigo-600"></i> Comparação Histórica dos Setores (Média de Força & Gols)
-
           </h3>
-
           <span class="text-xs text-slate-500 font-medium">Desempenho consolidado época a época</span>
-
         </div>
-
         <div class="overflow-x-auto">
-
           <table class="w-full text-left text-xs border-collapse">
-
             <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200">
-
               <tr>
-
                 <th class="py-2.5 px-3">Temporada</th>
-
                 <th class="py-2.5 px-3 text-center text-blue-700">Média OVR Defesa</th>
-
                 <th class="py-2.5 px-3 text-center text-blue-700">Gols Sofridos</th>
-
                 <th class="py-2.5 px-3 text-center text-amber-700">Média OVR Meio</th>
-
                 <th class="py-2.5 px-3 text-center text-amber-700">Gols do Meio</th>
-
                 <th class="py-2.5 px-3 text-center text-rose-700">Média OVR Ataque</th>
-
                 <th class="py-2.5 px-3 text-center text-rose-700">Gols do Ataque</th>
-
                 <th class="py-2.5 px-3 text-center text-emerald-700">Clean Sheets (SSG)</th>
-
                 <th class="py-2.5 px-3 text-right">Aproveitamento</th>
-
               </tr>
-
             </thead>
-
             <tbody id="sectorHistoryTableBody" class="divide-y divide-slate-100 font-semibold text-slate-700"></tbody>
-
           </table>
-
         </div>
-
       </div>
-
-
-
       <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
-
         <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-100 pb-3">
-
           <div>
-
             <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-
               <i class="fa-solid fa-book-bookmark text-amber-600"></i> Memorial dos Atletas
-
             </h3>
-
             <p class="text-xs text-slate-500 font-medium mt-0.5">Histórico consolidado com todos os atletas que jogaram ou foram transferidos pelo clube</p>
-
           </div>
-
-
-
           <div class="flex items-center gap-2">
-
             <button onclick="setPlayerHistoryFilter('ALL')" id="filterHistAll" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-900 text-white">Todos</button>
-
             <button onclick="setPlayerHistoryFilter('CURRENT')" id="filterHistCurrent" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">No Elenco</button>
-
             <button onclick="setPlayerHistoryFilter('PAST')" id="filterHistPast" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200">Ex-Jogadores</button>
-
           </div>
-
         </div>
-
-
-
         <div class="overflow-x-auto">
-
           <table class="w-full text-left text-xs border-collapse">
-
             <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200">
-
               <tr>
-
                 <th class="py-3 px-3">Atleta</th>
-
                 <th class="py-3 px-3 text-center">Posição</th>
-
                 <th class="py-3 px-3 text-center">Situação</th>
-
                 <th class="py-3 px-3 text-center">Evolução OVR</th>
-
                 <th class="py-3 px-3 text-center">Épocas</th>
-
                 <th class="py-3 px-2 text-center text-slate-800">Jogos</th>
-
                 <th class="py-3 px-2 text-center text-amber-700">Gols</th>
-
                 <th class="py-3 px-2 text-center text-blue-700">Assists</th>
-
                 <th class="py-3 px-2 text-center text-emerald-700">SSG</th>
-
                 <th class="py-3 px-2 text-center text-purple-700">Nota Hist.</th>
-
                 <th class="py-3 px-3 text-center">Títulos</th>
-
               </tr>
-
             </thead>
-
             <tbody id="playerMemorialTableBody" class="divide-y divide-slate-100 font-medium text-slate-700"></tbody>
-
           </table>
-
         </div>
-
       </div>
-
-
-
       <div class="space-y-4">
-
         <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-
           <i class="fa-solid fa-scroll text-slate-500"></i> Livro de Ouro das Campanhas Encerradas
-
         </h3>
-
         <div id="closedSeasonsCardsContainer" class="space-y-4"></div>
-
       </div>
-
     </section>
-
   </main>
-
-
 
   <!-- MODAL DE ATLETA -->
 
   <div id="athleteModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
-
     <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-
         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2" id="athleteModalTitle">
-
           <i class="fa-solid fa-user-pen text-emerald-600"></i> Dados do Atleta
-
         </h3>
-
         <button onclick="closeAthleteModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-
       </div>
-
-
-
       <form id="athleteForm" onsubmit="saveAthleteData(event)" class="space-y-3 text-xs">
-
-        <input type="hidden" id="athId">
-
-        
-
+        <input type="hidden" id="athId"> 
         <div class="bg-indigo-50/70 border border-indigo-200 p-3 rounded-xl space-y-2">
           <label class="block font-bold text-indigo-950 flex items-center justify-between">
             <span class="flex items-center gap-1.5">
@@ -2220,2253 +2569,1048 @@ Painel & Tabela Geral de MVP
           </div>
           <div id="playerSearchResults" class="hidden bg-white border border-indigo-200 rounded-lg max-h-40 overflow-y-auto divide-y divide-slate-100 shadow-sm mt-1"></div>
         </div>
-
-
-
         <div class="grid grid-cols-3 gap-2">
-
           <div class="col-span-2">
-
             <label class="block mb-1 font-semibold text-slate-700">Nº Camisa</label>
-
             <input type="number" id="athNumber" min="1" max="99" value="10" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
           </div>
-
           <div class="flex items-center justify-center pt-5">
-
             <div id="athPreviewAvatar" class="w-11 h-11 rounded-full bg-slate-100 border border-slate-300 flex items-center justify-center overflow-hidden shadow-2xs text-base font-bold text-slate-600">
-
               ?
-
             </div>
-
           </div>
-
         </div>
-
-
-
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700 flex items-center gap-1.5">
-
               <i class="fa-solid fa-id-badge text-emerald-600"></i> ID EA FC 26 (player_id)
-
             </label>
-
             <input type="text" id="athEaId" placeholder="Preenchido pela busca" oninput="updateModalPreviewFace()" class="w-full bg-white border border-slate-300 rounded-lg p-2 font-mono text-slate-900">
-
             <span class="text-[10px] text-slate-400">Puxa o rosto oficial automaticamente</span>
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700 flex items-center gap-1.5">
-
               <i class="fa-solid fa-image text-blue-600"></i> URL Foto Personalizada
-
             </label>
-
             <input type="url" id="athPhotoUrl" placeholder="https://.../foto.png" oninput="updateModalPreviewFace()" class="w-full bg-white border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
             <span class="text-[10px] text-slate-400">Opcional</span>
-
           </div>
-
         </div>
-
-
-
         <div class="grid grid-cols-3 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Posição</label>
-
             <select id="athPos" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
               <option value="GOL">GOL (Goleiro)</option>
-
               <option value="ZAG">ZAG (Zagueiro)</option>
-
               <option value="LD">LD (Lateral Dir.)</option>
-
               <option value="LE">LE (Lateral Esq.)</option>
-
               <option value="VOL">VOL (Volante)</option>
-
               <option value="MC">MC (Meia Central)</option>
-
               <option value="MEI">MEI (Meia Atacante)</option>
-
               <option value="MD">MD (Meia Direita)</option>
-
               <option value="ME">ME (Meia Esquerda)</option>
-
               <option value="PD">PD (Ponta Direita)</option>
-
               <option value="PE">PE (Ponta Esquerda)</option>
-
               <option value="ATA">ATA (Centroavante)</option>
-
               <option value="SA">SA (Segundo Atacante)</option>
-
               <option value="ATD">ATD (Atacante Dir.)</option>
-
               <option value="ATE">ATE (Atacante Esq.)</option>
-
             </select>
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Idade</label>
-
             <input type="number" id="athAge" value="23" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">País (Sigla / Nome)</label>
-
             <input type="text" id="athNat" value="ING" maxlength="6" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold uppercase text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div class="grid grid-cols-3 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Força Atual (OVR)</label>
-
             <input type="number" id="athOvr" min="40" max="99" value="72" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">OVR Inicial</label>
-
             <input type="number" id="athInitialOvr" min="40" max="99" value="72" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Tempo de Contrato</label>
-
             <input type="number" id="athContract" min="0" max="10" value="3" placeholder="Em anos" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div class="grid grid-cols-2 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Papel no Plantel</label>
-
             <select id="athRole" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
               <option value="Crucial">Crucial</option>
-
               <option value="Importante" selected>Importante</option>
-
               <option value="Esporádico">Esporádico</option>
-
               <option value="Rodízio">Rodízio</option>
-
               <option value="Promessa">Promessa</option>
-
             </select>
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Valor de Mercado</label>
-
             <input type="number" id="athMarketValue" value="500000" min="0" step="any" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div class="grid grid-cols-2 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Salário Semanal</label>
-
             <input type="number" id="athWage" value="1000" min="0" step="any" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Situação Empréstimo</label>
-
             <select id="athLoanStatus" onchange="toggleLoanClubInput()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
               <option value="NONE" selected>Permanente (Nosso)</option>
-
               <option value="LOAN_OUT">Emprestado por nós</option>
-
               <option value="LOAN_IN">Emprestado para nós</option>
-
             </select>
-
           </div>
-
         </div>
-
-
-
         <div id="loanClubContainer" class="hidden">
-
           <label class="block mb-1 font-semibold text-slate-700">Clube Empréstimo</label>
-
           <input type="text" id="athLoanClub" placeholder="Ex: Girona, Alavés..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
         </div>
-
-
-
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
-
           <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
-
           <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold text-white shadow-xs">Guardar Atleta</button>
-
         </div>
-
       </form>
-
     </div>
-
   </div>
-
-
 
   <!-- MODAL DE ESTATÍSTICAS DO ATLETA -->
 
   <div id="statsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-
     <div class="bg-white border border-slate-200 w-full max-w-md rounded-2xl shadow-xl p-5 space-y-4">
-
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-
         <div>
-
           <h3 class="text-sm font-bold text-slate-900 uppercase">Editar Estatísticas</h3>
-
           <p class="text-xs text-slate-500" id="statsModalPlayerName">-</p>
-
         </div>
-
         <button onclick="closeStatsModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-
       </div>
-
-
-
       <form id="statsForm" onsubmit="saveAthleteStats(event)" class="space-y-3 text-xs">
-
         <input type="hidden" id="statsPlayerId">
-
-
-
         <div class="grid grid-cols-2 gap-3">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Total de Jogos</label>
-
             <input type="number" id="statsMatches" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Nota Média (0 - 10)</label>
-
             <input type="number" id="statsAvgRating" step="0.01" min="0" max="10" placeholder="6.50" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div class="grid grid-cols-3 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Gols</label>
-
             <input type="number" id="statsGoals" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Assistências</label>
-
             <input type="number" id="statsAssists" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">SSG (Sem Sofrer)</label>
-
             <input type="number" id="statsSsg" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div class="grid grid-cols-2 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Cartões Amarelos (CA)</label>
-
             <input type="number" id="statsYellow" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Cartões Vermelhos (CV)</label>
-
             <input type="number" id="statsRed" min="0" required class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
-
           <button type="button" onclick="closeStatsModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
-
           <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-semibold text-white shadow-xs">Atualizar Dados</button>
-
         </div>
-
       </form>
-
     </div>
-
   </div>
-
-
-
   <!-- MODAL DE PARTIDAS (COM MATA-MATA, FASES E PÊNALTIS) -->
 
   <div id="matchModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 hidden">
-
     <div class="bg-white border border-slate-200 rounded-2xl max-w-3xl w-full p-5 shadow-2xl space-y-4 max-h-[92vh] flex flex-col overflow-hidden">
-
-      
-
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-
         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2" id="matchModalTitle">
-
           <i class="fa-solid fa-futbol text-emerald-600"></i> Registar Nova Partida
-
         </h3>
-
         <button onclick="closeMatchModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-
       </div>
-
-
-
       <div class="p-1 overflow-y-auto space-y-4 flex-1">
-
         <input type="hidden" id="matchEditId">
-
-
-
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-
           <div>
-
             <label class="text-[11px] font-semibold text-slate-600 block mb-1">Competição</label>
-
             <select id="matchModalChamp" onchange="onChampMatchChange()" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-bold text-slate-900"></select>
-
           </div>
-
-          
-
           <div id="matchStageCol" class="hidden">
-
             <label class="text-[11px] font-bold text-amber-700 block mb-1">Fase Eliminatória</label>
-
             <select id="matchStageSelect" class="w-full bg-amber-50 border border-amber-300 rounded-lg p-2 text-xs font-bold text-amber-900">
-
               <option value="Final">🏆 Final</option>
-
               <option value="Semifinal">Semifinal</option>
-
               <option value="Quartas de Final">Quartas de Final</option>
-
               <option value="Oitavas de Final">Oitavas de Final</option>
-
               <option value="16 avos de Final">16 avos de Final</option>
-
               <option value="Fase Preliminar">Fase Preliminar</option>
-
             </select>
-
           </div>
-
-
-
           <div>
-
             <label class="text-[11px] font-semibold text-slate-600 block mb-1">Adversário</label>
-
             <input type="text" id="matchOpponent" placeholder="Ex: Southampton, Accrington..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-bold text-slate-900">
-
           </div>
-
-
-
           <div>
-
             <label class="text-[11px] font-semibold text-slate-600 block mb-1">Mando de Campo</label>
-
             <select id="matchLocation" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-medium text-slate-900">
-
               <option value="CASA">Casa (Mandante)</option>
-
               <option value="FORA">Fora (Visitante)</option>
-
               <option value="NEUTRO">Campo Neutro</option>
-
             </select>
-
           </div>
-
         </div>
-
-
-
         <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex items-center justify-around">
-
           <div class="text-center">
-
             <span class="text-xs font-bold text-slate-700 block mb-1" id="matchModalMyClubName">O Meu Clube</span>
-
             <input type="number" id="matchMyScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-slate-300 rounded-xl focus:border-slate-800 font-heading">
-
           </div>
-
           <div class="text-xl font-black text-slate-400 font-heading">VS</div>
-
           <div class="text-center">
-
             <span class="text-xs font-bold text-slate-700 block mb-1">Adversário</span>
-
             <input type="number" id="matchOppScore" min="0" value="0" class="w-16 h-12 text-center text-2xl font-black bg-white border border-slate-300 rounded-xl focus:border-slate-800 font-heading">
-
           </div>
-
         </div>
-
-
 
         <!-- ÁREA DE DECISÃO EM MATA-MATA (PRORROGAÇÃO E PÊNALTIS) -->
 
         <div id="knockoutDecisionArea" class="hidden bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 space-y-2">
-
           <div class="flex items-center justify-between">
-
             <label class="text-xs font-bold uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
-
               <i class="fa-solid fa-stopwatch text-amber-600"></i> Desempate do Mata-Mata
-
             </label>
-
             <select id="matchDecidedBy" onchange="togglePenaltyInputs()" class="bg-white border border-amber-300 rounded-lg text-xs font-bold text-amber-900 p-1.5">
-
               <option value="REGULAR">Tempo Normal (90 min)</option>
-
               <option value="EXTRA_TIME">Após Prorrogação (120 min)</option>
-
               <option value="PENALTIES">Decisão por Pênaltis</option>
-
             </select>
-
           </div>
-
-
-
           <div id="penaltyScoresContainer" class="hidden flex items-center justify-center gap-4 pt-2 border-t border-amber-200">
-
             <span class="text-xs font-bold text-slate-700">Pênaltis:</span>
-
             <input type="number" id="matchMyPenalties" placeholder="Nós" min="0" value="0" class="w-14 h-9 text-center font-black text-base bg-white border border-amber-300 rounded-lg">
-
             <span class="font-bold text-slate-400">x</span>
-
             <input type="number" id="matchOppPenalties" placeholder="Adversário" min="0" value="0" class="w-14 h-9 text-center font-black text-base bg-white border border-amber-300 rounded-lg">
-
           </div>
-
         </div>
-
-
-
         <div class="space-y-2">
-
           <div class="flex items-center justify-between">
-
             <label class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-
               <i class="fa-solid fa-bullseye text-emerald-600"></i> Marcadores de Gols
-
             </label>
-
             <button type="button" onclick="addGoalDetailRow()" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 border border-slate-300 flex items-center gap-1">
-
               <i class="fa-solid fa-plus"></i> Adicionar Golo
-
             </button>
-
           </div>
-
           <div id="goalDetailsContainer" class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-
             <p class="text-xs text-slate-400 text-center py-2 italic font-medium" id="emptyGoalsMsg">Nenhum golo registado.</p>
-
           </div>
-
         </div>
-
-
-
         <div class="space-y-2">
-
           <div class="flex items-center justify-between">
-
             <label class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
-
               <i class="fa-solid fa-star text-amber-500"></i> Desempenho dos Atletas
-
             </label>
-
             <span class="text-[11px] text-slate-400 font-medium">Marque quem esteve em campo</span>
-
           </div>
-
           <div class="border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto">
-
             <table class="w-full text-left text-xs">
-
               <thead class="bg-slate-50 sticky top-0 text-[10px] uppercase font-bold text-slate-500">
-
                 <tr>
-
                   <th class="p-2 w-10 text-center">Jogou?</th>
-
                   <th class="p-2">Atleta</th>
-
                   <th class="p-2 w-20 text-center">Nota (0-10)</th>
-
                   <th class="p-2 w-16 text-center">CA</th>
-
                   <th class="p-2 w-16 text-center">CV</th>
-
                 </tr>
-
               </thead>
-
               <tbody id="matchAthletesPerformanceBody" class="divide-y divide-slate-100 bg-white"></tbody>
-
             </table>
-
           </div>
-
         </div>
-
       </div>
-
-
-
       <div class="px-2 pt-3 border-t border-slate-200 bg-white flex justify-end gap-2">
-
         <button onclick="closeMatchModal()" class="px-4 py-2 rounded-lg bg-slate-100 text-xs font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
-
         <button onclick="saveMatchData()" id="saveMatchBtn" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs">Guardar Partida</button>
-
       </div>
-
     </div>
-
   </div>
-
-
 
   <!-- MODAL DE TRANSFERÊNCIAS -->
 
   <div id="transferModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 hidden">
-
     <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
-
       <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
-
         <div class="flex items-center gap-2.5">
-
           <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-
             <i class="fa-solid fa-arrow-right-arrow-left"></i>
-
           </div>
-
           <div>
-
             <h3 class="text-sm font-bold tracking-wide">Mercado de Transferências</h3>
-
             <p class="text-[11px] text-slate-300">Registo de compras, vendas e atualização orçamental</p>
-
           </div>
-
         </div>
-
         <button onclick="closeTransferModal()" type="button" class="text-slate-400 hover:text-white transition text-lg">
-
           <i class="fa-solid fa-xmark"></i>
-
         </button>
-
       </div>
-
-
-
       <div class="flex border-b border-slate-200 bg-slate-50 text-xs font-bold">
-
         <button type="button" id="tabBtnBuy" onclick="setTransferType('BUY')" class="flex-1 py-3 text-center border-b-2 border-emerald-600 text-emerald-700 bg-white transition flex items-center justify-center gap-2">
-
           <i class="fa-solid fa-user-plus text-emerald-600"></i> Comprar / Contratar Atleta
-
         </button>
-
         <button type="button" id="tabBtnSell" onclick="setTransferType('SELL')" class="flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-800 transition flex items-center justify-center gap-2">
-
           <i class="fa-solid fa-user-minus text-rose-600"></i> Vender Atleta
-
         </button>
-
       </div>
-
-
-
       <form id="transferForm" onsubmit="handleTransferSubmit(event)" class="p-5 space-y-4">
-
         <input type="hidden" id="transType" value="BUY">
-
-
-
         <div id="transferBuySection" class="space-y-3">
-
           <div class="grid grid-cols-2 gap-3">
-
             <div class="col-span-2">
-
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Nome do Jogador</label>
-
               <input type="text" id="buyName" placeholder="Ex: Erling Haaland" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 focus:bg-white focus:border-slate-800">
-
             </div>
-
             <div>
-
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Posição</label>
-
               <select id="buyPos" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
-
                 <option value="GOL">GOL (Guarda-Redes)</option>
-
                 <option value="ZAG">ZAG (Zagueiro Central)</option>
-
                 <option value="LD">LD (Lateral Direito)</option>
-
                 <option value="LE">LE (Lateral Esquerdo)</option>
-
                 <option value="VOL">VOL (Volante)</option>
-
                 <option value="MC">MC (Médio Centro)</option>
-
                 <option value="MEI">MEI (Médio Ofensivo)</option>
-
                 <option value="MD">MD (Médio Direito)</option>
-
                 <option value="ME">ME (Médio Esquerdo)</option>
-
                 <option value="PD">PD (Ponta Direita)</option>
-
                 <option value="PE">PE (Ponta Esquerda)</option>
-
                 <option value="ATA" selected>ATA (Avançado / Centroavante)</option>
-
               </select>
-
             </div>
-
             <div>
-
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Idade</label>
-
               <input type="number" id="buyAge" value="23" min="15" max="45" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
-
             </div>
-
             <div>
-
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Overall (OVR)</label>
-
               <input type="number" id="buyOvr" value="75" min="45" max="99" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
-
             </div>
-
             <div>
-
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Nacionalidade</label>
-
               <input type="text" id="buyNat" value="ING" maxlength="6" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900 uppercase">
-
             </div>
-
             <div>
-
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Salário Semanal</label>
-
               <input type="number" id="buyWage" value="12000" step="500" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
-
             </div>
-
             <div>
-
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Contrato (Anos)</label>
-
               <input type="number" id="buyContract" value="3" min="1" max="5" class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
-
             </div>
-
             <div class="col-span-2">
-
               <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Equipa de Origem</label>
-
               <input type="text" id="buyOriginClub" placeholder="Ex: Girona, Benfica..." class="mt-1 w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
-
             </div>
-
           </div>
-
         </div>
-
-
-
         <div id="transferSellSection" class="space-y-3 hidden">
-
           <div>
-
             <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Selecionar Atleta a Vender</label>
-
             <select id="sellAthleteId" onchange="onAthleteSellSelectChange()" class="mt-1 w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900"></select>
-
           </div>
-
-
-
           <div id="sellAthletePreview" class="p-3 bg-amber-50/60 border border-amber-200 rounded-xl text-xs space-y-1 hidden">
-
             <div class="font-bold text-slate-900" id="sellPreviewName">-</div>
-
             <div class="text-slate-600 text-[11px]" id="sellPreviewDetails">-</div>
-
             <div class="text-[11px] font-bold text-amber-800" id="sellPreviewMarketValue">Valor de Mercado Atual: € 0</div>
-
           </div>
-
-
-
           <div>
-
             <label class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Equipa de Destino</label>
-
             <input type="text" id="sellDestClub" placeholder="Ex: Real Madrid, Juventus..." class="mt-1 w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div class="pt-2 border-t border-slate-200">
-
           <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-800 flex items-center justify-between">
-
             <span>Valor da Transferência</span>
-
             <span id="transHelperLabel" class="text-emerald-700 font-semibold text-[10px] lowercase"></span>
-
           </label>
-
           <div class="relative mt-1">
-
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-xs font-bold text-slate-400" id="transCurrencySymbol">€</span>
-
             <input type="number" id="transAmount" min="0" step="10000" placeholder="0" required class="w-full pl-8 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-black text-slate-900 focus:bg-white focus:border-slate-800">
-
           </div>
-
         </div>
-
-
-
         <div class="pt-3 border-t border-slate-200 flex justify-end gap-2">
-
           <button type="button" onclick="closeTransferModal()" class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition">Cancelar</button>
-
           <button type="submit" id="transSubmitBtn" class="px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition">Confirmar Compra</button>
-
         </div>
-
       </form>
-
     </div>
-
   </div>
-
-
 
   <!-- MODAL: DADOS DO CLUBE & ESCUDO -->
 
   <div id="changeClubModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-
     <div class="bg-white border border-slate-200 w-full max-w-lg rounded-2xl shadow-xl p-5 space-y-4">
-
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-
         <h3 class="text-sm font-bold uppercase tracking-wide text-slate-900 flex items-center gap-2">
-
           <i class="fa-solid fa-shield-halved text-indigo-600"></i> Clube, Identidade & Estádio
-
         </h3>
-
         <button onclick="closeChangeClubModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-
       </div>
-
-
-
       <div class="space-y-3.5 text-xs font-medium max-h-[75vh] overflow-y-auto pr-1">
-
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Nome do Clube</label>
-
             <input type="text" id="newClubNameInput" placeholder="Ex: Deportivo La Coruña" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Alcunha / Apelido</label>
-
             <input type="text" id="newClubNicknameInput" placeholder="Ex: Os Branquiazuis" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div>
-
           <label class="block mb-1 font-semibold text-slate-700">Lema do Clube</label>
-
           <input type="text" id="newClubMottoInput" placeholder="Ex: Forza Dépor! Sempre contigo." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
         </div>
-
-
-
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">URL do Escudo</label>
-
             <input type="url" id="newClubLogoUrlInput" placeholder="https://.../escudo.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">URL Banner do Estádio</label>
-
             <input type="url" id="newClubStadiumUrlInput" placeholder="https://.../estadio.jpg" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
-
           </div>
-
         </div>
-
-
-
         <div class="grid grid-cols-3 gap-2">
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Moeda Oficial</label>
-
             <select id="newClubCurrencyInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-bold text-slate-900">
-
               <option value="€">€ (Euro)</option>
-
               <option value="£">£ (Libra)</option>
-
               <option value="$">$ (Dólar)</option>
-
               <option value="R$">R$ (Real)</option>
-
             </select>
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Verba Transf.</label>
-
             <input type="number" id="newClubBudgetInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
           <div>
-
             <label class="block mb-1 font-semibold text-slate-700">Teto Salarial</label>
-
             <input type="number" id="newClubWageInput" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-semibold text-slate-900">
-
           </div>
-
         </div>
-
       </div>
-
-
-
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
-
         <button onclick="closeChangeClubModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
-
         <button onclick="confirmChangeClub()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-xs">Confirmar</button>
-
       </div>
-
     </div>
-
   </div>
-
-
 
   <!-- MODAL: NOVO TORNEIO -->
 
   <div id="champModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-
     <div class="bg-white border border-slate-200 w-full max-w-sm rounded-2xl shadow-xl p-5 space-y-4">
-
       <h3 class="text-sm font-bold text-slate-900 uppercase flex items-center gap-2">
-
         <i class="fa-solid fa-trophy text-amber-500"></i> Novo Campeonato
-
       </h3>
-
       <div class="space-y-3 text-xs">
-
         <div>
-
           <label class="block text-slate-600 mb-1 font-bold">Nome do Torneio</label>
-
           <input type="text" id="newChampName" placeholder="Ex: LaLiga, Taça do Rei" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-900">
-
         </div>
-
         <div>
-
           <label class="block text-slate-600 mb-1 font-bold">URL da Imagem da Taça</label>
-
           <input type="url" id="newChampTrophyUrl" placeholder="https://exemplo.com/taca.png" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-900">
-
         </div>
-
         <div>
-
           <label class="block text-slate-600 mb-1 font-bold">Formato</label>
-
           <select id="newChampFormat" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-900">
-
             <option value="PONTOS">Pontos Corridos</option>
-
             <option value="MATA">Eliminatória / Taça</option>
-
           </select>
-
         </div>
-
       </div>
-
       <div class="flex justify-end gap-2 pt-2 border-t border-slate-200">
-
         <button onclick="closeNewChampModal()" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">Cancelar</button>
-
         <button onclick="saveNewChamp()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs">Cadastrar</button>
-
       </div>
-
     </div>
-
   </div>
-
-
 
   <!-- MODAL: VIRADA DE ÉPOCA -->
 
   <div id="seasonAdvanceModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3">
-
     <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-2xl shadow-2xl p-5 space-y-4 max-h-[92vh] flex flex-col overflow-hidden">
-
-      
-
       <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-
         <div class="flex items-center gap-2">
-
           <div class="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-700 flex items-center justify-center font-bold text-lg">
-
             <i class="fa-solid fa-trophy"></i>
-
           </div>
-
           <div>
-
             <h3 class="text-sm font-bold text-slate-900 uppercase">Fecho de Temporada & Classificações</h3>
-
             <p class="text-xs text-slate-500">Confirme as classificações nos torneios antes de avançar para a próxima época</p>
-
           </div>
-
         </div>
-
         <button onclick="closeSeasonAdvanceModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-
       </div>
-
-
-
       <div class="p-1 overflow-y-auto space-y-4 flex-1 text-xs">
-
         <div class="bg-amber-50/70 border border-amber-200 p-3 rounded-xl space-y-1 text-slate-700">
-
           <div class="font-bold text-amber-900 flex items-center gap-1.5 text-xs">
-
             <i class="fa-solid fa-circle-exclamation text-amber-600"></i> O que acontece ao encerrar:
-
           </div>
-
           <p class="leading-relaxed text-[11px]">
-
             • Um snapshot completo de partidas, atletas e notas por setor será arquivado no <strong>Histórico Global</strong>.<br>
-
             • Os títulos marcados como <strong>CAMPEÃO</strong> serão adicionados à Sala de Troféus oficial.<br>
-
             • No novo ano, as estatísticas são reiniciadas, atletas envelhecem <strong>+1 ano</strong> e contratos reduzem <strong>-1 ano</strong>.
-
           </p>
-
         </div>
-
-
-
         <div class="space-y-2">
-
           <label class="font-bold uppercase tracking-wide text-slate-700 block text-[11px] flex items-center gap-1.5">
-
             <i class="fa-solid fa-ranking-star text-indigo-600"></i> Classificação nos Torneios da Época (<span id="advanceCurrentSeasonLabel">2025/2026</span>):
-
           </label>
-
           <div id="seasonTournamentsRankingContainer" class="space-y-2.5"></div>
-
         </div>
-
-
-
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
-
           <label class="block text-slate-700 font-bold uppercase tracking-wider text-[11px]">Identificação da Nova Temporada</label>
-
           <input type="text" id="nextSeasonNameInput" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-slate-900 font-black text-sm focus:border-slate-800">
-
         </div>
-
       </div>
-
-
-
       <div class="flex justify-end gap-2 pt-3 border-t border-slate-200 bg-white">
-
         <button onclick="closeSeasonAdvanceModal()" class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">Cancelar</button>
-
         <button onclick="confirmAdvanceSeason()" class="px-5 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs flex items-center gap-2">
-
           <i class="fa-solid fa-check-double"></i> Confirmar & Avançar Época
-
         </button>
-
       </div>
-
-
-
     </div>
-
   </div>
-
-
 
   <!-- JAVASCRIPT GLOBAL -->
 
   <script>
-
     const API_URL = "https://script.google.com/macros/s/AKfycbysXpEpvC2Yjl_ksDdXvVCLTSrPG4NzHxa1Y3szeCbh25nLQ5VJVCQUTW7Z2VAYjPRh/exec";
-
     const STORAGE_KEY = 'MODO_CARREIRA_FIFA_APP_V15_SYSTEM';
-
-
-
     const countryIsoMap = {
-
       'BRA': 'br', 'ESP': 'es', 'POR': 'pt', 'ARG': 'ar', 'FRA': 'fr', 'GER': 'de', 'ALE': 'de',
-
       'ENG': 'gb-eng', 'ING': 'gb-eng', 'ITA': 'it', 'NED': 'nl', 'HOL': 'nl', 'BEL': 'be', 'URU': 'uy',
-
       'COL': 'co', 'CHI': 'cl', 'PAR': 'py', 'ECU': 'ec', 'PER': 'pe', 'VEN': 've', 'BOL': 'bo',
-
       'MEX': 'mx', 'USA': 'us', 'EUA': 'us', 'CAN': 'ca', 'CRO': 'hr', 'SRB': 'rs', 'SUI': 'ch',
-
       'AUT': 'at', 'SWE': 'se', 'NOR': 'no', 'DEN': 'dk', 'DIN': 'dk', 'POL': 'pl', 'CZE': 'cz',
-
       'TUR': 'tr', 'GRE': 'gr', 'UKR': 'ua', 'RUS': 'ru', 'SCO': 'gb-sct', 'WAL': 'gb-wls', 'GAL': 'gb-wls',
-
       'IRL': 'ie', 'NIR': 'gb-nir', 'MAR': 'ma', 'SEN': 'sn', 'NGA': 'ng', 'GHA': 'gh', 'CIV': 'ci',
-
       'CMR': 'cm', 'CAM': 'cm', 'EGY': 'eg', 'ALG': 'dz', 'TUN': 'tn', 'RSA': 'za', 'JPN': 'jp',
-
       'KOR': 'kr', 'AUS': 'au', 'NZL': 'nz', 'KSA': 'sa', 'QAT': 'qa', 'UAE': 'ae', 'IRN': 'ir', 'CHN': 'cn',
-
       'SLO': 'si', 'SVK': 'sk', 'ROU': 'ro', 'HUN': 'hu'
-
     };
-
-
-
     const defaultState = {
-
       clubName: 'La Coruña',
-
       clubNickname: '',
-
       clubMotto: '',
-
       clubLogoUrl: '',
-
       clubStadiumUrl: '',
-
       currency: '€',
-
       currentSeason: '2025/2026',
-
       budget: 8075625,
-
       transferAcquired: 0,
-
       wageBudget: 155300,
-
       currentChampId: 'c1',
-
       championships: [
-
         { id: 'c1', name: 'LaLiga Hyper', format: 'PONTOS', trophyUrl: '' }
-
       ],
-
       athletes: [],
-
       matches: [],
-
       transfersHistory: [],
-
       seasonsHistory: [],
-
       departedAthletes: [],
-
       trophiesWon: []
-
     };
-
-
-
     let state = loadState();
-
     let currentPosFilter = 'TODOS';
-
     let currentHistPlayerFilter = 'ALL';
-
     let natChartInstance = null;
-
     let sectorChartInstance = null;
-
     let homeAwayChartInstance = null;
-
     let seasonsWinRateChartInstance = null;
-
     let seasonsGoalsChartInstance = null;
 
-
-
     function loadState() {
-
       const data = localStorage.getItem(STORAGE_KEY);
-
       if (!data) return JSON.parse(JSON.stringify(defaultState));
-
       try {
-
         const parsed = JSON.parse(data);
-
         return Object.assign({}, defaultState, parsed);
-
       } catch (e) {
-
         return JSON.parse(JSON.stringify(defaultState));
-
       }
-
     }
-
-
 
     function saveState() {
-
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-
       updateUI();
-
     }
-
-
 
     function formatCurrency(val) {
-
       const sym = state.currency || '€';
-
       return `${sym} ${Number(val || 0).toLocaleString('pt-PT')}`;
-
     }
-
-
 
     function getCountryFlagImg(natCode) {
-
       if (!natCode) return `<span class="text-xs">🌐</span>`;
-
       const clean = String(natCode).toUpperCase().trim();
-
       const iso2 = countryIsoMap[clean] || clean.toLowerCase();
-
       return `<img src="https://flagcdn.com/24x18/${iso2}.png" alt="${clean}" title="${clean}" class="w-5 h-3.5 object-cover rounded-[2px] shadow-xs inline-block align-middle border border-slate-200" onerror="this.onerror=null; this.outerHTML='<span class=\\'font-bold text-[10px] text-slate-700 uppercase\\'>${clean}</span>';">`;
-
     }
-
-
 
     // BASE DE DADOS LOCAL PARA BUSCA INSTANTÂNEA
 
     const COMMON_PLAYERS_DATABASE = [
-
       { name: "Tom Booth", aliases: ["booth", "tom booth"], eaId: "271239", pos: "GOL", age: 20, nat: "ENG", ovr: 56 },
-
       { name: "Giorgian de Arrascaeta", aliases: ["arrascaeta", "de arrascaeta"], eaId: "216460", pos: "MEI", age: 30, nat: "URU", ovr: 81 },
-
       { name: "Memphis Depay", aliases: ["memphis", "depay"], eaId: "202556", pos: "ATA", age: 30, nat: "NED", ovr: 80 },
-
       { name: "Yeremay Hernández", aliases: ["yeremay", "peke"], eaId: "264259", pos: "PE", age: 21, nat: "ESP", ovr: 74 },
-
       { name: "Mario Soriano", aliases: ["mario soriano", "soriano"], eaId: "258943", pos: "MEI", age: 22, nat: "ESP", ovr: 72 },
-
       { name: "David Mella", aliases: ["david mella", "mella"], eaId: "270634", pos: "PD", age: 19, nat: "ESP", ovr: 71 },
-
       { name: "Diego Villares", aliases: ["diego villares", "villares"], eaId: "262332", pos: "MC", age: 28, nat: "ESP", ovr: 71 },
-
       { name: "Sebastián Cáceres", aliases: ["sebastian caceres", "caceres"], eaId: "246187", pos: "ZAG", age: 25, nat: "URU", ovr: 74 },
-
       { name: "Lucas Noubi", aliases: ["lucas noubi", "noubi"], eaId: "268307", pos: "ZAG", age: 19, nat: "BEL", ovr: 68 },
-
       { name: "Luis Chávez", aliases: ["luis chavez", "chavez"], eaId: "233419", pos: "MC", age: 28, nat: "MEX", ovr: 77 },
-
       { name: "Giacomo Quagliata", aliases: ["quagliata", "giacomo quagliata"], eaId: "256877", pos: "LE", age: 24, nat: "ITA", ovr: 69 },
-
       { name: "Ximo Navarro", aliases: ["ximo navarro", "navarro"], eaId: "200842", pos: "LD", age: 34, nat: "ESP", ovr: 70 },
-
       { name: "Adrià Altimira", aliases: ["altimira"], eaId: "269553", pos: "LD", age: 23, nat: "ESP", ovr: 69 },
-
       { name: "Samuele Mulattieri", aliases: ["mulattieri"], eaId: "246191", pos: "ATA", age: 23, nat: "ITA", ovr: 72 },
-
       { name: "Erling Haaland", aliases: ["haaland"], eaId: "239085", pos: "ATA", age: 24, nat: "NOR", ovr: 91 },
-
       { name: "Kylian Mbappé", aliases: ["mbappe"], eaId: "231747", pos: "ATA", age: 25, nat: "FRA", ovr: 91 },
-
       { name: "Vinícius Jr.", aliases: ["vini jr", "vinicius"], eaId: "238794", pos: "PE", age: 24, nat: "BRA", ovr: 90 },
-
       { name: "Jude Bellingham", aliases: ["bellingham"], eaId: "252371", pos: "MEI", age: 21, nat: "ENG", ovr: 90 }
-
     ];
 
-
-
     async function searchPlayerAuto() {
-
       const input = document.getElementById('athName');
-
       const query = (input?.value || '').trim().toLowerCase();
-
       const resultsContainer = document.getElementById('playerSearchResults');
-
       const btn = document.getElementById('btnSearchPlayer');
-
-
-
       if (!query) return alert('Por favor, digite o nome de um jogador!');
-
-
-
       btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i>`;
-
       btn.disabled = true;
-
-
-
       let matches = COMMON_PLAYERS_DATABASE.filter(p => {
-
         return p.name.toLowerCase().includes(query) || p.aliases.some(a => a.includes(query));
-
       });
-
-
-
       if (matches.length === 0) {
-
         try {
-
           const res = await fetch(`https://api.msmc.cc/api/fc25/player/name/${encodeURIComponent(query)}`);
-
           if (res.ok) {
-
             const data = await res.json();
-
             const list = Array.isArray(data) ? data : [data];
-
             list.slice(0, 5).forEach(item => {
-
               if (item && item.ID) {
-
                 matches.push({
-
                   name: item.Name || item.name || query,
-
                   eaId: String(item.ID),
-
                   pos: (item.POS || item.pos || item.Position || 'MEI').toUpperCase(),
-
                   age: Number(item.Age || item.age) || 24,
-
                   nat: (item.Nation || item.nation || item.Nationality || 'BRA').slice(0, 3).toUpperCase(),
-
                   ovr: Number(item.OVR || item.ovr) || 75
-
                 });
-
               }
-
             });
-
           }
-
         } catch (e) {}
-
       }
-
-
-
       btn.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> Buscar`;
-
       btn.disabled = false;
-
-
-
       if (!resultsContainer) return;
-
-
-
       if (matches.length === 0) {
-
         resultsContainer.innerHTML = `<div class="p-3 text-center text-xs text-slate-500">Nenhum jogador encontrado com "<strong>${query}</strong>". Preencha manualmente.</div>`;
-
         resultsContainer.classList.remove('hidden');
-
         return;
-
       }
-
-
-
       resultsContainer.innerHTML = matches.map((p, idx) => {
-
         const paddedId = ("000000" + p.eaId).slice(-6);
-
         const faceUrl = `https://cdn.futbin.com/content/ea/fifa25/img/players/${paddedId}.png`;
-
         return `
-
           <div onclick="selectFoundPlayer(${idx})" class="p-2.5 hover:bg-indigo-50 cursor-pointer flex items-center justify-between gap-3 transition">
-
             <div class="flex items-center gap-2.5">
-
               <img src="${faceUrl}" class="w-8 h-8 rounded-full object-contain bg-slate-100 border border-slate-200" onerror="this.src='https://placehold.co/32x32/e2e8f0/475569?text=⚽'">
-
               <div>
-
                 <span class="font-bold text-slate-900 block text-xs">${p.name}</span>
-
                 <span class="text-[10px] text-slate-500 font-semibold">${p.pos} • ${p.age} anos • ${p.nat}</span>
-
               </div>
-
             </div>
-
             <span class="text-xs font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">OVR ${p.ovr}</span>
-
           </div>
-
         `;
-
       }).join('');
-
-
-
       window._currentSearchMatches = matches;
-
       resultsContainer.classList.remove('hidden');
-
     }
-
-
 
     function selectFoundPlayer(index) {
-
       const p = window._currentSearchMatches ? window._currentSearchMatches[index] : null;
-
       if (!p) return;
-
-
-
       document.getElementById('athName').value = p.name;
-
       document.getElementById('athEaId').value = p.eaId;
-
       document.getElementById('athPos').value = p.pos;
-
       document.getElementById('athAge').value = p.age;
-
       document.getElementById('athNat').value = p.nat;
-
       document.getElementById('athOvr').value = p.ovr;
-
       document.getElementById('athInitialOvr').value = p.ovr;
-
-
-
       updateModalPreviewFace();
-
       document.getElementById('playerSearchResults')?.classList.add('hidden');
-
     }
-
-
 
     function updateModalPreviewFace() {
-
       const eaId = document.getElementById('athEaId').value.trim();
-
       const photoUrl = document.getElementById('athPhotoUrl').value.trim();
-
       const preview = document.getElementById('athPreviewAvatar');
-
       if (!preview) return;
-
-
-
       let imgUrl = photoUrl;
-
       if (!imgUrl && eaId) {
-
         const paddedId = ("000000" + eaId).slice(-6);
-
         imgUrl = `https://cdn.futbin.com/content/ea/fifa25/img/players/${paddedId}.png`;
-
       }
-
-
-
       if (imgUrl) {
-
         preview.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-contain scale-110" onerror="this.parentElement.innerText='?'">`;
-
       } else {
-
         preview.innerText = '?';
-
       }
-
     }
-
-
 
     // BUSCA DIRETA NO FUTBIN
-
     function getPlayerFaceUrl(player) {
-
       if (!player) return '';
-
       if (player.photoUrl && player.photoUrl.trim() !== '') return player.photoUrl.trim();
-
-      
-
       if (player.eaId && String(player.eaId).trim() !== '') {
-
         const rawId = String(player.eaId).trim();
-
         const paddedId = rawId.padStart(6, '0');
-
         return `https://cdn.futbin.com/content/ea/fifa25/img/players/${paddedId}.png`;
-
       }
-
       return '';
-
     }
-
-
 
     function renderPlayerAvatarHtml(player, sizeClass = 'w-9 h-9', roundedClass = 'rounded-full') {
-
       const rawId = player && player.eaId ? String(player.eaId).trim() : '';
-
       const photoUrl = player && player.photoUrl ? player.photoUrl.trim() : '';
-
       const initial = (player && player.name) ? player.name.charAt(0).toUpperCase() : '?';
-
-
-
       if (photoUrl) {
-
         return `
-
           <div class="${sizeClass} ${roundedClass} bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-2xs flex items-center justify-center relative">
-
             <img src="${photoUrl}" alt="${player.name}" class="w-full h-full object-contain transform scale-110 translate-y-0.5" 
-
                  onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'font-bold text-xs text-slate-700\\'>${initial}</span>';">
-
           </div>
-
         `;
-
       }
-
-
-
       if (rawId) {
-
         const paddedId = rawId.padStart(6, '0');
-
         const futbinUrl = `https://cdn.futbin.com/content/ea/fifa25/img/players/${paddedId}.png`;
-
         const eaUrl = `https://media.ea.com/content/dam/ea/easportsfc/common/player-headshots/p${rawId}.png`;
-
-
-
         return `
-
           <div class="${sizeClass} ${roundedClass} bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-2xs flex items-center justify-center relative">
-
             <img src="${futbinUrl}" alt="${player.name}" class="w-full h-full object-contain transform scale-110 translate-y-0.5" 
-
                  onerror="this.onerror=null; this.src='${eaUrl}'; this.onerror=function(){ this.parentElement.innerHTML='<span class=\\'font-bold text-xs text-slate-700\\'>${initial}</span>'; };">
-
           </div>
-
         `;
-
       }
-
-
-
       return `
-
         <div class="${sizeClass} ${roundedClass} bg-slate-200 border border-slate-300 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
-
           ${initial}
-
         </div>
-
       `;
-
     }
-
-
 
     function switchTab(tabId) {
-
       document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
-
       document.getElementById(`tab-${tabId}`)?.classList.remove('hidden');
-
-
-
       document.querySelectorAll('.tab-btn').forEach(btn => {
-
         btn.classList.remove('bg-white', 'text-slate-900', 'shadow-xs');
-
         btn.classList.add('text-slate-600');
-
       });
-
       document.getElementById(`nav-btn-${tabId}`)?.classList.add('bg-white', 'text-slate-900', 'shadow-xs');
-
       document.getElementById(`nav-btn-${tabId}`)?.classList.remove('text-slate-600');
-
-
-
       if (tabId === 'dashboard') {
-
         renderDashboardVisuals();
-
         renderBestAthletesByPosition();
         renderMvpRankingList();
-
       }
-
       if (tabId === 'athletes') renderAthletesContainers();
-
       if (tabId === 'matches') updateTourneyHomeAwayDashboard();
-
       if (tabId === 'history') renderHistoryTab();
-
     }
-
-
 
     function updateClubLogo() {
-
       const img = document.getElementById('clubBadgeImg');
-
       const def = document.getElementById('clubDefaultBadge');
-
       if (state.clubLogoUrl && state.clubLogoUrl.trim() !== '') {
-
         img.src = state.clubLogoUrl;
-
         img.classList.remove('hidden');
-
         def.classList.add('hidden');
-
       } else {
-
         showDefaultLogo();
-
       }
-
     }
-
-
 
     function showDefaultLogo() {
-
       const img = document.getElementById('clubBadgeImg');
-
       const def = document.getElementById('clubDefaultBadge');
-
       if (img) img.classList.add('hidden');
-
       if (def) {
-
         def.classList.remove('hidden');
-
         def.innerText = state.clubName ? state.clubName.charAt(0).toUpperCase() : '⚽';
-
       }
-
     }
-
-
 
     function getPlayerShoeOrGloveIcon(player, isTop11) {
-
       const pos = (player.pos || '').toUpperCase().trim();
-
       if (isTop11 && Number(player.matches) > 0) {
-
         if (pos === 'GOL') {
-
           return `<span title="Top 11 Mais Jogos" class="inline-flex items-center gap-1 font-bold"><i class="fa-solid fa-mitten text-amber-500"></i> <span class="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded border border-amber-300 font-bold">Top 11</span></span>`;
-
         }
-
         return `<span title="Top 11 Mais Jogos" class="inline-flex items-center gap-1 font-bold"><i class="fa-solid fa-shoe-prints icon-boot-gold"></i> <span class="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded border border-amber-300 font-bold">Top 11</span></span>`;
-
       }
-
-
-
       if (pos === 'GOL') return `<i class="fa-solid fa-mitten icon-glove-yellow text-sm" title="Guarda-Redes"></i>`;
-
       if (['LD', 'LE', 'LAT'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Lateral"></i>`;
-
       if (['ZAG', 'DEF'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-blue text-sm" title="Central"></i>`;
-
       if (['ME', 'MD', 'MEI'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-orange text-sm" title="Médio"></i>`;
-
       if (['MC', 'VOL'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-red text-sm" title="Médio/Volante"></i>`;
-
       if (['ATA', 'SA', 'ATD', 'ATE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-black text-sm" title="Avançado"></i>`;
-
       if (['PD', 'PE'].includes(pos)) return `<i class="fa-solid fa-shoe-prints icon-boot-gray text-sm" title="Extremo"></i>`;
-
-
-
       return `<i class="fa-solid fa-shoe-prints text-slate-400 text-sm"></i>`;
-
     }
-
-
 
     function getRoleBadge(role) {
-
       const r = (role || 'Importante').toUpperCase().trim();
-
       if (r === 'CRUCIAL') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">Crucial</span>`;
-
       if (r === 'IMPORTANTE') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">Importante</span>`;
-
       if (r === 'ESPORÁDICO' || r === 'ESPORADICO') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">Esporádico</span>`;
-
       if (r === 'RODÍZIO' || r === 'RODIZIO') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200">Rodízio</span>`;
-
       if (r === 'PROMESSA') return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Promessa</span>`;
-
       return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">${role || 'Importante'}</span>`;
-
     }
-
-
 
     function calculateMVP() {
-
       const mvpContainer = document.getElementById('mvpAvatarContainer');
-
-
-
       if (state.athletes.length === 0) {
-
         document.getElementById('mvpName').textContent = 'Nenhum atleta';
-
         if (mvpContainer) mvpContainer.innerHTML = `<i class="fa-solid fa-award"></i>`;
-
         return;
-
       }
-
-
 
       const totalTeamMatches = state.athletes.reduce((acc, a) => acc + (Number(a.matches) || 0), 0);
-
       if (totalTeamMatches === 0) {
-
         document.getElementById('mvpName').textContent = 'Sem jogos disputados';
-
         document.getElementById('mvpDetails').textContent = 'Aguardando início dos confrontos';
-
         document.getElementById('mvpGA').textContent = '0';
-
         document.getElementById('mvpRating').textContent = '-';
-
         document.getElementById('mvpScore').textContent = '0.0';
-
         if (mvpContainer) mvpContainer.innerHTML = `<i class="fa-solid fa-award"></i>`;
-
         return;
-
       }
-
-
-
       const scoredAthletes = state.athletes.map(a => {
-
         const jogos = Number(a.matches) || 0;
-
         const gols = Number(a.goals) || 0;
-
         const assists = Number(a.assists) || 0;
-
         const ssg = Number(a.ssg) || 0;
-
         const notaSoma = Number(a.ratingSum) || 0;
-
         const avg = jogos > 0 ? (notaSoma / jogos) : 0;
-
         const isDef = ['GOL', 'ZAG', 'LD', 'LE'].includes(a.pos);
-
         const score = jogos > 0 ? ((avg * 10) + ((gols + assists) * 2) + (isDef ? (ssg * 1.5) : 0)) : 0;
-
-
-
         return { ...a, avg, ga: gols + assists, mvpScore: score, jogos };
-
       }).sort((a, b) => b.mvpScore - a.mvpScore);
-
-
-
       const mvp = scoredAthletes[0];
-
       if (mvp && mvp.jogos > 0) {
-
         document.getElementById('mvpName').textContent = `${mvp.name} (#${mvp.number || '-'})`;
-
         document.getElementById('mvpDetails').textContent = `${mvp.pos} • ${mvp.age} anos • ${mvp.jogos} jogos disputados`;
-
         document.getElementById('mvpGA').textContent = mvp.ga;
-
         document.getElementById('mvpRating').textContent = mvp.avg > 0 ? mvp.avg.toFixed(2) : '-';
-
         document.getElementById('mvpScore').textContent = mvp.mvpScore.toFixed(1);
-
-
-
         const face = getPlayerFaceUrl(mvp);
-
         if (mvpContainer) {
-
           if (face) {
-
             mvpContainer.innerHTML = `<img src="${face}" class="w-full h-full object-contain scale-125 translate-y-1" alt="${mvp.name}" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-award\\'></i>'">`;
-
           } else {
-
             mvpContainer.innerHTML = `<i class="fa-solid fa-award"></i>`;
-
           }
-
         }
-
       }
-
     }
-
-
 
     function renderBestAthletesByPosition() {
-
       const container = document.getElementById('bestByPositionGrid');
-
       if (!container) return;
-
-
-
       const positions = ['GOL', 'ZAG', 'LD', 'LE', 'VOL', 'MC', 'MEI', 'ATA'];
-
       container.innerHTML = positions.map(pos => {
-
         const group = state.athletes.filter(a => a.pos === pos);
-
         if (group.length === 0) {
-
           return `
-
             <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-center">
-
               <span class="text-[10px] font-bold text-slate-400 block">${pos}</span>
-
               <span class="text-xs text-slate-400 italic font-medium">-</span>
-
             </div>
-
           `;
-
         }
-
-
-
         const best = group.sort((a, b) => {
-
           const avgA = a.matches > 0 ? (a.ratingSum / a.matches) : 0;
-
           const avgB = b.matches > 0 ? (b.ratingSum / b.matches) : 0;
-
           return avgB - avgA || Number(b.currentOvr) - Number(a.currentOvr);
-
         })[0];
-
-
-
         const avg = best.matches > 0 ? (best.ratingSum / best.matches).toFixed(2) : '-';
-
         const face = getPlayerFaceUrl(best);
-
         const avatarHtml = face 
-
           ? `<img src="${face}" class="w-8 h-8 rounded-full object-contain mx-auto bg-white border border-slate-200 mb-1" onerror="this.classList.add('hidden')">` 
-
           : '';
-
-
-
         return `
-
           <div class="bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-center shadow-2xs hover:border-amber-300 transition">
-
             <span class="text-[10px] font-extrabold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded uppercase">${pos}</span>
-
             <div class="mt-1">${avatarHtml}</div>
-
             <div class="font-bold text-slate-900 text-xs truncate mt-0.5" title="${best.name}">${best.name}</div>
-
             <div class="text-[10px] text-slate-500 font-semibold">OVR ${best.currentOvr} • Nota ${avg}</div>
-
           </div>
-
         `;
-
       }).join('');
-
     }
-
-
 
     function renderDashboardVisuals() {
-
       calculateMVP();
-
       renderBestAthletesByPosition();
       renderMvpRankingList();
-
-
       document.getElementById('dashBudget').textContent = formatCurrency(state.budget);
-
       document.getElementById('dashTransferAcquired').textContent = formatCurrency(state.transferAcquired);
-
-
-
       const totalWage = state.athletes.reduce((s, a) => s + (Number(a.wage) || 0), 0);
-
       document.getElementById('dashWage').textContent = formatCurrency(totalWage);
-
       document.getElementById('dashWageBudget').textContent = formatCurrency(state.wageBudget);
-
-
-
       const totalVal = state.athletes.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
-
       document.getElementById('dashTotalSquadValue').textContent = formatCurrency(totalVal);
-
       document.getElementById('dashTotalSquad').textContent = state.athletes.length;
-
-
-
       if (state.athletes.length > 0) {
-
         const avgOvr = (state.athletes.reduce((s, a) => s + Number(a.currentOvr), 0) / state.athletes.length).toFixed(1);
-
         const avgAge = (state.athletes.reduce((s, a) => s + Number(a.age), 0) / state.athletes.length).toFixed(1);
-
         document.getElementById('dashAvgOvr').textContent = avgOvr;
-
         document.getElementById('dashAvgAge').textContent = avgAge;
-
       }
-
-
-
       const defPlayers = state.athletes.filter(a => ['GOL', 'ZAG', 'LD', 'LE'].includes(a.pos));
-
       const meiPlayers = state.athletes.filter(a => ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos));
-
       const ataPlayers = state.athletes.filter(a => ['PD', 'PE', 'ATA', 'SA'].includes(a.pos));
-
-
-
       const getAvgOvr = arr => arr.length ? (arr.reduce((s, a) => s + Number(a.currentOvr), 0) / arr.length).toFixed(1) : '0.0';
-
       const getTotalVal = arr => formatCurrency(arr.reduce((s, a) => s + (Number(a.marketValue) || 0), 0));
-
-
-
       document.getElementById('sectorDefAvgOvr').textContent = getAvgOvr(defPlayers);
-
       document.getElementById('sectorDefTotalValue').textContent = getTotalVal(defPlayers);
-
-
-
       document.getElementById('sectorMeiAvgOvr').textContent = getAvgOvr(meiPlayers);
-
       document.getElementById('sectorMeiTotalValue').textContent = getTotalVal(meiPlayers);
-
-
-
       document.getElementById('sectorAtaAvgOvr').textContent = getAvgOvr(ataPlayers);
-
       document.getElementById('sectorAtaTotalValue').textContent = getTotalVal(ataPlayers);
-
-
-
       const bestScorer = [...state.athletes].filter(a => Number(a.goals) > 0).sort((a, b) => b.goals - a.goals)[0];
-
       const bestAssister = [...state.athletes].filter(a => Number(a.assists) > 0).sort((a, b) => b.assists - a.assists)[0];
-
       const bestSsg = [...state.athletes].filter(a => Number(a.ssg) > 0).sort((a, b) => b.ssg - a.ssg)[0];
-
       const bestRating = [...state.athletes].filter(a => Number(a.matches) > 0).sort((a, b) => (b.ratingSum/b.matches) - (a.ratingSum/a.matches))[0];
-
-
-
       document.getElementById('bestScorer').textContent = bestScorer ? bestScorer.name : '-';
-
       document.getElementById('bestScorerGols').textContent = bestScorer ? `${bestScorer.goals} Gols` : '0 Gols';
-
       if (bestScorer) updateMiniAvatar('bestScorerAvatar', bestScorer, 'fa-futbol');
-
-
-
       document.getElementById('bestAssister').textContent = bestAssister ? bestAssister.name : '-';
-
       document.getElementById('bestAssisterCount').textContent = bestAssister ? `${bestAssister.assists} Ass.` : '0 Ass.';
-
       if (bestAssister) updateMiniAvatar('bestAssisterAvatar', bestAssister, 'fa-shoe-prints');
-
-
-
       document.getElementById('bestSsgPlayer').textContent = bestSsg ? bestSsg.name : '-';
-
       document.getElementById('bestSsgCount').textContent = bestSsg ? `${bestSsg.ssg} Jogos` : '0 Jogos';
-
       if (bestSsg) updateMiniAvatar('bestSsgAvatar', bestSsg, 'fa-shield-halved');
-
-
-
       document.getElementById('bestRatingPlayer').textContent = bestRating ? bestRating.name : '-';
-
       document.getElementById('bestRatingVal').textContent = bestRating ? (bestRating.ratingSum / bestRating.matches).toFixed(2) : '-';
-
       if (bestRating) updateMiniAvatar('bestRatingAvatar', bestRating, 'fa-star');
-
-
-
       const natMap = {};
-
       state.athletes.forEach(a => { const n = a.nat || 'OUT'; natMap[n] = (natMap[n] || 0) + 1; });
-
       const natCtx = document.getElementById('nationalityChart')?.getContext('2d');
-
       if (natChartInstance) natChartInstance.destroy();
-
       if (natCtx) {
-
         natChartInstance = new Chart(natCtx, {
-
           type: 'doughnut',
-
           data: {
-
             labels: Object.keys(natMap),
-
             datasets: [{ data: Object.values(natMap), backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'] }]
-
           },
-
           options: { responsive: true, maintainAspectRatio: false }
-
         });
-
       }
-
       document.getElementById('natCountLabel').textContent = `${Object.keys(natMap).length} países`;
-
-
-
       const secCtx = document.getElementById('sectorMarketChart')?.getContext('2d');
-
       if (sectorChartInstance) sectorChartInstance.destroy();
-
       if (secCtx) {
-
         const defV = defPlayers.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
-
         const meiV = meiPlayers.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
-
         const ataV = ataPlayers.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
-
-
-
         sectorChartInstance = new Chart(secCtx, {
-
           type: 'bar',
-
           data: {
-
             labels: ['Defesa', 'Meio-Campo', 'Ataque'],
-
             datasets: [{ label: 'Valor de Mercado', data: [defV, meiV, ataV], backgroundColor: ['#3b82f6', '#f59e0b', '#ef4444'], borderRadius: 6 }]
-
           },
-
           options: { responsive: true, maintainAspectRatio: false }
-
         });
-
       }
-
     }
-
-
 
     function updateMiniAvatar(elemId, player, defaultIconClass) {
-
       const el = document.getElementById(elemId);
-
       if (!el) return;
-
       const face = getPlayerFaceUrl(player);
-
       if (face) {
-
         el.innerHTML = `<img src="${face}" class="w-full h-full object-contain scale-110" alt="${player.name}" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid ${defaultIconClass}\\'></i>'">`;
-
       } else {
-
         el.innerHTML = `<i class="fa-solid ${defaultIconClass}"></i>`;
-
       }
-
     }
-
-
 
     function updateAthletesSummary() {
-
       const defPositions = ['GOL', 'ZAG', 'LD', 'LE'];
-
       const midPositions = ['VOL', 'MC', 'MEI', 'MD', 'ME'];
-
       const attPositions = ['PD', 'PE', 'ATA', 'SA'];
-
-
-
       document.getElementById('totalAthletesCount').textContent = state.athletes.length;
-
       document.getElementById('countDefense').textContent = state.athletes.filter(a => defPositions.includes(a.pos)).length;
-
       document.getElementById('countMidfield').textContent = state.athletes.filter(a => midPositions.includes(a.pos)).length;
-
       document.getElementById('countAttack').textContent = state.athletes.filter(a => attPositions.includes(a.pos)).length;
-
       document.getElementById('countUsable').textContent = state.athletes.filter(a => a.loanStatus !== 'LOAN_OUT').length;
-
       document.getElementById('countLoaned').textContent = state.athletes.filter(a => a.loanStatus === 'LOAN_OUT' || a.loanStatus === 'LOAN_IN').length;
-
     }
-
-
 
     function setPosFilter(pos) {
-
       currentPosFilter = pos;
-
       document.querySelectorAll('.pos-filter-btn').forEach(btn => {
-
         if (btn.dataset.pos === pos) {
-
           btn.className = "pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white";
-
         } else {
-
           btn.className = "pos-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200";
-
         }
-
       });
-
       renderAthletesContainers();
-
     }
-
-
 
     function renderAthletesContainers() {
       const tbody = document.getElementById('athletesTableBody');
       if (!tbody) return;
-
       const search = (document.getElementById('playerSearch')?.value || '').toLowerCase();
-
       // Considera apenas atletas ativos no elenco (exclui transferidos/vendidos)
       const activeAthletes = state.athletes.filter(a => a.status !== 'TRANSFERRED_OUT');
-
       const top11Ids = [...activeAthletes]
         .filter(a => Number(a.matches) > 0)
         .sort((a, b) => b.matches - a.matches)
         .slice(0, 11)
         .map(a => a.id);
-
       const filtered = activeAthletes.filter(a => {
         const matchesSearch = a.name.toLowerCase().includes(search) || (a.nat || '').toLowerCase().includes(search);
         if (!matchesSearch) return false;
-
         if (currentPosFilter === 'GOL') return a.pos === 'GOL';
         if (currentPosFilter === 'DEF') return ['ZAG', 'LD', 'LE'].includes(a.pos);
         if (currentPosFilter === 'MEI') return ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos);
@@ -5499,244 +4643,131 @@ Painel & Tabela Geral de MVP
 
 
     function deleteMatch(matchId) {
-
       if (confirm('Tem a certeza de que deseja eliminar esta partida? As estatísticas dos atletas serão recalculadas.')) {
-
         const match = state.matches.find(m => String(m.id) === String(matchId));
-
         if (match) {
-
           (match.performances || []).forEach(p => {
-
             const a = state.athletes.find(ath => String(ath.id) === String(p.playerId));
-
             if (a) {
-
               a.matches = Math.max(0, (a.matches || 0) - 1);
-
               a.ratingSum = Math.max(0, (a.ratingSum || 0) - (p.rating || 0));
-
               a.yellow = Math.max(0, (a.yellow || 0) - (p.yellow || 0));
-
               a.red = Math.max(0, (a.red || 0) - (p.red || 0));
-
               if (match.oppScore === 0 && ['GOL', 'ZAG', 'LD', 'LE'].includes(a.pos)) {
-
                 a.ssg = Math.max(0, (a.ssg || 0) - 1);
-
               }
-
             }
-
           });
-
-
 
           (match.goals || []).forEach(g => {
-
             if (g.scorerId) {
-
               const sc = state.athletes.find(ath => String(ath.id) === String(g.scorerId));
-
               if (sc) sc.goals = Math.max(0, (sc.goals || 0) - 1);
-
             }
-
             if (g.assistId) {
-
               const as = state.athletes.find(ath => String(ath.id) === String(g.assistId));
-
               if (as) as.assists = Math.max(0, (as.assists || 0) - 1);
-
             }
-
           });
-
         }
-
-
-
         state.matches = state.matches.filter(m => String(m.id) !== String(matchId));
-
         saveState();
-
         syncAllToCloud();
-
       }
-
     }
-
-
 
     function renderMatchesList() {
-
-      const list = document.getElementById('matchesList');
-
-      const countLabel = document.getElementById('matchesCountLabel');
-
-      if (!list) return;
-
-
-
-      const champMatches = state.matches.filter(m => String(m.champId) === String(state.currentChampId) && m.season === state.currentSeason);
-
-
-
-      if (countLabel) {
-
-      countLabel.textContent = `${champMatches.length} partidas nesta temporada`;
-
-      }
-
-
-
-      if (champMatches.length === 0) {
-
-        list.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 italic">Nenhum confronto registrado neste torneio.</div>`;
-
-        return;
-
-      }
-
-
-
-      list.innerHTML = champMatches.map(m => {
-
-        let oppName = (m.opponent || m.adversario || '').trim();
-
-        if (!oppName || oppName.toLowerCase() === 'adversário' || oppName.toLowerCase() === 'adversario' || oppName.toLowerCase() === 'equipa oponente') {
-
-          oppName = (m.fase && !m.fase.includes('Final')) ? m.fase : 'Adversário';
-
-        }
-
-
-
-        const isAway = (m.location || m.mando || 'CASA') === 'FORA';
-
-        const myG = Number(m.myScore !== undefined ? m.myScore : m.gols_pro) || 0;
-
-        const oppG = Number(m.oppScore !== undefined ? m.oppScore : m.gols_contra) || 0;
-
-
-
-        let isWin = myG > oppG;
-
-        let isDraw = myG === oppG;
-
-        if (m.desempate === 'PENALTIES') {
-
-          isWin = Number(m.penaltis_pro) > Number(m.penaltis_contra);
-
-          isDraw = false;
-
-        }
-
-
-
-        const badgeColor = isWin 
-
-          ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-
-          : (isDraw ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200');
-
-        const badgeText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
-
-
-
-        let penaltyInfo = '';
-
-        if (m.desempate === 'PENALTIES') {
-
-          penaltyInfo = `<span class="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">
-
-            (Pênaltis: ${m.penaltis_pro} - ${m.penaltis_contra})
-
-          </span>`;
-
-        } else if (m.desempate === 'EXTRA_TIME') {
-
-          penaltyInfo = `<span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Após Prorrogação</span>`;
-
-        }
-
-
-
-        const scorersText = (m.goals || []).map(g => {
-
-          const sc = state.athletes.find(a => String(a.id) === String(g.scorerId))?.name || 'Golo';
-
-          const as = g.assistId ? `(Ass: ${state.athletes.find(a => String(a.id) === String(g.assistId))?.name || 'Passe'})` : '';
-
-          return `${sc} ⚽ ${as}`;
-
-        }).join(' • ');
-
-
-
-        return `
-
-          <div class="bg-white border border-slate-200 p-4 rounded-xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-
-            <div class="space-y-1">
-
-              <div class="flex items-center gap-2 flex-wrap">
-
-                <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded border ${badgeColor}">${badgeText}</span>
-
-                ${m.fase ? `<span class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">${m.fase}</span>` : ''}
-
-                <span class="text-xs text-slate-400 font-semibold">${isAway ? 'Fora' : 'Casa'} • ${m.date || m.data || ''}</span>
-
-              </div>
-
-              <div class="text-base font-black text-slate-900 flex items-center gap-3">
-
-                <span>${isAway ? oppName : state.clubName}</span>
-
-                <span class="px-2.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-900 font-mono">
-
-                  ${isAway ? oppG : myG} - ${isAway ? myG : oppG}
-
-                </span>
-
-                <span>${isAway ? state.clubName : oppName}</span>
-
-                ${penaltyInfo}
-
-              </div>
-
-              ${scorersText ? `<div class="text-xs text-amber-700 font-medium">${scorersText}</div>` : ''}
-
-            </div>
-
-            
-
-            <div class="flex items-center gap-1 self-end sm:self-center">
-
-              <button onclick="editMatch('${m.id}')" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="Editar Confronto">
-
-                <i class="fa-solid fa-pen-to-square"></i>
-
-              </button>
-
-              <button onclick="deleteMatch('${m.id}')" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition" title="Eliminar Jogo">
-
-                <i class="fa-solid fa-trash-can"></i>
-
-              </button>
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join('');
-
+  const list = document.getElementById('matchesList');
+  const countLabel = document.getElementById('matchesCountLabel');
+  if (!list) return;
+
+  const champMatches = state.matches.filter(m => String(m.champId) === String(state.currentChampId) && m.season === state.currentSeason);
+
+  if (countLabel) {
+    countLabel.textContent = `${champMatches.length} partidas nesta temporada`;
+  }
+
+  if (champMatches.length === 0) {
+    list.innerHTML = `<div class="p-8 text-center text-xs text-slate-400 italic">Nenhum confronto registrado neste torneio.</div>`;
+    return;
+  }
+
+  list.innerHTML = champMatches.map(m => {
+    let oppName = (m.opponent || m.adversario || '').trim();
+    if (!oppName || oppName.toLowerCase() === 'adversário' || oppName.toLowerCase() === 'adversario' || oppName.toLowerCase() === 'equipa oponente') {
+      oppName = (m.fase && !m.fase.includes('Final')) ? m.fase : 'Adversário';
     }
 
+    const isAway = (m.location || m.mando || 'CASA') === 'FORA';
+    const myG = Number(m.myScore !== undefined ? m.myScore : m.gols_pro) || 0;
+    const oppG = Number(m.oppScore !== undefined ? m.oppScore : m.gols_contra) || 0;
 
+    let isWin = myG > oppG;
+    let isDraw = myG === oppG;
+    if (m.desempate === 'PENALTIES') {
+      isWin = Number(m.penaltis_pro) > Number(m.penaltis_contra);
+      isDraw = false;
+    }
+
+    // Cores da tag de status (superior)
+    const badgeColor = isWin 
+      ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+      : (isDraw ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200');
+    const badgeText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
+
+    // Cores variáveis do placar central
+    const scoreColor = isWin 
+      ? 'bg-emerald-600 text-white border-emerald-700' 
+      : (isDraw ? 'bg-amber-500 text-white border-amber-600' : 'bg-rose-600 text-white border-rose-700');
+
+    let penaltyInfo = '';
+    if (m.desempate === 'PENALTIES') {
+      penaltyInfo = `<span class="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded border border-amber-300">
+        (Pênaltis: ${m.penaltis_pro} - ${m.penaltis_contra})
+      </span>`;
+    } else if (m.desempate === 'EXTRA_TIME') {
+      penaltyInfo = `<span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Após Prorrogação</span>`;
+    }
+
+    const scorersText = (m.goals || []).map(g => {
+      const sc = state.athletes.find(a => String(a.id) === String(g.scorerId))?.name || 'Golo';
+      const as = g.assistId ? `(Ass: ${state.athletes.find(a => String(a.id) === String(g.assistId))?.name || 'Passe'})` : '';
+      return `${sc} ⚽ ${as}`;
+    }).join(' • ');
+
+    return `
+      <div class="match-card-item">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="badge-match-status ${badgeColor}">${badgeText}</span>
+            ${m.fase ? `<span class="badge-stage-amber">${m.fase}</span>` : ''}
+            <span class="stat-meta-slate">${isAway ? 'Fora' : 'Casa'}</span>
+          </div>
+
+          <div class="match-scoreline-row flex items-center gap-2">
+            <span class="${!isAway ? 'font-black text-slate-900' : 'text-slate-600'}">${isAway ? oppName : state.clubName}</span>
+            <span class="score-badge-mono px-3 py-0.5 rounded border font-mono font-bold shadow-xs ${scoreColor}">
+              ${isAway ? oppG : myG} - ${isAway ? myG : oppG}
+            </span>
+            <span class="${isAway ? 'font-black text-slate-900' : 'text-slate-600'}">${isAway ? state.clubName : oppName}</span>
+            ${penaltyInfo}
+          </div>
+
+          ${scorersText ? `<div class="stat-highlight-amber text-xs text-slate-600">${scorersText}</div>` : ''}
+        </div>      
+
+        <div class="match-actions-group flex items-center gap-1">
+          <button onclick="editMatch('${m.id}')" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="Editar Confronto">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+          <button onclick="deleteMatch('${m.id}')" class="p-2 text-rose-500 hover:bg-rose-50 rounded-lg transition" title="Eliminar Jogo">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
     // MANDO DE CAMPO FILTRADO PELO TORNEIO SELECIONADO
 function updateTourneyHomeAwayDashboard() {
