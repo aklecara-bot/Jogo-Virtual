@@ -3157,6 +3157,81 @@ Painel & Tabela Geral de MVP
     let seasonsWinRateChartInstance = null;
     let seasonsGoalsChartInstance = null;
 
+
+    // Mapeamento com peso de prioridade tática estrita
+const TACTICAL_ORDER_MAP = {
+  // 1. Goleiro
+  'GOL': 1, 'GK': 1,
+  // 2. Lateral Direito
+  'LD': 2, 'RB': 2, 'LAT D': 2,
+  // 3. Zagueiros
+  'ZAG': 3, 'CB': 3, 'DEF': 3,
+  // 4. Lateral Esquerdo
+  'LE': 4, 'LB': 4, 'LAT E': 4,
+  // 5. Volante
+  'VOL': 5, 'CDM': 5,
+  // 6. Meia Central
+  'MC': 6, 'CM': 6,
+  // 7. Meia Direito
+  'MD': 7, 'RM': 7,
+  // 8. Meia (Armador / Ofensivo)
+  'MEI': 8, 'CAM': 8, 'MEIA': 8,
+  // 9. Meia Esquerdo
+  'ME': 9, 'LM': 9,
+  // 10. Ponta Direita
+  'PD': 10, 'RW': 10,
+  // 11. Atacantes
+  'ATA': 11, 'ST': 11, 'CF': 11, 'SA': 11, 'ATD': 11, 'ATE': 11,
+  // 12. Ponta Esquerda
+  'PE': 12, 'LW': 12
+};
+
+function getTacticalOrderIndex(pos) {
+  if (!pos) return 99;
+  // Extrai a posição principal caso existam posições secundárias (ex: "ZAG LD")
+  const primaryPos = String(pos).trim().toUpperCase().split(/[\s,/]+/)[0];
+  return TACTICAL_ORDER_MAP[primaryPos] !== undefined ? TACTICAL_ORDER_MAP[primaryPos] : 99;
+}
+
+// Função utilitária para ordenar qualquer lista de atletas
+function sortAthletesTactically(list) {
+  return [...list].sort((a, b) => {
+    const orderA = getTacticalOrderIndex(a.pos);
+    const orderB = getTacticalOrderIndex(b.pos);
+
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+    // Desempate 1: maior OVR atual primeiro
+    const ovrA = Number(a.ovr || a.currentOvr) || 0;
+    const ovrB = Number(b.ovr || b.currentOvr) || 0;
+    if (ovrB !== ovrA) {
+      return ovrB - ovrA;
+    }
+    // Desempate 2: ordem alfabética
+    return (a.name || a.nome || '').localeCompare(b.name || b.nome || '');
+  });
+}
+
+function renderOvrCell(athlete) {
+  const ovrAtual = Number(athlete.ovr || athlete.currentOvr) || 0;
+  const ovrIni = Number(athlete.ovr_inicial || athlete.initialOvr || ovrAtual);
+  const diffOvr = ovrAtual - ovrIni;
+
+  let diffBadge = '';
+  if (diffOvr > 0) {
+    diffBadge = `<span class="text-[10px] font-bold text-emerald-600 ml-1">(+${diffOvr})</span>`;
+  } else if (diffOvr < 0) {
+    diffBadge = `<span class="text-[10px] font-bold text-rose-600 ml-1">(${diffOvr})</span>`;
+  }
+
+  return `
+    <td class="py-3 px-3 text-center">
+      <span class="font-black text-slate-900 text-sm">${ovrAtual}</span>${diffBadge}
+    </td>
+  `;
+}
+
     function loadState() {
       const data = localStorage.getItem(STORAGE_KEY);
       if (!data) return JSON.parse(JSON.stringify(defaultState));
@@ -3616,124 +3691,178 @@ Painel & Tabela Geral de MVP
       renderAthletesContainers();
     }
 
-    function renderAthletesContainers() {
-      const tbody = document.getElementById('athletesTableBody');
-      if (!tbody) return;
-      const search = (document.getElementById('playerSearch')?.value || '').toLowerCase();
-      // Considera apenas atletas ativos no elenco (exclui transferidos/vendidos)
-      const activeAthletes = state.athletes.filter(a => a.status !== 'TRANSFERRED_OUT');
-      const top11Ids = [...activeAthletes]
-        .filter(a => Number(a.matches) > 0)
-        .sort((a, b) => b.matches - a.matches)
-        .slice(0, 11)
-        .map(a => a.id);
-      const filtered = activeAthletes.filter(a => {
-        const matchesSearch = a.name.toLowerCase().includes(search) || (a.nat || '').toLowerCase().includes(search);
-        if (!matchesSearch) return false;
-        if (currentPosFilter === 'GOL') return a.pos === 'GOL';
-        if (currentPosFilter === 'DEF') return ['ZAG', 'LD', 'LE'].includes(a.pos);
-        if (currentPosFilter === 'MEI') return ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos);
-        if (currentPosFilter === 'ATA') return ['PD', 'PE', 'ATA', 'SA'].includes(a.pos);
-        return true;
-      });
+function renderAthletesContainers() {
+  const tbody = document.getElementById('athletesTableBody');
+  if (!tbody) return;
 
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="17" class="p-8 text-center text-xs text-slate-400 italic">Nenhum atleta encontrado no plantel.</td></tr>`;
-        return;
-      }
+  const search = (document.getElementById('playerSearch')?.value || '').toLowerCase();
 
-      tbody.innerHTML = filtered.map(a => {
-        const isTop11 = top11Ids.includes(a.id);
-        const iconHtml = getPlayerShoeOrGloveIcon(a, isTop11);
-        const flagHtml = getCountryFlagImg(a.nat);
-        const roleBadge = getRoleBadge(a.role);
-        const avatarHtml = renderPlayerAvatarHtml(a, 'w-8 h-8', 'rounded-full');
-        const matches = Number(a.matches) || 0;
-        const avg = matches > 0 ? (Number(a.ratingSum) / matches).toFixed(2) : '-';
+  // Considera apenas atletas ativos no elenco (exclui transferidos/vendidos)
+  const activeAthletes = state.athletes.filter(a => a.status !== 'TRANSFERRED_OUT');
 
-        const ovr = Number(a.currentOvr) || 70;
-        const age = Number(a.age) || 20;
-        let pot = ovr;
-        if (age < 21) pot += 5;
-        else if (age <= 24) pot += 2;
-        else if (age >= 32) pot -= 2;
-        const margin = pot - ovr;
-        const resale = (Number(a.marketValue) || 0) * (margin > 0 ? 1.6 : 1.0);
+  const top11Ids = [...activeAthletes]
+    .filter(a => Number(a.matches) > 0)
+    .sort((a, b) => b.matches - a.matches)
+    .slice(0, 11)
+    .map(a => a.id);
 
-        // Identificação de vínculo e estilização de empréstimo
-        let rowBg = 'bg-emerald-50/40 hover:bg-emerald-50/70'; // Jogador nosso (Verde)
-        let loanTag = '';
+  // Mapeamento posicional estrito de cima para baixo:
+  // Goleiro -> Lateral Direito -> Zagueiros -> Lateral Esquerdo -> Volante -> 
+  // Meia Central -> Meia Direito -> Meia -> Meia Esquerdo -> Ponta Direita -> Atacantes -> Ponta Esquerda
+  const tacticalOrderMap = {
+    'GOL': 1, 'GK': 1,
+    'LD': 2, 'RB': 2, 'LAT D': 2,
+    'ZAG': 3, 'CB': 3, 'DEF': 3,
+    'LE': 4, 'LB': 4, 'LAT E': 4,
+    'VOL': 5, 'CDM': 5,
+    'MC': 6, 'CM': 6,
+    'MD': 7, 'RM': 7,
+    'MEI': 8, 'CAM': 8, 'MEIA': 8,
+    'ME': 9, 'LM': 9,
+    'PD': 10, 'RW': 10,
+    'ATA': 11, 'ST': 11, 'CF': 11, 'SA': 11, 'ATD': 11, 'ATE': 11,
+    'PE': 12, 'LW': 12
+  };
 
-        if (a.loanStatus === 'LOAN_OUT' || a.emprestimo_status === 'LOAN_OUT' || a.emprestimo_status === 1) {
-          rowBg = 'bg-amber-50/60 hover:bg-amber-50/90'; // Emprestado por nós (Amarelo)
-          loanTag = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900 border border-amber-300">para: ${a.loanClub || a.emprestimo_clube || 'Outro Clube'}</span>`;
-        } else if (a.loanStatus === 'LOAN_IN' || a.emprestimo_status === 'LOAN_IN') {
-          rowBg = 'bg-blue-50/60 hover:bg-blue-50/90'; // Emprestado a nós (Azul)
-          loanTag = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-200 text-blue-900 border border-blue-300">de: ${a.loanClub || a.emprestimo_clube || 'Origem'}</span>`;
-        }
+  const getPosOrder = (pos) => {
+    if (!pos) return 99;
+    const p = String(pos).trim().toUpperCase().split(/[\s,/]+/)[0];
+    return tacticalOrderMap[p] !== undefined ? tacticalOrderMap[p] : 99;
+  };
 
-        return `
-          <tr class="${rowBg} transition border-b border-slate-100">
-            <td class="py-3 px-3 text-center font-bold text-slate-400 font-mono">${a.number || '-'}</td>
-            
-            <td class="py-3 px-3">
-              <div class="flex items-center gap-2.5">
-                ${avatarHtml}
-                <div>
-                  <div class="flex items-center gap-1.5 flex-wrap">
-                    ${flagHtml}
-                    <span class="font-extrabold text-slate-900 text-xs">${a.name}</span>
-                    ${loanTag}
-                  </div>
-                  <div class="mt-0.5">${roleBadge}</div>
-                </div>
-              </div>
-            </td>
+  const filtered = activeAthletes.filter(a => {
+    const matchesSearch = a.name.toLowerCase().includes(search) || (a.nat || '').toLowerCase().includes(search);
+    if (!matchesSearch) return false;
 
-            <td class="py-3 px-3 text-center">
-              <span class="inline-flex items-center gap-1.5 font-bold text-[11px] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
-                ${a.pos} ${iconHtml}
-              </span>
-            </td>
+    if (currentPosFilter === 'GOL') return a.pos === 'GOL';
+    if (currentPosFilter === 'DEF') return ['ZAG', 'LD', 'LE'].includes(a.pos);
+    if (currentPosFilter === 'MEI') return ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos);
+    if (currentPosFilter === 'ATA') return ['PD', 'PE', 'ATA', 'SA'].includes(a.pos);
+    return true;
+  });
 
-            <td class="py-3 px-3 text-center text-slate-600 font-semibold">${a.age} anos</td>
+  // Aplica a ordenação tática de cima para baixo
+  filtered.sort((a, b) => {
+    const orderDiff = getPosOrder(a.pos) - getPosOrder(b.pos);
+    if (orderDiff !== 0) return orderDiff;
+    // Desempate 1: maior OVR atual primeiro
+    const ovrA = Number(a.currentOvr || a.ovr) || 0;
+    const ovrB = Number(b.currentOvr || b.ovr) || 0;
+    if (ovrB !== ovrA) return ovrB - ovrA;
+    // Desempate 2: ordem alfabética
+    return (a.name || '').localeCompare(b.name || '');
+  });
 
-            <td class="py-3 px-3 text-center font-black text-slate-900 text-sm">${a.currentOvr}</td>
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="17" class="p-8 text-center text-xs text-slate-400 italic">Nenhum atleta encontrado no plantel.</td></tr>`;
+    return;
+  }
 
-            <td class="py-3 px-3">
-              <div class="font-extrabold text-slate-900 text-xs">${formatCurrency(a.marketValue)}</div>
-              <div class="text-[10px] text-emerald-600 font-semibold">Revenda: ${formatCurrency(resale)}</div>
-            </td>
+  tbody.innerHTML = filtered.map(a => {
+    const isTop11 = top11Ids.includes(a.id);
+    const iconHtml = getPlayerShoeOrGloveIcon(a, isTop11);
+    const flagHtml = getCountryFlagImg(a.nat);
+    const roleBadge = getRoleBadge(a.role);
+    const avatarHtml = renderPlayerAvatarHtml(a, 'w-8 h-8', 'rounded-full');
+    const matches = Number(a.matches) || 0;
+    const avg = matches > 0 ? (Number(a.ratingSum) / matches).toFixed(2) : '-';
 
-            <td class="py-3 px-3 text-slate-600 font-semibold text-xs">${formatCurrency(a.wage)}/sem</td>
+    const ovr = Number(a.currentOvr || a.ovr) || 70;
+    const initialOvr = Number(a.initialOvr || a.ovr_inicial) || ovr;
+    const diffOvr = ovr - initialOvr;
 
-            <td class="py-3 px-3 text-center text-slate-600 font-medium">${a.contractYears || 3} anos</td>
-
-            <td class="py-3 px-3 text-center">
-              <div class="text-indigo-600 font-bold text-xs">POT: ${pot}</div>
-              <div class="text-[10px] text-slate-400 font-medium">(Margem: ${margin >= 0 ? '+' + margin : margin})</div>
-            </td>
-
-            <td class="py-3 px-2 text-center font-bold text-slate-800">${matches}</td>
-            <td class="py-3 px-2 text-center font-bold text-amber-600">${a.goals || 0}</td>
-            <td class="py-3 px-2 text-center font-bold text-blue-600">${a.assists || 0}</td>
-            <td class="py-3 px-2 text-center font-bold text-emerald-600">${a.ssg || 0}</td>
-            <td class="py-3 px-2 text-center font-bold text-yellow-600">${a.yellow || 0}</td>
-            <td class="py-3 px-2 text-center font-bold text-rose-600">${a.red || 0}</td>
-            <td class="py-3 px-2 text-center font-extrabold ${avg !== '-' ? 'text-purple-600' : 'text-slate-400'}">${avg}</td>
-
-            <td class="py-3 px-3 text-right">
-              <div class="flex items-center justify-end gap-1">
-                <button type="button" onclick="openStatsModal('${a.id}')" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100" title="Editar Estatísticas"><i class="fa-solid fa-chart-simple"></i></button>
-                <button type="button" onclick="editAthlete('${a.id}')" class="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="Editar Atleta"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button type="button" onclick="deleteAthlete('${a.id}')" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100" title="Remover"><i class="fa-solid fa-trash"></i></button>
-              </div>
-            </td>
-          </tr>
-        `;
-      }).join('');
+    // Variação de OVR (+x ou -x) menor que o número principal
+    let diffBadge = '';
+    if (diffOvr > 0) {
+      diffBadge = `<span class="text-[10px] font-bold text-emerald-600 ml-1">(+${diffOvr})</span>`;
+    } else if (diffOvr < 0) {
+      diffBadge = `<span class="text-[10px] font-bold text-rose-600 ml-1">(${diffOvr})</span>`;
     }
 
+    const age = Number(a.age) || 20;
+    let pot = ovr;
+    if (age < 21) pot += 5;
+    else if (age <= 24) pot += 2;
+    else if (age >= 32) pot -= 2;
+    const margin = pot - ovr;
+    const resale = (Number(a.marketValue) || 0) * (margin > 0 ? 1.6 : 1.0);
+
+    // Identificação de vínculo e estilização de empréstimo
+    let rowBg = 'bg-emerald-50/40 hover:bg-emerald-50/70'; // Jogador nosso (Verde)
+    let loanTag = '';
+
+    if (a.loanStatus === 'LOAN_OUT' || a.emprestimo_status === 'LOAN_OUT' || a.emprestimo_status === 1) {
+      rowBg = 'bg-amber-50/60 hover:bg-amber-50/90'; // Emprestado por nós (Amarelo)
+      loanTag = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900 border border-amber-300">para: ${a.loanClub || a.emprestimo_clube || 'Outro Clube'}</span>`;
+    } else if (a.loanStatus === 'LOAN_IN' || a.emprestimo_status === 'LOAN_IN') {
+      rowBg = 'bg-blue-50/60 hover:bg-blue-50/90'; // Emprestado a nós (Azul)
+      loanTag = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-200 text-blue-900 border border-blue-300">de: ${a.loanClub || a.emprestimo_clube || 'Origem'}</span>`;
+    }
+
+    return `
+      <tr class="${rowBg} transition border-b border-slate-100">
+        <td class="py-3 px-3 text-center font-bold text-slate-400 font-mono">${a.number || '-'}</td>
+        
+        <td class="py-3 px-3">
+          <div class="flex items-center gap-2.5">
+            ${avatarHtml}
+            <div>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                ${flagHtml}
+                <span class="font-extrabold text-slate-900 text-xs">${a.name}</span>
+                ${loanTag}
+              </div>
+              <div class="mt-0.5">${roleBadge}</div>
+            </div>
+          </div>
+        </td>
+
+        <td class="py-3 px-3 text-center">
+          <span class="inline-flex items-center gap-1.5 font-bold text-[11px] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+            ${a.pos} ${iconHtml}
+          </span>
+        </td>
+
+        <td class="py-3 px-3 text-center text-slate-600 font-semibold">${a.age} anos</td>
+
+        <!-- Coluna de OVR com a variação menor (+x / -x) -->
+        <td class="py-3 px-3 text-center">
+          <span class="font-black text-slate-900 text-sm">${ovr}</span>${diffBadge}
+        </td>
+
+        <td class="py-3 px-3">
+          <div class="font-extrabold text-slate-900 text-xs">${formatCurrency(a.marketValue)}</div>
+          <div class="text-[10px] text-emerald-600 font-semibold">Revenda: ${formatCurrency(resale)}</div>
+        </td>
+
+        <td class="py-3 px-3 text-slate-600 font-semibold text-xs">${formatCurrency(a.wage)}/sem</td>
+
+        <td class="py-3 px-3 text-center text-slate-600 font-medium">${a.contractYears || 3} anos</td>
+
+        <td class="py-3 px-3 text-center">
+          <div class="text-indigo-600 font-bold text-xs">POT: ${pot}</div>
+          <div class="text-[10px] text-slate-400 font-medium">(Margem: ${margin >= 0 ? '+' + margin : margin})</div>
+        </td>
+
+        <td class="py-3 px-2 text-center font-bold text-slate-800">${matches}</td>
+        <td class="py-3 px-2 text-center font-bold text-amber-600">${a.goals || 0}</td>
+        <td class="py-3 px-2 text-center font-bold text-blue-600">${a.assists || 0}</td>
+        <td class="py-3 px-2 text-center font-bold text-emerald-600">${a.ssg || 0}</td>
+        <td class="py-3 px-2 text-center font-bold text-yellow-600">${a.yellow || 0}</td>
+        <td class="py-3 px-2 text-center font-bold text-rose-600">${a.red || 0}</td>
+        <td class="py-3 px-2 text-center font-extrabold ${avg !== '-' ? 'text-purple-600' : 'text-slate-400'}">${avg}</td>
+
+        <td class="py-3 px-3 text-right">
+          <div class="flex items-center justify-end gap-1">
+            <button type="button" onclick="openStatsModal('${a.id}')" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100" title="Editar Estatísticas"><i class="fa-solid fa-chart-simple"></i></button>
+            <button type="button" onclick="editAthlete('${a.id}')" class="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="Editar Atleta"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button type="button" onclick="deleteAthlete('${a.id}')" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100" title="Remover"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
 
     function openAthleteModal() {
 
