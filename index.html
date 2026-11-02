@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
@@ -2411,6 +2412,13 @@ Painel & Tabela Geral de MVP
             <label class="label-uppercase-muted">Competição Selecionada:</label>
             <select id="champSelect" onchange="onChampSelectChange()" class="select-champ-input"></select>
           </div>
+          <div>
+            <label class="label-uppercase-muted">Filtrar Temporada:</label>
+            <select id="matchSeasonFilter" onchange="onMatchSeasonFilterChange()" class="select-champ-input">
+              <option value="CURRENT">Época Atual</option>
+              <option value="ALL">Todas as Épocas</option>
+            </select>
+          </div>
           <button onclick="openNewChampModal()" class="btn-secondary-slate">
             <i class="icon-spacing-right"></i> Novo Torneio
           </button>
@@ -2540,6 +2548,26 @@ Painel & Tabela Geral de MVP
           </table>
         </div>
       </div>
+      <!-- SEÇÃO: CONFRONTOS DIRETOS (HEAD-TO-HEAD) -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-3 border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+              <i class="fa-solid fa-handshake-angle text-indigo-600"></i> Histórico de Confrontos Diretos (Head-to-Head)
+            </h3>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">Retrospecto geral de partidas contra qualquer adversário em todas as temporadas</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="text" id="h2hOpponentSearch" list="h2hOpponentsDatalist" oninput="renderHeadToHead()" placeholder="Buscar ou escolher time..." class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-xs font-bold text-slate-900 focus:outline-none focus:border-indigo-600 w-56">
+            <datalist id="h2hOpponentsDatalist"></datalist>
+          </div>
+        </div>
+
+        <div id="h2hResultsContainer" class="space-y-3">
+          <div class="p-6 text-center text-xs text-slate-400 italic">Digite ou selecione o nome de um clube adversário acima para visualizar o histórico de confrontos.</div>
+        </div>
+      </div>
+
       <div class="space-y-4">
         <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
           <i class="fa-solid fa-scroll text-slate-500"></i> Livro de Ouro das Campanhas Encerradas
@@ -3143,6 +3171,7 @@ Painel & Tabela Geral de MVP
       ],
       athletes: [],
       matches: [],
+      athleteSeasonHistory: [],
       transfersHistory: [],
       seasonsHistory: [],
       departedAthletes: [],
@@ -3854,6 +3883,7 @@ function renderAthletesContainers() {
 
         <td class="py-3 px-3 text-right">
           <div class="flex items-center justify-end gap-1">
+            <button type="button" onclick="openPlayerCareerModal('${a.id}')" class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100" title="Ficha Histórica / Carreira"><i class="fa-solid fa-id-card-clip"></i></button>
             <button type="button" onclick="openStatsModal('${a.id}')" class="p-1.5 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100" title="Editar Estatísticas"><i class="fa-solid fa-chart-simple"></i></button>
             <button type="button" onclick="editAthlete('${a.id}')" class="p-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200" title="Editar Atleta"><i class="fa-solid fa-pen-to-square"></i></button>
             <button type="button" onclick="deleteAthlete('${a.id}')" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100" title="Remover"><i class="fa-solid fa-trash"></i></button>
@@ -4829,7 +4859,16 @@ function renderAthletesContainers() {
   const countLabel = document.getElementById('matchesCountLabel');
   if (!list) return;
 
-  const champMatches = state.matches.filter(m => String(m.champId) === String(state.currentChampId) && m.season === state.currentSeason);
+  populateSeasonMatchFilter();
+  const seasonFilter = document.getElementById('matchSeasonFilter')?.value || 'CURRENT';
+
+  const champMatches = state.matches.filter(m => {
+    const matchChamp = String(m.champId) === String(state.currentChampId);
+    if (!matchChamp) return false;
+    if (seasonFilter === 'CURRENT') return m.season === state.currentSeason;
+    if (seasonFilter === 'ALL') return true;
+    return m.season === seasonFilter;
+  });
 
   if (countLabel) {
     countLabel.textContent = `${champMatches.length} partidas nesta temporada`;
@@ -7170,6 +7209,317 @@ function updateTourneyHomeAwayDashboard() {
 
 
 
+    
+    // ========================================================
+    // INTEGRAÇÃO DE HISTÓRICO DE CONFRONTOS (HEAD-TO-HEAD) & CARREIRA
+    // ========================================================
+
+    function populateSeasonMatchFilter() {
+      const select = document.getElementById('matchSeasonFilter');
+      if (!select) return;
+
+      const currentValue = select.value || 'CURRENT';
+
+      const seasonsSet = new Set();
+      seasonsSet.add(state.currentSeason);
+      (state.matches || []).forEach(m => { if (m.season) seasonsSet.add(m.season); });
+      (state.seasonsHistory || []).forEach(s => { if (s.season) seasonsSet.add(s.season); });
+
+      const sortedSeasons = Array.from(seasonsSet).sort().reverse();
+
+      let optionsHtml = `<option value="CURRENT">Época Ativa (${state.currentSeason})</option>`;
+      optionsHtml += `<option value="ALL">Todas as Épocas</option>`;
+
+      sortedSeasons.forEach(s => {
+        if (s !== state.currentSeason) {
+          optionsHtml += `<option value="${s}">Época ${s}</option>`;
+        }
+      });
+
+      select.innerHTML = optionsHtml;
+      select.value = currentValue;
+    }
+
+    function onMatchSeasonFilterChange() {
+      renderMatchesList();
+      updateTourneyHomeAwayDashboard();
+    }
+
+    function getHeadToHeadData(opponentQuery) {
+      if (!opponentQuery || !opponentQuery.trim()) return null;
+      const q = opponentQuery.trim().toLowerCase();
+
+      const games = (state.matches || []).filter(m => {
+        const opp = (m.opponent || m.adversario || '').trim().toLowerCase();
+        return opp === q || opp.includes(q);
+      });
+
+      let wins = 0, draws = 0, losses = 0, gp = 0, gc = 0;
+      games.forEach(m => {
+        const myG = Number(m.myScore !== undefined ? m.myScore : m.gols_pro) || 0;
+        const oppG = Number(m.oppScore !== undefined ? m.oppScore : m.gols_contra) || 0;
+        gp += myG;
+        gc += oppG;
+
+        if (m.desempate === 'PENALTIES') {
+          if (Number(m.penaltis_pro) > Number(m.penaltis_contra)) wins++;
+          else losses++;
+        } else {
+          if (myG > oppG) wins++;
+          else if (myG === oppG) draws++;
+          else losses++;
+        }
+      });
+
+      const total = games.length;
+      const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
+
+      return {
+        query: opponentQuery,
+        total,
+        wins,
+        draws,
+        losses,
+        goalsFor: gp,
+        goalsAgainst: gc,
+        goalDiff: gp - gc,
+        winRate,
+        games
+      };
+    }
+
+    function populateHeadToHeadDatalist() {
+      const dl = document.getElementById('h2hOpponentsDatalist');
+      if (!dl) return;
+
+      const opps = new Set();
+      (state.matches || []).forEach(m => {
+        const o = (m.opponent || m.adversario || '').trim();
+        if (o && o.toLowerCase() !== 'adversário' && o.toLowerCase() !== 'adversario') {
+          opps.add(o);
+        }
+      });
+
+      dl.innerHTML = Array.from(opps).sort().map(o => `<option value="${o}">`).join('');
+    }
+
+    function renderHeadToHead() {
+      const input = document.getElementById('h2hOpponentSearch');
+      const container = document.getElementById('h2hResultsContainer');
+      if (!container) return;
+
+      populateHeadToHeadDatalist();
+
+      const query = (input?.value || '').trim();
+      if (!query) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-400 italic">Digite ou selecione o nome de um adversário acima para calcular o retrospecto histórico.</div>`;
+        return;
+      }
+
+      const h2h = getHeadToHeadData(query);
+      if (!h2h || h2h.total === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-500 italic">Nenhum confronto histórico registrado contra "<strong>${query}</strong>".</div>`;
+        return;
+      }
+
+      const gamesListHtml = h2h.games.map(m => {
+        const isAway = (m.location || m.mando || 'CASA') === 'FORA';
+        const myG = Number(m.myScore !== undefined ? m.myScore : m.gols_pro) || 0;
+        const oppG = Number(m.oppScore !== undefined ? m.oppScore : m.gols_contra) || 0;
+        const oppName = m.opponent || m.adversario || query;
+
+        let isWin = myG > oppG;
+        let isDraw = myG === oppG;
+        if (m.desempate === 'PENALTIES') {
+          isWin = Number(m.penaltis_pro) > Number(m.penaltis_contra);
+          isDraw = false;
+        }
+
+        const tagColor = isWin ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : (isDraw ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-rose-100 text-rose-800 border-rose-300');
+        const tagText = isWin ? 'VITÓRIA' : (isDraw ? 'EMPATE' : 'DERROTA');
+
+        return `
+          <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div class="space-y-0.5">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${tagColor}">${tagText}</span>
+                <span class="font-bold text-slate-700">${m.champName || 'Competição'}</span>
+                <span class="text-[10px] text-slate-400 font-semibold">• Época ${m.season} • ${isAway ? 'Fora' : 'Casa'}</span>
+              </div>
+              <div class="font-black text-slate-900 text-sm mt-1">
+                ${isAway ? oppName : state.clubName} 
+                <span class="px-2 py-0.5 bg-white border border-slate-300 rounded font-mono text-slate-900 mx-1">${isAway ? oppG : myG} - ${isAway ? myG : oppG}</span> 
+                ${isAway ? state.clubName : oppName}
+              </div>
+            </div>
+            <span class="text-[10px] font-semibold text-slate-400">${m.date || ''}</span>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="bg-gradient-to-r from-indigo-50/80 via-blue-50/50 to-white border border-indigo-200 p-4 rounded-xl space-y-3">
+          <div class="flex items-center justify-between flex-wrap gap-2 border-b border-indigo-100 pb-2">
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 block">Retrospecto Oficial</span>
+              <h4 class="text-base font-black text-slate-900">${state.clubName} <span class="text-indigo-600 font-normal">vs</span> ${query}</h4>
+            </div>
+            <span class="text-xs font-black bg-indigo-600 text-white px-3 py-1 rounded-full shadow-2xs">${h2h.winRate}% de Aproveitamento</span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
+            <div class="bg-white p-2 rounded-lg border border-indigo-100 shadow-2xs">
+              <span class="text-[10px] text-slate-500 font-bold block">Partidas</span>
+              <span class="font-black text-slate-900 text-sm">${h2h.total}</span>
+            </div>
+            <div class="bg-white p-2 rounded-lg border border-emerald-100 shadow-2xs">
+              <span class="text-[10px] text-emerald-700 font-bold block">Vitórias</span>
+              <span class="font-black text-emerald-700 text-sm">${h2h.wins}</span>
+            </div>
+            <div class="bg-white p-2 rounded-lg border border-amber-100 shadow-2xs">
+              <span class="text-[10px] text-amber-700 font-bold block">Empates</span>
+              <span class="font-black text-amber-700 text-sm">${h2h.draws}</span>
+            </div>
+            <div class="bg-white p-2 rounded-lg border border-rose-100 shadow-2xs">
+              <span class="text-[10px] text-rose-700 font-bold block">Derrotas</span>
+              <span class="font-black text-rose-700 text-sm">${h2h.losses}</span>
+            </div>
+            <div class="bg-white p-2 rounded-lg border border-slate-100 shadow-2xs">
+              <span class="text-[10px] text-slate-500 font-bold block">Gols Pró</span>
+              <span class="font-black text-emerald-700 text-sm">${h2h.goalsFor}</span>
+            </div>
+            <div class="bg-white p-2 rounded-lg border border-slate-100 shadow-2xs">
+              <span class="text-[10px] text-slate-500 font-bold block">Gols Sofridos</span>
+              <span class="font-black text-rose-700 text-sm">${h2h.goalsAgainst}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2 mt-3">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-600 block">Lista de Todos os Confrontos:</span>
+          <div class="space-y-2 max-h-72 overflow-y-auto pr-1">
+            ${gamesListHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    function openPlayerCareerModal(playerId) {
+      const athlete = (state.athletes || []).find(a => String(a.id) === String(playerId)) || 
+                      (state.departedAthletes || []).find(d => String(d.id) === String(playerId));
+
+      if (!athlete) return alert('Jogador não encontrado no histórico.');
+
+      const modal = document.getElementById('playerCareerModal');
+      if (!modal) return;
+
+      document.getElementById('careerModalName').textContent = athlete.name;
+      document.getElementById('careerModalSub').textContent = `${athlete.pos} • ${athlete.age || '-'} anos • ${athlete.nat || ''} • OVR Atual: ${athlete.currentOvr || athlete.ovr || '-'}`;
+
+      const avatarBox = document.getElementById('careerModalAvatar');
+      if (avatarBox) {
+        avatarBox.innerHTML = renderPlayerAvatarHtml(athlete, 'w-full h-full', 'rounded-xl');
+      }
+
+      const seasonsList = [];
+
+      (state.athleteSeasonHistory || []).filter(h => String(h.playerId) === String(athlete.id)).forEach(h => {
+        seasonsList.push(h);
+      });
+
+      (state.seasonsHistory || []).forEach(sh => {
+        const alreadyIn = seasonsList.some(s => s.season === sh.season);
+        if (!alreadyIn && sh.squadSnapshot) {
+          const pastSnap = sh.squadSnapshot.find(p => String(p.id) === String(athlete.id));
+          if (pastSnap) {
+            seasonsList.push({
+              season: sh.season,
+              initialOvr: pastSnap.finalOvr,
+              finalOvr: pastSnap.finalOvr,
+              matches: pastSnap.matches,
+              goals: pastSnap.goals,
+              assists: pastSnap.assists,
+              ssg: pastSnap.ssg,
+              yellow: pastSnap.yellow || 0,
+              red: pastSnap.red || 0,
+              ratingSum: (Number(pastSnap.matches) || 0) * (Number(pastSnap.avgRating) || 6.5)
+            });
+          }
+        }
+      });
+
+      const currentAth = (state.athletes || []).find(a => String(a.id) === String(athlete.id));
+      if (currentAth) {
+        seasonsList.push({
+          season: `${state.currentSeason} (Atual)`,
+          initialOvr: currentAth.initialOvr !== undefined ? currentAth.initialOvr : currentAth.currentOvr,
+          finalOvr: currentAth.currentOvr,
+          matches: Number(currentAth.matches) || 0,
+          goals: Number(currentAth.goals) || 0,
+          assists: Number(currentAth.assists) || 0,
+          ssg: Number(currentAth.ssg) || 0,
+          yellow: Number(currentAth.yellow) || 0,
+          red: Number(currentAth.red) || 0,
+          ratingSum: Number(currentAth.ratingSum) || 0
+        });
+      }
+
+      let totMatches = 0, totGoals = 0, totAssists = 0, totSsg = 0, totRatingSum = 0;
+      seasonsList.forEach(s => {
+        totMatches += Number(s.matches) || 0;
+        totGoals += Number(s.goals) || 0;
+        totAssists += Number(s.assists) || 0;
+        totSsg += Number(s.ssg) || 0;
+        totRatingSum += Number(s.ratingSum) || 0;
+      });
+
+      const avgCareer = totMatches > 0 ? (totRatingSum / totMatches).toFixed(2) : '-';
+      const initialOvrVal = athlete.initialOvr || athlete.currentOvr || 70;
+      const currentOvrVal = athlete.currentOvr || 70;
+      const diffOvr = currentOvrVal - initialOvrVal;
+      const evolText = `${initialOvrVal} → ${currentOvrVal} (${diffOvr >= 0 ? '+' + diffOvr : diffOvr})`;
+
+      document.getElementById('careerTotalMatches').textContent = totMatches;
+      document.getElementById('careerTotalGoals').textContent = totGoals;
+      document.getElementById('careerTotalAssists').textContent = totAssists;
+      document.getElementById('careerTotalSsg').textContent = totSsg;
+      document.getElementById('careerAvgRating').textContent = avgCareer;
+      document.getElementById('careerOvrEvol').textContent = evolText;
+
+      const tbody = document.getElementById('careerSeasonsTbody');
+      if (tbody) {
+        if (seasonsList.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-slate-400 italic">Nenhum dado por temporada registrado ainda.</td></tr>`;
+        } else {
+          tbody.innerHTML = seasonsList.map(s => {
+            const m = Number(s.matches) || 0;
+            const avg = m > 0 ? ((Number(s.ratingSum) || 0) / m).toFixed(2) : '-';
+            const ovrDisplay = s.finalOvr ? `${s.initialOvr || s.finalOvr} → ${s.finalOvr}` : (athlete.currentOvr || '-');
+            return `
+              <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                <td class="py-2 px-3 font-bold text-slate-900">${s.season}</td>
+                <td class="py-2 px-2 text-center font-bold text-slate-700">${ovrDisplay}</td>
+                <td class="py-2 px-2 text-center font-bold text-slate-800">${m}</td>
+                <td class="py-2 px-2 text-center font-bold text-amber-600">${s.goals || 0}</td>
+                <td class="py-2 px-2 text-center font-bold text-blue-600">${s.assists || 0}</td>
+                <td class="py-2 px-2 text-center font-bold text-emerald-600">${s.ssg || 0}</td>
+                <td class="py-2 px-2 text-center text-yellow-600 font-semibold">${s.yellow || 0}</td>
+                <td class="py-2 px-2 text-center text-rose-600 font-semibold">${s.red || 0}</td>
+                <td class="py-2 px-2 text-center font-extrabold text-purple-600">${avg}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closePlayerCareerModal() {
+      document.getElementById('playerCareerModal')?.classList.add('hidden');
+    }
+
+
     function updateUI() {
 
       document.getElementById('headerClubName').textContent = state.clubName;
@@ -7251,6 +7601,83 @@ function updateTourneyHomeAwayDashboard() {
 
   </script>
 
+  <!-- MODAL: PERFIL HISTÓRICO & CARREIRA DO ATLETA -->
+  <div id="playerCareerModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3">
+    <div class="bg-white border border-slate-200 w-full max-w-3xl rounded-2xl shadow-2xl p-5 space-y-4 max-h-[92vh] flex flex-col overflow-hidden">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div class="flex items-center gap-3">
+          <div id="careerModalAvatar" class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
+            ?
+          </div>
+          <div>
+            <h3 class="text-base font-black text-slate-900 flex items-center gap-2" id="careerModalName">Nome do Atleta</h3>
+            <p class="text-xs text-slate-500 font-semibold" id="careerModalSub">Posição • Idade • Nacionalidade</p>
+          </div>
+        </div>
+        <button onclick="closePlayerCareerModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div class="p-1 overflow-y-auto space-y-4 flex-1 text-xs">
+        <!-- Totais de Carreira -->
+        <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center">
+          <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+            <span class="text-[10px] text-slate-500 font-bold uppercase block">Jogos Totais</span>
+            <span class="text-base font-black text-slate-900" id="careerTotalMatches">0</span>
+          </div>
+          <div class="bg-amber-50 p-2.5 rounded-xl border border-amber-200">
+            <span class="text-[10px] text-amber-700 font-bold uppercase block">Gols</span>
+            <span class="text-base font-black text-amber-800" id="careerTotalGoals">0</span>
+          </div>
+          <div class="bg-blue-50 p-2.5 rounded-xl border border-blue-200">
+            <span class="text-[10px] text-blue-700 font-bold uppercase block">Assists</span>
+            <span class="text-base font-black text-blue-800" id="careerTotalAssists">0</span>
+          </div>
+          <div class="bg-emerald-50 p-2.5 rounded-xl border border-emerald-200">
+            <span class="text-[10px] text-emerald-700 font-bold uppercase block">SSG</span>
+            <span class="text-base font-black text-emerald-800" id="careerTotalSsg">0</span>
+          </div>
+          <div class="bg-purple-50 p-2.5 rounded-xl border border-purple-200">
+            <span class="text-[10px] text-purple-700 font-bold uppercase block">Nota Média</span>
+            <span class="text-base font-black text-purple-800" id="careerAvgRating">-</span>
+          </div>
+          <div class="bg-indigo-50 p-2.5 rounded-xl border border-indigo-200">
+            <span class="text-[10px] text-indigo-700 font-bold uppercase block">Evolução OVR</span>
+            <span class="text-base font-black text-indigo-900" id="careerOvrEvol">-</span>
+          </div>
+        </div>
+
+        <!-- Tabela Ano a Ano -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wide text-slate-800 flex items-center gap-1.5">
+            <i class="fa-solid fa-timeline text-indigo-600"></i> Histórico Época a Época no Clube
+          </h4>
+          <div class="border border-slate-200 rounded-xl overflow-x-auto shadow-xs">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead class="bg-slate-50 text-[10px] uppercase font-bold text-slate-500 border-b border-slate-200">
+                <tr>
+                  <th class="py-2.5 px-3">Temporada</th>
+                  <th class="py-2.5 px-2 text-center">OVR</th>
+                  <th class="py-2.5 px-2 text-center">Jogos</th>
+                  <th class="py-2.5 px-2 text-center text-amber-600">Gols</th>
+                  <th class="py-2.5 px-2 text-center text-blue-600">Assists</th>
+                  <th class="py-2.5 px-2 text-center text-emerald-600">SSG</th>
+                  <th class="py-2.5 px-2 text-center text-yellow-600">CA</th>
+                  <th class="py-2.5 px-2 text-center text-rose-600">CV</th>
+                  <th class="py-2.5 px-2 text-center text-purple-600 font-extrabold">Nota</th>
+                </tr>
+              </thead>
+              <tbody id="careerSeasonsTbody" class="divide-y divide-slate-100 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="flex justify-end pt-3 border-t border-slate-200">
+        <button onclick="closePlayerCareerModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200 text-xs">Fechar</button>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
+codigo_completo.html
+Exibindo codigo_completo.html.
