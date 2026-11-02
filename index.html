@@ -2158,6 +2158,7 @@ Painel & Tabela Geral de MVP
           <div class="relative h-64 flex items-center justify-center">
             <canvas id="nationalityChart"></canvas>
           </div>
+          <div id="nationalityCustomLegend" class="flex flex-wrap justify-center items-center gap-2 pt-2 border-t border-slate-100 max-h-24 overflow-y-auto"></div>
         </div>
         <div class="bg-white border border-slate-200 p-5 rounded-xl shadow-xs space-y-3">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -3152,7 +3153,7 @@ Painel & Tabela Geral de MVP
       'IRL': 'ie', 'NIR': 'gb-nir', 'MAR': 'ma', 'SEN': 'sn', 'NGA': 'ng', 'GHA': 'gh', 'CIV': 'ci',
       'CMR': 'cm', 'CAM': 'cm', 'EGY': 'eg', 'ALG': 'dz', 'TUN': 'tn', 'RSA': 'za', 'JPN': 'jp',
       'KOR': 'kr', 'AUS': 'au', 'NZL': 'nz', 'KSA': 'sa', 'QAT': 'qa', 'UAE': 'ae', 'IRN': 'ir', 'CHN': 'cn',
-      'SLO': 'si', 'SVK': 'sk', 'ROU': 'ro', 'HUN': 'hu'
+      'SLO': 'si', 'SVK': 'sk', 'ROU': 'ro', 'HUN': 'hu', 'PAN': 'pa'
     };
     const defaultState = {
       clubName: 'La Coruña',
@@ -3214,6 +3215,28 @@ const TACTICAL_ORDER_MAP = {
   // 12. Ponta Esquerda
   'PE': 12, 'LW': 12
 };
+
+// Gera a textura da bandeira para preencher as fatias do gráfico de pizza/rosca
+function loadFlagPattern(ctx, natCode) {
+  return new Promise((resolve) => {
+    const clean = (natCode || 'BRA').toUpperCase().trim();
+    const iso2 = countryIsoMap[clean] || clean.toLowerCase();
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = `https://flagcdn.com/w80/${iso2}.png`;
+    img.onload = () => {
+      try {
+        const pattern = ctx.createPattern(img, 'repeat');
+        resolve(pattern || '#3b82f6');
+      } catch (e) {
+        resolve('#3b82f6');
+      }
+    };
+    img.onerror = () => {
+      resolve('#3b82f6');
+    };
+  });
+}
 
 function getTacticalOrderIndex(pos) {
   if (!pos) return 99;
@@ -3608,7 +3631,7 @@ function renderOvrCell(athlete) {
       }).join('');
     }
 
-    function renderDashboardVisuals() {
+   function renderDashboardVisuals() {
       calculateMVP();
       renderBestAthletesByPosition();
       renderMvpRankingList();
@@ -3620,54 +3643,131 @@ function renderOvrCell(athlete) {
       const totalVal = state.athletes.reduce((s, a) => s + (Number(a.marketValue) || 0), 0);
       document.getElementById('dashTotalSquadValue').textContent = formatCurrency(totalVal);
       document.getElementById('dashTotalSquad').textContent = state.athletes.length;
+
       if (state.athletes.length > 0) {
         const avgOvr = (state.athletes.reduce((s, a) => s + Number(a.currentOvr), 0) / state.athletes.length).toFixed(1);
         const avgAge = (state.athletes.reduce((s, a) => s + Number(a.age), 0) / state.athletes.length).toFixed(1);
         document.getElementById('dashAvgOvr').textContent = avgOvr;
         document.getElementById('dashAvgAge').textContent = avgAge;
       }
+
       const defPlayers = state.athletes.filter(a => ['GOL', 'ZAG', 'LD', 'LE'].includes(a.pos));
       const meiPlayers = state.athletes.filter(a => ['VOL', 'MC', 'MEI', 'MD', 'ME'].includes(a.pos));
       const ataPlayers = state.athletes.filter(a => ['PD', 'PE', 'ATA', 'SA'].includes(a.pos));
       const getAvgOvr = arr => arr.length ? (arr.reduce((s, a) => s + Number(a.currentOvr), 0) / arr.length).toFixed(1) : '0.0';
       const getTotalVal = arr => formatCurrency(arr.reduce((s, a) => s + (Number(a.marketValue) || 0), 0));
+
       document.getElementById('sectorDefAvgOvr').textContent = getAvgOvr(defPlayers);
       document.getElementById('sectorDefTotalValue').textContent = getTotalVal(defPlayers);
       document.getElementById('sectorMeiAvgOvr').textContent = getAvgOvr(meiPlayers);
       document.getElementById('sectorMeiTotalValue').textContent = getTotalVal(meiPlayers);
       document.getElementById('sectorAtaAvgOvr').textContent = getAvgOvr(ataPlayers);
       document.getElementById('sectorAtaTotalValue').textContent = getTotalVal(ataPlayers);
+
       const bestScorer = [...state.athletes].filter(a => Number(a.goals) > 0).sort((a, b) => b.goals - a.goals)[0];
       const bestAssister = [...state.athletes].filter(a => Number(a.assists) > 0).sort((a, b) => b.assists - a.assists)[0];
       const bestSsg = [...state.athletes].filter(a => Number(a.ssg) > 0).sort((a, b) => b.ssg - a.ssg)[0];
       const bestRating = [...state.athletes].filter(a => Number(a.matches) > 0).sort((a, b) => (b.ratingSum/b.matches) - (a.ratingSum/a.matches))[0];
+
       document.getElementById('bestScorer').textContent = bestScorer ? bestScorer.name : '-';
       document.getElementById('bestScorerGols').textContent = bestScorer ? `${bestScorer.goals} Gols` : '0 Gols';
       if (bestScorer) updateMiniAvatar('bestScorerAvatar', bestScorer, 'fa-futbol');
+
       document.getElementById('bestAssister').textContent = bestAssister ? bestAssister.name : '-';
       document.getElementById('bestAssisterCount').textContent = bestAssister ? `${bestAssister.assists} Ass.` : '0 Ass.';
       if (bestAssister) updateMiniAvatar('bestAssisterAvatar', bestAssister, 'fa-shoe-prints');
+
       document.getElementById('bestSsgPlayer').textContent = bestSsg ? bestSsg.name : '-';
       document.getElementById('bestSsgCount').textContent = bestSsg ? `${bestSsg.ssg} Jogos` : '0 Jogos';
       if (bestSsg) updateMiniAvatar('bestSsgAvatar', bestSsg, 'fa-shield-halved');
+
       document.getElementById('bestRatingPlayer').textContent = bestRating ? bestRating.name : '-';
       document.getElementById('bestRatingVal').textContent = bestRating ? (bestRating.ratingSum / bestRating.matches).toFixed(2) : '-';
       if (bestRating) updateMiniAvatar('bestRatingAvatar', bestRating, 'fa-star');
+
+      // ==========================================
+      // GRÁFICO DE NACIONALIDADES COM BANDEIRAS
+      // ==========================================
       const natMap = {};
-      state.athletes.forEach(a => { const n = a.nat || 'OUT'; natMap[n] = (natMap[n] || 0) + 1; });
-      const natCtx = document.getElementById('nationalityChart')?.getContext('2d');
+      state.athletes.forEach(a => { 
+        const n = (a.nat || 'OUT').toUpperCase().trim(); 
+        natMap[n] = (natMap[n] || 0) + 1; 
+      });
+      const natLabels = Object.keys(natMap);
+      const natData = Object.values(natMap);
+      const totalNatAthletes = natData.reduce((s, v) => s + v, 0);
+
+      const natCountEl = document.getElementById('natCountLabel');
+      if (natCountEl) natCountEl.textContent = `${natLabels.length} países`;
+
+      // Legenda com miniaturas reais das bandeiras
+      const natLegendEl = document.getElementById('nationalityCustomLegend');
+      if (natLegendEl) {
+        if (natLabels.length === 0) {
+          natLegendEl.innerHTML = '<span class="text-xs text-slate-400 italic">Nenhum atleta cadastrado</span>';
+        } else {
+          natLegendEl.innerHTML = natLabels.map((n, i) => `
+            <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-50 hover:bg-slate-100 border border-slate-200 shadow-2xs transition cursor-default" title="${n}: ${natData[i]} atleta(s)">
+              ${getCountryFlagImg(n)}
+              <span class="font-extrabold text-[11px] text-slate-800">${n}</span>
+              <span class="text-[10px] font-bold text-slate-500">(${natData[i]})</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      const natCanvas = document.getElementById('nationalityChart');
+      const natCtx = natCanvas?.getContext('2d');
       if (natChartInstance) natChartInstance.destroy();
-      if (natCtx) {
-        natChartInstance = new Chart(natCtx, {
-          type: 'doughnut',
-          data: {
-            labels: Object.keys(natMap),
-            datasets: [{ data: Object.values(natMap), backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'] }]
-          },
-          options: { responsive: true, maintainAspectRatio: false }
+
+      if (natCtx && natLabels.length > 0) {
+        // Carrega as texturas com bandeiras para cada fatia da rosca
+        Promise.all(natLabels.map(n => loadFlagPattern(natCtx, n))).then(flagPatterns => {
+          if (natChartInstance) natChartInstance.destroy();
+          natChartInstance = new Chart(natCtx, {
+            type: 'doughnut',
+            data: {
+              labels: natLabels,
+              datasets: [{
+                data: natData,
+                backgroundColor: flagPatterns,
+                borderColor: '#ffffff',
+                borderWidth: 2,
+                // Responsividade de destaque ao passar o mouse
+                hoverOffset: 12,
+                hoverBorderColor: '#0f172a',
+                hoverBorderWidth: 4
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: { duration: 350 },
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                  titleFont: { size: 12, weight: 'bold' },
+                  bodyFont: { size: 12 },
+                  padding: 10,
+                  boxPadding: 4,
+                  callbacks: {
+                    label: function(ctx) {
+                      const count = ctx.raw || 0;
+                      const pct = totalNatAthletes > 0 ? ((count / totalNatAthletes) * 100).toFixed(1) : '0';
+                      return ` ${ctx.label}: ${count} atleta(s) (${pct}%)`;
+                    }
+                  }
+                }
+              }
+            }
+          });
         });
       }
-      document.getElementById('natCountLabel').textContent = `${Object.keys(natMap).length} países`;
+
+      // ==========================================
+      // GRÁFICO POR SETOR (DEFESA, MEIO, ATAQUE)
+      // ==========================================
       const secCtx = document.getElementById('sectorMarketChart')?.getContext('2d');
       if (sectorChartInstance) sectorChartInstance.destroy();
       if (secCtx) {
