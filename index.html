@@ -3223,6 +3223,23 @@ function getTacticalOrderIndex(pos) {
   return TACTICAL_ORDER_MAP[primaryPos] !== undefined ? TACTICAL_ORDER_MAP[primaryPos] : 99;
 }
 
+// Retorna uma cópia da lista de atletas ordenada taticamente
+function getOrderedAthletesList(athletesList = state.athletes) {
+  return [...athletesList]
+    .filter(a => a.status !== 'TRANSFERRED_OUT')
+    .sort((a, b) => {
+      const orderA = getTacticalOrderIndex(a.pos);
+      const orderB = getTacticalOrderIndex(b.pos);
+      if (orderA !== orderB) return orderA - orderB;
+
+      const ovrA = Number(a.currentOvr || a.ovr) || 0;
+      const ovrB = Number(b.currentOvr || b.ovr) || 0;
+      if (ovrB !== ovrA) return ovrB - ovrA;
+
+      return (a.name || a.nome || '').localeCompare(b.name || b.nome || '');
+    });
+}
+
 // Função utilitária para ordenar qualquer lista de atletas
 function sortAthletesTactically(list) {
   return [...list].sort((a, b) => {
@@ -4374,81 +4391,51 @@ function renderAthletesContainers() {
 
 
 
-    function addGoalDetailRow(scorerId = '', assistId = '') {
+function addGoalDetailRow(scorerId = '', assistId = '') {
+  const emptyMsg = document.getElementById('emptyGoalsMsg');
+  if (emptyMsg) emptyMsg.remove();
 
-      const emptyMsg = document.getElementById('emptyGoalsMsg');
+  const container = document.getElementById('goalDetailsContainer');
+  const rowId = 'goal_' + Date.now() + Math.random().toString(36).substring(7);
 
-      if (emptyMsg) emptyMsg.remove();
+  // 1. Obtém os atletas na sequência tática clássica (Goleiros -> Zagueiros -> Meias -> Atacantes)
+  const orderedAthletes = getOrderedAthletesList(state.athletes);
 
+  // 2. Monta as opções já organizadas
+  const playerOptions = orderedAthletes.map(a => 
+    `<option value="${a.id}">${a.pos} - ${a.name} (OVR ${a.currentOvr || a.ovr || 70})</option>`
+  ).join('');
 
+  const div = document.createElement('div');
+  div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs';
+  div.id = rowId;
+  div.innerHTML = `
+    <div class="sm:col-span-5">
+      <span class="text-[10px] text-slate-500 font-bold block">Marcador:</span>
+      <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900 font-semibold">
+        ${playerOptions}
+      </select>
+    </div>
+    <div class="sm:col-span-5">
+      <span class="text-[10px] text-slate-500 font-bold block">Assistência:</span>
+      <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900 font-semibold">
+        <option value="">Nenhuma / Jogada Individual</option>
+        ${playerOptions}
+      </select>
+    </div>
+    <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-2 sm:mt-0">
+      <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs border border-rose-200">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
+  `;
+  container.appendChild(div);
 
-      const container = document.getElementById('goalDetailsContainer');
+  if (scorerId) div.querySelector('.goal-scorer-select').value = scorerId;
+  if (assistId) div.querySelector('.goal-assist-select').value = assistId;
 
-      const rowId = 'goal_' + Date.now() + Math.random().toString(36).substring(7);
-
-      const playerOptions = state.athletes.map(a => `<option value="${a.id}">${a.name} (${a.pos})</option>`).join('');
-
-
-
-      const div = document.createElement('div');
-
-      div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs';
-
-      div.id = rowId;
-
-      div.innerHTML = `
-
-        <div class="sm:col-span-5">
-
-          <span class="text-[10px] text-slate-500 font-bold block">Marcador:</span>
-
-          <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900">
-
-            ${playerOptions}
-
-          </select>
-
-        </div>
-
-        <div class="sm:col-span-5">
-
-          <span class="text-[10px] text-slate-500 font-bold block">Assistência:</span>
-
-          <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900">
-
-            <option value="">Nenhuma / Individual</option>
-
-            ${playerOptions}
-
-          </select>
-
-        </div>
-
-        <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-2 sm:mt-0">
-
-          <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs border border-rose-200">
-
-            <i class="fa-solid fa-trash"></i>
-
-          </button>
-
-        </div>
-
-      `;
-
-      container.appendChild(div);
-
-
-
-      if (scorerId) div.querySelector('.goal-scorer-select').value = scorerId;
-
-      if (assistId) div.querySelector('.goal-assist-select').value = assistId;
-
-
-
-      document.getElementById('matchMyScore').value = document.querySelectorAll('.goal-detail-row').length;
-
-    }
+  document.getElementById('matchMyScore').value = document.querySelectorAll('.goal-detail-row').length;
+}
 
 
 
@@ -4470,51 +4457,37 @@ function renderAthletesContainers() {
 
 
 
-    function renderMatchAthletesPerformanceInputs() {
+function renderMatchAthletesPerformanceInputs() {
+  const tbody = document.getElementById('matchAthletesPerformanceBody');
+  if (!tbody) return;
 
-      const tbody = document.getElementById('matchAthletesPerformanceBody');
+  // Ordena os jogadores antes de renderizar as linhas
+  const orderedAthletes = getOrderedAthletesList(state.athletes);
 
-      tbody.innerHTML = state.athletes.map(a => `
-
-        <tr class="hover:bg-slate-50">
-
-          <td class="p-2 text-center">
-
-            <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-emerald-600 w-4 h-4 cursor-pointer" onchange="toggleRatingField('${a.id}')">
-
-          </td>
-
-          <td class="p-2">
-
-            <div class="font-bold text-slate-900 text-xs">${a.name}</div>
-
-            <div class="text-[10px] text-slate-500">${a.pos} • OVR ${a.currentOvr}</div>
-
-          </td>
-
-          <td class="p-2 text-center">
-
-            <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-amber-600 font-bold disabled:opacity-30">
-
-          </td>
-
-          <td class="p-2 text-center">
-
-            <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-yellow-600 font-bold disabled:opacity-30">
-
-          </td>
-
-          <td class="p-2 text-center">
-
-            <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-rose-600 font-bold disabled:opacity-30">
-
-          </td>
-
-        </tr>
-
-      `).join('');
-
-    }
+  tbody.innerHTML = orderedAthletes.map(a => `
+    <tr class="hover:bg-slate-50 border-b border-slate-100">
+      <td class="p-2 text-center">
+        <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-emerald-600 w-4 h-4 cursor-pointer" onchange="toggleRatingField('${a.id}')">
+      </td>
+      <td class="p-2">
+        <div class="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+          <span class="px-1.5 py-0.2 rounded text-[10px] font-black bg-slate-100 border border-slate-200 font-mono">${a.pos}</span>
+          <span>${a.name}</span>
+        </div>
+        <div class="text-[10px] text-slate-400 font-medium">OVR ${a.currentOvr || a.ovr} • #${a.number || '-'}</div>
+      </td>
+      <td class="p-2 text-center">
+        <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-amber-600 font-bold disabled:opacity-30">
+      </td>
+      <td class="p-2 text-center">
+        <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-yellow-600 font-bold disabled:opacity-30">
+      </td>
+      <td class="p-2 text-center">
+        <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-rose-600 font-bold disabled:opacity-30">
+      </td>
+    </tr>
+  `).join('');
+}
 
 
 
@@ -6378,238 +6351,228 @@ function updateTourneyHomeAwayDashboard() {
 
 
 
-    function renderPlayerMemorialTable() {
-
+function renderPlayerMemorialTable() {
       const tbody = document.getElementById('playerMemorialTableBody');
-
       if (!tbody) return;
 
+      // 1. Mapeia todos os títulos conquistados por temporada
+      const trophiesBySeason = {};
+      (state.trophiesWon || []).forEach(t => {
+        const s = t.season || t.temporada;
+        if (s) {
+          trophiesBySeason[s] = (trophiesBySeason[s] || 0) + 1;
+        }
+      });
 
+      // 2. Calcula as estatísticas completas de TODOS os jogos salvos no banco de dados (Partidas)
+      // Isso garante que jogos da 1ª, 2ª ou qualquer temporada anterior sejam computados com exatidão
+      const matchStatsByPlayer = {};
+      (state.matches || []).forEach(m => {
+        const season = m.season || m.temporada;
 
-      const currentList = state.athletes.map(a => {
-
-        let histMatches = Number(a.matches) || 0;
-
-        let histGoals = Number(a.goals) || 0;
-
-        let histAssists = Number(a.assists) || 0;
-
-        let histSsg = Number(a.ssg) || 0;
-
-        let histRatingSum = Number(a.ratingSum) || 0;
-
-
-
-        (state.seasonsHistory || []).forEach(sh => {
-
-          const pastMe = (sh.squadSnapshot || []).find(p => String(p.id) === String(a.id));
-
-          if (pastMe) {
-
-            histMatches += Number(pastMe.matches) || 0;
-
-            histGoals += Number(pastMe.goals) || 0;
-
-            histAssists += Number(pastMe.assists) || 0;
-
-            histSsg += Number(pastMe.ssg) || 0;
-
+        // Processa as notas e presenças de cada jogador que esteve em campo
+        (m.performances || []).forEach(p => {
+          const pid = String(p.playerId);
+          if (!matchStatsByPlayer[pid]) {
+            matchStatsByPlayer[pid] = {
+              matches: 0,
+              goals: 0,
+              assists: 0,
+              ssg: 0,
+              yellow: 0,
+              red: 0,
+              ratingSum: 0,
+              seasons: new Set()
+            };
           }
 
+          matchStatsByPlayer[pid].matches += 1;
+          matchStatsByPlayer[pid].ratingSum += (Number(p.rating) || 0);
+          matchStatsByPlayer[pid].yellow += (Number(p.yellow) || 0);
+          matchStatsByPlayer[pid].red += (Number(p.red) || 0);
+          if (season) matchStatsByPlayer[pid].seasons.add(season);
+
+          // SSG (Clean Sheet) para defensores/goleiros quando a equipe não sofreu gols
+          const oppScore = Number(m.oppScore !== undefined ? m.oppScore : m.gols_contra) || 0;
+          if (oppScore === 0) {
+            matchStatsByPlayer[pid].ssg += 1;
+          }
         });
 
+        // Processa os autores dos gols e assistências da partida
+        (m.goals || []).forEach(g => {
+          if (g.scorerId) {
+            const scId = String(g.scorerId);
+            if (!matchStatsByPlayer[scId]) {
+              matchStatsByPlayer[scId] = { matches: 0, goals: 0, assists: 0, ssg: 0, yellow: 0, red: 0, ratingSum: 0, seasons: new Set() };
+            }
+            matchStatsByPlayer[scId].goals += 1;
+            if (season) matchStatsByPlayer[scId].seasons.add(season);
+          }
+          if (g.assistId) {
+            const asId = String(g.assistId);
+            if (!matchStatsByPlayer[asId]) {
+              matchStatsByPlayer[asId] = { matches: 0, goals: 0, assists: 0, ssg: 0, yellow: 0, red: 0, ratingSum: 0, seasons: new Set() };
+            }
+            matchStatsByPlayer[asId].assists += 1;
+            if (season) matchStatsByPlayer[asId].seasons.add(season);
+          }
+        });
+      });
 
+      // 3. Monta a lista dos atletas que estão atualmente no elenco
+      const currentList = state.athletes.map(a => {
+        const pid = String(a.id);
+        const pStats = matchStatsByPlayer[pid] || { matches: 0, goals: 0, assists: 0, ssg: 0, ratingSum: 0, seasons: new Set() };
 
-        const avg = histMatches > 0 ? (histRatingSum / (Number(a.matches) || 1)).toFixed(2) : '-';
+        // Usa os dados compilados das partidas se existirem; se não houver jogos salvos na aba Partidas, usa o acumulador do atleta
+        const totalMatches = Math.max(Number(a.matches) || 0, pStats.matches);
+        const totalGoals = Math.max(Number(a.goals) || 0, pStats.goals);
+        const totalAssists = Math.max(Number(a.assists) || 0, pStats.assists);
+        const totalSsg = Math.max(Number(a.ssg) || 0, pStats.ssg);
+        const totalRatingSum = Math.max(Number(a.ratingSum) || 0, pStats.ratingSum);
 
+        const avg = totalMatches > 0 ? (totalRatingSum / totalMatches).toFixed(2) : '-';
 
+        // Identifica as temporadas em que ele atuou ou esteve no clube
+        pStats.seasons.add(state.currentSeason);
+        const epocasCount = pStats.seasons.size;
+
+        // Calcula títulos conquistados nas temporadas em que o atleta participou
+        let titulosAtleta = 0;
+        pStats.seasons.forEach(s => {
+          if (trophiesBySeason[s]) {
+            titulosAtleta += trophiesBySeason[s];
+          }
+        });
+
+        // Caso os troféus não estejam separados por época, atribui o total conquistado pelo clube
+        if (titulosAtleta === 0 && (state.trophiesWon || []).length > 0 && totalMatches > 0) {
+          titulosAtleta = state.trophiesWon.length;
+        }
 
         return {
-
           id: a.id,
-
           name: a.name,
-
           eaId: a.eaId || '',
-
           photoUrl: a.photoUrl || '',
-
           pos: a.pos,
-
           nat: a.nat,
-
           isCurrent: true,
-
           statusText: 'No Elenco',
-
           statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-
-          initialOvr: a.initialOvr || a.currentOvr,
-
-          currentOvr: a.currentOvr,
-
-          matches: histMatches,
-
-          goals: histGoals,
-
-          assists: histAssists,
-
-          ssg: histSsg,
-
+          initialOvr: a.initialOvr !== undefined ? a.initialOvr : (a.ovr_inicial || a.currentOvr),
+          currentOvr: a.currentOvr || a.ovr || 70,
+          epocas: epocasCount > 1 ? `${epocasCount} épocas` : 'Atual',
+          matches: totalMatches,
+          goals: totalGoals,
+          assists: totalAssists,
+          ssg: totalSsg,
           avg: avg,
-
-          trophiesCount: (state.trophiesWon || []).length
-
+          trophiesCount: titulosAtleta
         };
-
       });
 
+      // 4. Monta a lista dos ex-atletas (transferidos/vendidos)
+      const departedList = (state.departedAthletes || state.pastAthletes || []).map(d => {
+        const pid = String(d.id);
+        const pStats = matchStatsByPlayer[pid] || { matches: 0, goals: 0, assists: 0, ssg: 0, ratingSum: 0, seasons: new Set() };
 
+        const totalMatches = Math.max(Number(d.careerMatches || d.matches) || 0, pStats.matches);
+        const totalGoals = Math.max(Number(d.careerGoals || d.goals) || 0, pStats.goals);
+        const totalAssists = Math.max(Number(d.careerAssists || d.assists) || 0, pStats.assists);
+        const totalSsg = Math.max(Number(d.careerSsg || d.ssg) || 0, pStats.ssg);
+        const totalRatingSum = Math.max(Number(d.careerRatingSum || d.ratingSum) || 0, pStats.ratingSum);
 
-      const departedList = (state.departedAthletes || []).map(d => {
+        const avg = totalMatches > 0 ? (totalRatingSum / totalMatches).toFixed(2) : '-';
+
+        let titulosAtleta = 0;
+        pStats.seasons.forEach(s => {
+          if (trophiesBySeason[s]) {
+            titulosAtleta += trophiesBySeason[s];
+          }
+        });
 
         return {
-
           id: d.id,
-
           name: d.name,
-
           eaId: d.eaId || '',
-
           photoUrl: d.photoUrl || '',
-
           pos: d.pos,
-
           nat: d.nat,
-
           isCurrent: false,
-
           statusText: `Vendido (${d.destClub || 'Outro'})`,
-
           statusClass: 'bg-slate-100 text-slate-600 border-slate-200',
-
-          initialOvr: d.initialOvr,
-
+          initialOvr: d.initialOvr || d.currentOvr,
           currentOvr: d.currentOvr,
-
-          matches: d.careerMatches,
-
-          goals: d.careerGoals,
-
-          assists: d.careerAssists,
-
-          ssg: d.careerSsg,
-
-          avg: d.careerMatches > 0 ? (d.careerRatingSum / d.careerMatches).toFixed(2) : '-',
-
-          trophiesCount: '-'
-
+          epocas: pStats.seasons.size > 0 ? `${pStats.seasons.size} épocas` : 'Anterior',
+          matches: totalMatches,
+          goals: totalGoals,
+          assists: totalAssists,
+          ssg: totalSsg,
+          avg: avg,
+          trophiesCount: titulosAtleta
         };
-
       });
-
-
 
       let combined = [...currentList, ...departedList];
-
       if (currentHistPlayerFilter === 'CURRENT') combined = combined.filter(p => p.isCurrent);
-
       if (currentHistPlayerFilter === 'PAST') combined = combined.filter(p => !p.isCurrent);
 
-
-
+      // Ordena por partidas totais
       combined.sort((a, b) => b.matches - a.matches);
 
-
-
       if (combined.length === 0) {
-
         tbody.innerHTML = `<tr><td colspan="11" class="p-6 text-center text-xs text-slate-400 italic">Nenhum atleta registrado no Memorial.</td></tr>`;
-
         return;
-
       }
 
-
-
       tbody.innerHTML = combined.map(p => {
-
         const flag = getCountryFlagImg(p.nat);
-
         const avatar = renderPlayerAvatarHtml(p, 'w-6 h-6', 'rounded-full');
-
         const ovrDiff = p.currentOvr - p.initialOvr;
-
-        const diffHtml = ovrDiff > 0 ? `<span class="text-emerald-600 font-bold text-[10px]">+${ovrDiff}</span>` : (ovrDiff < 0 ? `<span class="text-rose-600 font-bold text-[10px]">${ovrDiff}</span>` : '<span class="text-slate-400 text-[10px]">=</span>');
-
-
+        const diffHtml = ovrDiff > 0 
+          ? `<span class="text-emerald-600 font-bold text-[10px]">+${ovrDiff}</span>` 
+          : (ovrDiff < 0 
+              ? `<span class="text-rose-600 font-bold text-[10px]">${ovrDiff}</span>` 
+              : '<span class="text-slate-400 text-[10px]">=</span>');
 
         return `
-
           <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-
             <td class="py-3 px-3">
-
               <div class="flex items-center gap-2">
-
                 ${avatar}
-
                 ${flag}
-
-                <span class="font-extrabold text-slate-900 text-xs">${p.name}</span>
-
+                <span class="font-extrabold text-slate-900 text-xs cursor-pointer hover:text-indigo-600" onclick="openPlayerCareerModal('${p.id}')" title="Clique para ver a ficha histórica">${p.name}</span>
+                <button type="button" onclick="openPlayerCareerModal('${p.id}')" class="p-1 rounded bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-[10px]" title="Ver Carreira"><i class="fa-solid fa-id-card-clip"></i></button>
               </div>
-
             </td>
-
             <td class="py-3 px-3 text-center">
-
               <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-800">${p.pos}</span>
-
             </td>
-
             <td class="py-3 px-3 text-center">
-
               <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${p.statusClass}">${p.statusText}</span>
-
             </td>
-
             <td class="py-3 px-3 text-center font-mono">
-
               <span class="font-bold text-slate-800">${p.initialOvr}</span> 
-
               <i class="fa-solid fa-arrow-right text-[9px] text-slate-400 mx-1"></i>
-
               <span class="font-black text-slate-900">${p.currentOvr}</span>
-
               (${diffHtml})
-
             </td>
-
-            <td class="py-3 px-3 text-center font-semibold text-slate-500">${p.isCurrent ? 'Atual' : 'Passado'}</td>
-
+            <td class="py-3 px-3 text-center font-semibold text-slate-500">${p.epocas}</td>
             <td class="py-3 px-2 text-center font-bold text-slate-900">${p.matches}</td>
-
             <td class="py-3 px-2 text-center font-bold text-amber-600">${p.goals}</td>
-
             <td class="py-3 px-2 text-center font-bold text-blue-600">${p.assists}</td>
-
             <td class="py-3 px-2 text-center font-bold text-emerald-600">${p.ssg}</td>
-
             <td class="py-3 px-2 text-center font-extrabold text-purple-700">${p.avg}</td>
-
             <td class="py-3 px-3 text-center">
-
-              <span class="text-amber-600 font-extrabold"><i class="fa-solid fa-trophy mr-1 text-[10px]"></i> ${p.trophiesCount}</span>
-
+              <span class="text-amber-600 font-extrabold flex items-center justify-center gap-1">
+                <i class="fa-solid fa-trophy text-[10px]"></i> ${p.trophiesCount}
+              </span>
             </td>
-
           </tr>
-
         `;
-
       }).join('');
-
     }
 
   function renderMvpRankingList() {
