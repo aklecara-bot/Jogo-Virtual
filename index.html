@@ -2710,10 +2710,17 @@ Painel & Tabela Geral de MVP
           <label class="block mb-1 font-semibold text-slate-700">Clube Empréstimo</label>
           <input type="text" id="athLoanClub" placeholder="Ex: Girona, Alavés..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
         </div>
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-200">
-          <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
-          <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold text-white shadow-xs">Guardar Atleta</button>
+        <div class="flex items-center justify-between pt-3 border-t border-slate-200">
+        <!-- Botão visível apenas ao editar atleta existente -->
+          <button type="button" id="btnRetireAthlete" onclick="retireCurrentAthlete()" class="hidden px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold text-xs flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-medal text-amber-600"></i> Aposentar Jogador
+          </button>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200 text-xs">Cancelar</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold text-white text-xs shadow-xs">Guardar Atleta</button>
         </div>
+<     /div>
       </form>
     </div>
   </div>
@@ -4008,21 +4015,14 @@ function renderAthletesContainers() {
     function openAthleteModal() {
 
       document.getElementById('athleteForm').reset();
-
       document.getElementById('athId').value = "";
-
+      document.getElementById('btnRetireAthlete')?.classList.add('hidden');
       document.getElementById('athEaId').value = "";
-
       document.getElementById('athPhotoUrl').value = "";
-
       document.getElementById('athPreviewAvatar').innerText = "?";
-
       document.getElementById('playerSearchResults')?.classList.add('hidden');
-
       document.getElementById('athleteModalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-emerald-600"></i> Cadastrar Atleta`;
-
       document.getElementById('athleteModal').classList.remove('hidden');
-
     }
 
 
@@ -4051,56 +4051,100 @@ function renderAthletesContainers() {
 
     }
 
+    function retireCurrentAthlete() {
+    const idVal = document.getElementById('athId').value;
+    if (!idVal) return;
 
+    const athleteIndex = state.athletes.findIndex(a => String(a.id) === String(idVal));
+    if (athleteIndex === -1) return alert('Atleta não encontrado no plantel!');
+
+    const player = state.athletes[athleteIndex];
+
+    const confirmMsg = `Deseja realmente aposentar ${player.name}?\n\nEle será removido do elenco ativo, sua folha salarial será liberada e ele entrará para o Memorial / Hall da Fama do clube com status de APOSENTADO.`;
+    if (!confirm(confirmMsg)) return;
+
+    // 1. Garante a estrutura de ex-jogadores / aposentados
+    if (!Array.isArray(state.departedAthletes)) state.departedAthletes = [];
+    if (!Array.isArray(state.pastAthletes)) state.pastAthletes = [];
+    if (!Array.isArray(state.transfersHistory)) state.transfersHistory = [];
+
+    // 2. Arquiva o atleta com todo o seu histórico no memorial
+    const retiredRecord = {
+      id: player.id,
+      name: player.name,
+      number: player.number,
+      eaId: player.eaId || '',
+      photoUrl: player.photoUrl || '',
+      pos: player.pos,
+      nat: player.nat,
+      age: player.age,
+      initialOvr: player.initialOvr !== undefined ? player.initialOvr : player.currentOvr,
+      currentOvr: player.currentOvr,
+      status: 'APOSENTADO',
+      destClub: 'Pendurou as Chuteiras',
+      retiredSeason: state.currentSeason,
+      careerMatches: Number(player.matches) || 0,
+      careerGoals: Number(player.goals) || 0,
+      careerAssists: Number(player.assists) || 0,
+      careerSsg: Number(player.ssg) || 0,
+      careerRatingSum: Number(player.ratingSum) || 0
+   };
+
+    state.departedAthletes.push(retiredRecord);
+    state.pastAthletes.push(retiredRecord);
+
+    // 3. Registra o evento no histórico de transferências/movimentações
+    state.transfersHistory.unshift({
+      id: Date.now(),
+      temporada: state.currentSeason,
+      tipo: 'APOSENTADORIA',
+      nome: player.name,
+      pos: player.pos,
+      idade: Number(player.age) || 0,
+      valor_mercado: Number(player.marketValue) || 0,
+      valor_transferencia: 0,
+      origem: state.clubName,
+      destino: 'Aposentadoria',
+      data: new Date().toLocaleDateString('pt-PT')
+    });
+
+    // 4. Remove o atleta do elenco ativo
+    state.athletes.splice(athleteIndex, 1);
+
+    // 5. Fecha modal, salva localmente e sincroniza com o Drive/Planilha
+    closeAthleteModal();
+    saveState();
+    syncAllToCloud();
+
+    alert(`Homenagem prestada! ${player.name} aposentou-se com sucesso e agora faz parte do Memorial do clube!`);
+  }
 
     function editAthlete(id) {
 
       const a = state.athletes.find(p => String(p.id) === String(id));
-
       if (!a) return;
-
       document.getElementById('athId').value = a.id;
-
       document.getElementById('athName').value = a.name || '';
-
       document.getElementById('athNumber').value = (a.number !== undefined && a.number !== '-') ? a.number : '';
-
       document.getElementById('athEaId').value = a.eaId || '';
-
       document.getElementById('athPhotoUrl').value = a.photoUrl || '';
-
       document.getElementById('athPos').value = a.pos || 'MEI';
-
       document.getElementById('athAge').value = a.age || 20;
-
       document.getElementById('athNat').value = a.nat || 'ING';
-
       document.getElementById('athOvr').value = a.currentOvr || 70;
-
       document.getElementById('athInitialOvr').value = (a.initialOvr !== undefined) ? a.initialOvr : a.currentOvr;
-
       document.getElementById('athContract').value = (a.contractYears !== undefined) ? a.contractYears : 3;
-
       document.getElementById('athRole').value = a.role || 'Importante';
-
       document.getElementById('athMarketValue').value = a.marketValue || 0;
-
       document.getElementById('athWage').value = a.wage || 0;
-
       document.getElementById('athLoanStatus').value = a.loanStatus || 'NONE';
-
       document.getElementById('athLoanClub').value = a.loanClub || '';
-
+      document.getElementById('btnRetireAthlete')?.classList.remove('hidden');
       toggleLoanClubInput();
-
       updateModalPreviewFace();
 
-
-
       document.getElementById('athleteModalTitle').innerHTML = `<i class="fa-solid fa-user-pen text-indigo-600"></i> Editar Atleta`;
-
       document.getElementById('athleteModal').classList.remove('hidden');
-
     }
 
 
