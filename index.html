@@ -2711,16 +2711,14 @@ Painel & Tabela Geral de MVP
           <input type="text" id="athLoanClub" placeholder="Ex: Girona, Alavés..." class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 font-medium text-slate-900">
         </div>
         <div class="flex items-center justify-between pt-3 border-t border-slate-200">
-        <!-- Botão visível apenas ao editar atleta existente -->
           <button type="button" id="btnRetireAthlete" onclick="retireCurrentAthlete()" class="hidden px-3 py-2 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold text-xs flex items-center gap-1.5 transition">
             <i class="fa-solid fa-medal text-amber-600"></i> Aposentar Jogador
           </button>
-
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200 text-xs">Cancelar</button>
-          <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold text-white text-xs shadow-xs">Guardar Atleta</button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeAthleteModal()" class="px-4 py-2 rounded-lg bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200">Cancelar</button>
+            <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 font-semibold text-white shadow-xs">Guardar Atleta</button>
+          </div>
         </div>
-<     /div>
       </form>
     </div>
   </div>
@@ -3197,30 +3195,20 @@ Painel & Tabela Geral de MVP
 
     // Mapeamento com peso de prioridade tática estrita
 const TACTICAL_ORDER_MAP = {
-  // 1. Goleiro
   'GOL': 1, 'GK': 1,
-  // 2. Lateral Direito
-  'LD': 2, 'RB': 2, 'LAT D': 2,
-  // 3. Zagueiros
+  'LE':  2, 'LB': 2, 'LAT E': 2,
   'ZAG': 3, 'CB': 3, 'DEF': 3,
-  // 4. Lateral Esquerdo
-  'LE': 4, 'LB': 4, 'LAT E': 4,
-  // 5. Volante
+  'LD':  4, 'RB': 4, 'LAT D': 4,
   'VOL': 5, 'CDM': 5,
-  // 6. Meia Central
-  'MC': 6, 'CM': 6,
-  // 7. Meia Direito
-  'MD': 7, 'RM': 7,
-  // 8. Meia (Armador / Ofensivo)
-  'MEI': 8, 'CAM': 8, 'MEIA': 8,
-  // 9. Meia Esquerdo
-  'ME': 9, 'LM': 9,
-  // 10. Ponta Direita
-  'PD': 10, 'RW': 10,
-  // 11. Atacantes
-  'ATA': 11, 'ST': 11, 'CF': 11, 'SA': 11, 'ATD': 11, 'ATE': 11,
-  // 12. Ponta Esquerda
-  'PE': 12, 'LW': 12
+  'ME':  6, 'LM': 6,
+  'MC':  7, 'CM': 7,
+  'MD':  8, 'RM': 8,
+  'MEI': 9, 'CAM': 9, 'MEIA': 9,
+  'PE':  10, 'LW': 10,
+  'ATE': 11,
+  'ATA': 12, 'ST': 12, 'CF': 12, 'SA': 12,
+  'PD':  13, 'RW': 13,
+  'ATD': 14
 };
 
 function getTacticalOrderIndex(pos) {
@@ -3228,23 +3216,6 @@ function getTacticalOrderIndex(pos) {
   // Extrai a posição principal caso existam posições secundárias (ex: "ZAG LD")
   const primaryPos = String(pos).trim().toUpperCase().split(/[\s,/]+/)[0];
   return TACTICAL_ORDER_MAP[primaryPos] !== undefined ? TACTICAL_ORDER_MAP[primaryPos] : 99;
-}
-
-// Retorna uma cópia da lista de atletas ordenada taticamente
-function getOrderedAthletesList(athletesList = state.athletes) {
-  return [...athletesList]
-    .filter(a => a.status !== 'TRANSFERRED_OUT')
-    .sort((a, b) => {
-      const orderA = getTacticalOrderIndex(a.pos);
-      const orderB = getTacticalOrderIndex(b.pos);
-      if (orderA !== orderB) return orderA - orderB;
-
-      const ovrA = Number(a.currentOvr || a.ovr) || 0;
-      const ovrB = Number(b.currentOvr || b.ovr) || 0;
-      if (ovrB !== ovrA) return ovrB - ovrA;
-
-      return (a.name || a.nome || '').localeCompare(b.name || b.nome || '');
-    });
 }
 
 // Função utilitária para ordenar qualquer lista de atletas
@@ -3856,20 +3827,7 @@ function renderAthletesContainers() {
   // Mapeamento posicional estrito de cima para baixo:
   // Goleiro -> Lateral Direito -> Zagueiros -> Lateral Esquerdo -> Volante -> 
   // Meia Central -> Meia Direito -> Meia -> Meia Esquerdo -> Ponta Direita -> Atacantes -> Ponta Esquerda
-  const tacticalOrderMap = {
-    'GOL': 1, 'GK': 1,
-    'LD': 2, 'RB': 2, 'LAT D': 2,
-    'ZAG': 3, 'CB': 3, 'DEF': 3,
-    'LE': 4, 'LB': 4, 'LAT E': 4,
-    'VOL': 5, 'CDM': 5,
-    'MC': 6, 'CM': 6,
-    'MD': 7, 'RM': 7,
-    'MEI': 8, 'CAM': 8, 'MEIA': 8,
-    'ME': 9, 'LM': 9,
-    'PD': 10, 'RW': 10,
-    'ATA': 11, 'ST': 11, 'CF': 11, 'SA': 11, 'ATD': 11, 'ATE': 11,
-    'PE': 12, 'LW': 12
-  };
+  const tacticalOrderMap = TACTICAL_ORDER_MAP;
 
   const getPosOrder = (pos) => {
     if (!pos) return 99;
@@ -4015,14 +3973,22 @@ function renderAthletesContainers() {
     function openAthleteModal() {
 
       document.getElementById('athleteForm').reset();
+
       document.getElementById('athId').value = "";
       document.getElementById('btnRetireAthlete')?.classList.add('hidden');
+
       document.getElementById('athEaId').value = "";
+
       document.getElementById('athPhotoUrl').value = "";
+
       document.getElementById('athPreviewAvatar').innerText = "?";
+
       document.getElementById('playerSearchResults')?.classList.add('hidden');
+
       document.getElementById('athleteModalTitle').innerHTML = `<i class="fa-solid fa-user-plus text-emerald-600"></i> Cadastrar Atleta`;
+
       document.getElementById('athleteModal').classList.remove('hidden');
+
     }
 
 
@@ -4051,100 +4017,57 @@ function renderAthletesContainers() {
 
     }
 
-    function retireCurrentAthlete() {
-    const idVal = document.getElementById('athId').value;
-    if (!idVal) return;
 
-    const athleteIndex = state.athletes.findIndex(a => String(a.id) === String(idVal));
-    if (athleteIndex === -1) return alert('Atleta não encontrado no plantel!');
-
-    const player = state.athletes[athleteIndex];
-
-    const confirmMsg = `Deseja realmente aposentar ${player.name}?\n\nEle será removido do elenco ativo, sua folha salarial será liberada e ele entrará para o Memorial / Hall da Fama do clube com status de APOSENTADO.`;
-    if (!confirm(confirmMsg)) return;
-
-    // 1. Garante a estrutura de ex-jogadores / aposentados
-    if (!Array.isArray(state.departedAthletes)) state.departedAthletes = [];
-    if (!Array.isArray(state.pastAthletes)) state.pastAthletes = [];
-    if (!Array.isArray(state.transfersHistory)) state.transfersHistory = [];
-
-    // 2. Arquiva o atleta com todo o seu histórico no memorial
-    const retiredRecord = {
-      id: player.id,
-      name: player.name,
-      number: player.number,
-      eaId: player.eaId || '',
-      photoUrl: player.photoUrl || '',
-      pos: player.pos,
-      nat: player.nat,
-      age: player.age,
-      initialOvr: player.initialOvr !== undefined ? player.initialOvr : player.currentOvr,
-      currentOvr: player.currentOvr,
-      status: 'APOSENTADO',
-      destClub: 'Pendurou as Chuteiras',
-      retiredSeason: state.currentSeason,
-      careerMatches: Number(player.matches) || 0,
-      careerGoals: Number(player.goals) || 0,
-      careerAssists: Number(player.assists) || 0,
-      careerSsg: Number(player.ssg) || 0,
-      careerRatingSum: Number(player.ratingSum) || 0
-   };
-
-    state.departedAthletes.push(retiredRecord);
-    state.pastAthletes.push(retiredRecord);
-
-    // 3. Registra o evento no histórico de transferências/movimentações
-    state.transfersHistory.unshift({
-      id: Date.now(),
-      temporada: state.currentSeason,
-      tipo: 'APOSENTADORIA',
-      nome: player.name,
-      pos: player.pos,
-      idade: Number(player.age) || 0,
-      valor_mercado: Number(player.marketValue) || 0,
-      valor_transferencia: 0,
-      origem: state.clubName,
-      destino: 'Aposentadoria',
-      data: new Date().toLocaleDateString('pt-PT')
-    });
-
-    // 4. Remove o atleta do elenco ativo
-    state.athletes.splice(athleteIndex, 1);
-
-    // 5. Fecha modal, salva localmente e sincroniza com o Drive/Planilha
-    closeAthleteModal();
-    saveState();
-    syncAllToCloud();
-
-    alert(`Homenagem prestada! ${player.name} aposentou-se com sucesso e agora faz parte do Memorial do clube!`);
-  }
 
     function editAthlete(id) {
 
       const a = state.athletes.find(p => String(p.id) === String(id));
+
       if (!a) return;
+
       document.getElementById('athId').value = a.id;
-      document.getElementById('athName').value = a.name || '';
-      document.getElementById('athNumber').value = (a.number !== undefined && a.number !== '-') ? a.number : '';
-      document.getElementById('athEaId').value = a.eaId || '';
-      document.getElementById('athPhotoUrl').value = a.photoUrl || '';
-      document.getElementById('athPos').value = a.pos || 'MEI';
-      document.getElementById('athAge').value = a.age || 20;
-      document.getElementById('athNat').value = a.nat || 'ING';
-      document.getElementById('athOvr').value = a.currentOvr || 70;
-      document.getElementById('athInitialOvr').value = (a.initialOvr !== undefined) ? a.initialOvr : a.currentOvr;
-      document.getElementById('athContract').value = (a.contractYears !== undefined) ? a.contractYears : 3;
-      document.getElementById('athRole').value = a.role || 'Importante';
-      document.getElementById('athMarketValue').value = a.marketValue || 0;
-      document.getElementById('athWage').value = a.wage || 0;
-      document.getElementById('athLoanStatus').value = a.loanStatus || 'NONE';
-      document.getElementById('athLoanClub').value = a.loanClub || '';
       document.getElementById('btnRetireAthlete')?.classList.remove('hidden');
+
+      document.getElementById('athName').value = a.name || '';
+
+      document.getElementById('athNumber').value = (a.number !== undefined && a.number !== '-') ? a.number : '';
+
+      document.getElementById('athEaId').value = a.eaId || '';
+
+      document.getElementById('athPhotoUrl').value = a.photoUrl || '';
+
+      document.getElementById('athPos').value = a.pos || 'MEI';
+
+      document.getElementById('athAge').value = a.age || 20;
+
+      document.getElementById('athNat').value = a.nat || 'ING';
+
+      document.getElementById('athOvr').value = a.currentOvr || 70;
+
+      document.getElementById('athInitialOvr').value = (a.initialOvr !== undefined) ? a.initialOvr : a.currentOvr;
+
+      document.getElementById('athContract').value = (a.contractYears !== undefined) ? a.contractYears : 3;
+
+      document.getElementById('athRole').value = a.role || 'Importante';
+
+      document.getElementById('athMarketValue').value = a.marketValue || 0;
+
+      document.getElementById('athWage').value = a.wage || 0;
+
+      document.getElementById('athLoanStatus').value = a.loanStatus || 'NONE';
+
+      document.getElementById('athLoanClub').value = a.loanClub || '';
+
       toggleLoanClubInput();
+
       updateModalPreviewFace();
 
+
+
       document.getElementById('athleteModalTitle').innerHTML = `<i class="fa-solid fa-user-pen text-indigo-600"></i> Editar Atleta`;
+
       document.getElementById('athleteModal').classList.remove('hidden');
+
     }
 
 
@@ -4248,6 +4171,68 @@ function renderAthletesContainers() {
     }
 
 
+
+        function retireCurrentAthlete() {
+      const idVal = document.getElementById('athId').value;
+      if (!idVal) return;
+
+      const athleteIndex = state.athletes.findIndex(a => String(a.id) === String(idVal));
+      if (athleteIndex === -1) return alert('Atleta não encontrado no plantel!');
+
+      const player = state.athletes[athleteIndex];
+      const confirmMsg = `Deseja realmente aposentar ${player.name}?\n\nEle será removido do elenco ativo, sua folha salarial será liberada e ele entrará para o Memorial / Hall da Fama do clube com status de APOSENTADO.`;
+      if (!confirm(confirmMsg)) return;
+
+      if (!Array.isArray(state.departedAthletes)) state.departedAthletes = [];
+      if (!Array.isArray(state.pastAthletes)) state.pastAthletes = [];
+      if (!Array.isArray(state.transfersHistory)) state.transfersHistory = [];
+
+      const retiredRecord = {
+        id: player.id,
+        name: player.name,
+        number: player.number,
+        eaId: player.eaId || '',
+        photoUrl: player.photoUrl || '',
+        pos: player.pos,
+        nat: player.nat,
+        age: player.age,
+        initialOvr: player.initialOvr !== undefined ? player.initialOvr : player.currentOvr,
+        currentOvr: player.currentOvr,
+        status: 'APOSENTADO',
+        destClub: 'Pendurou as Chuteiras',
+        retiredSeason: state.currentSeason,
+        careerMatches: Number(player.matches) || 0,
+        careerGoals: Number(player.goals) || 0,
+        careerAssists: Number(player.assists) || 0,
+        careerSsg: Number(player.ssg) || 0,
+        careerRatingSum: Number(player.ratingSum) || 0
+      };
+
+      state.departedAthletes.push(retiredRecord);
+      state.pastAthletes.push(retiredRecord);
+
+      state.transfersHistory.unshift({
+        id: Date.now(),
+        temporada: state.currentSeason,
+        tipo: 'APOSENTADORIA',
+        nome: player.name,
+        pos: player.pos,
+        idade: Number(player.age) || 0,
+        valor_mercado: Number(player.marketValue) || 0,
+        valor_transferencia: 0,
+        origem: state.clubName,
+        destino: 'Aposentadoria',
+        data: new Date().toLocaleDateString('pt-PT')
+      });
+
+      state.athletes.splice(athleteIndex, 1);
+
+      closeAthleteModal();
+      saveState();
+      syncAllToCloud();
+
+      alert(`Homenagem prestada! ${player.name} aposentou-se com sucesso e agora faz parte do Memorial do clube!`);
+    }
 
     function deleteAthlete(id) {
 
@@ -4435,51 +4420,81 @@ function renderAthletesContainers() {
 
 
 
-function addGoalDetailRow(scorerId = '', assistId = '') {
-  const emptyMsg = document.getElementById('emptyGoalsMsg');
-  if (emptyMsg) emptyMsg.remove();
+    function addGoalDetailRow(scorerId = '', assistId = '') {
 
-  const container = document.getElementById('goalDetailsContainer');
-  const rowId = 'goal_' + Date.now() + Math.random().toString(36).substring(7);
+      const emptyMsg = document.getElementById('emptyGoalsMsg');
 
-  // 1. Obtém os atletas na sequência tática clássica (Goleiros -> Zagueiros -> Meias -> Atacantes)
-  const orderedAthletes = getOrderedAthletesList(state.athletes);
+      if (emptyMsg) emptyMsg.remove();
 
-  // 2. Monta as opções já organizadas
-  const playerOptions = orderedAthletes.map(a => 
-    `<option value="${a.id}">${a.pos} - ${a.name} (OVR ${a.currentOvr || a.ovr || 70})</option>`
-  ).join('');
 
-  const div = document.createElement('div');
-  div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs';
-  div.id = rowId;
-  div.innerHTML = `
-    <div class="sm:col-span-5">
-      <span class="text-[10px] text-slate-500 font-bold block">Marcador:</span>
-      <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900 font-semibold">
-        ${playerOptions}
-      </select>
-    </div>
-    <div class="sm:col-span-5">
-      <span class="text-[10px] text-slate-500 font-bold block">Assistência:</span>
-      <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900 font-semibold">
-        <option value="">Nenhuma / Jogada Individual</option>
-        ${playerOptions}
-      </select>
-    </div>
-    <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-2 sm:mt-0">
-      <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs border border-rose-200">
-        <i class="fa-solid fa-trash"></i>
-      </button>
-    </div>
-  `;
-  container.appendChild(div);
 
-  if (scorerId) div.querySelector('.goal-scorer-select').value = scorerId;
-  if (assistId) div.querySelector('.goal-assist-select').value = assistId;
+      const container = document.getElementById('goalDetailsContainer');
 
-  document.getElementById('matchMyScore').value = document.querySelectorAll('.goal-detail-row').length;
-}
+      const rowId = 'goal_' + Date.now() + Math.random().toString(36).substring(7);
+
+      const playerOptions = sortAthletesTactically(state.athletes).map(a => `<option value="${a.id}">${a.pos} - ${a.name} (OVR ${a.currentOvr || a.ovr || 70})</option>`).join('');
+
+
+
+      const div = document.createElement('div');
+
+      div.className = 'goal-detail-row grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-white p-2.5 rounded-lg border border-slate-200 shadow-xs';
+
+      div.id = rowId;
+
+      div.innerHTML = `
+
+        <div class="sm:col-span-5">
+
+          <span class="text-[10px] text-slate-500 font-bold block">Marcador:</span>
+
+          <select class="goal-scorer-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900">
+
+            ${playerOptions}
+
+          </select>
+
+        </div>
+
+        <div class="sm:col-span-5">
+
+          <span class="text-[10px] text-slate-500 font-bold block">Assistência:</span>
+
+          <select class="goal-assist-select w-full bg-slate-50 border border-slate-300 rounded p-1.5 text-xs text-slate-900">
+
+            <option value="">Nenhuma / Individual</option>
+
+            ${playerOptions}
+
+          </select>
+
+        </div>
+
+        <div class="sm:col-span-2 flex items-center justify-end gap-1 mt-2 sm:mt-0">
+
+          <button type="button" onclick="removeGoalDetailRow('${rowId}')" class="px-2 py-1.5 rounded bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs border border-rose-200">
+
+            <i class="fa-solid fa-trash"></i>
+
+          </button>
+
+        </div>
+
+      `;
+
+      container.appendChild(div);
+
+
+
+      if (scorerId) div.querySelector('.goal-scorer-select').value = scorerId;
+
+      if (assistId) div.querySelector('.goal-assist-select').value = assistId;
+
+
+
+      document.getElementById('matchMyScore').value = document.querySelectorAll('.goal-detail-row').length;
+
+    }
 
 
 
@@ -4501,37 +4516,51 @@ function addGoalDetailRow(scorerId = '', assistId = '') {
 
 
 
-function renderMatchAthletesPerformanceInputs() {
-  const tbody = document.getElementById('matchAthletesPerformanceBody');
-  if (!tbody) return;
+    function renderMatchAthletesPerformanceInputs() {
 
-  // Ordena os jogadores antes de renderizar as linhas
-  const orderedAthletes = getOrderedAthletesList(state.athletes);
+      const tbody = document.getElementById('matchAthletesPerformanceBody');
 
-  tbody.innerHTML = orderedAthletes.map(a => `
-    <tr class="hover:bg-slate-50 border-b border-slate-100">
-      <td class="p-2 text-center">
-        <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-emerald-600 w-4 h-4 cursor-pointer" onchange="toggleRatingField('${a.id}')">
-      </td>
-      <td class="p-2">
-        <div class="font-bold text-slate-900 text-xs flex items-center gap-1.5">
-          <span class="px-1.5 py-0.2 rounded text-[10px] font-black bg-slate-100 border border-slate-200 font-mono">${a.pos}</span>
-          <span>${a.name}</span>
-        </div>
-        <div class="text-[10px] text-slate-400 font-medium">OVR ${a.currentOvr || a.ovr} • #${a.number || '-'}</div>
-      </td>
-      <td class="p-2 text-center">
-        <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-amber-600 font-bold disabled:opacity-30">
-      </td>
-      <td class="p-2 text-center">
-        <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-yellow-600 font-bold disabled:opacity-30">
-      </td>
-      <td class="p-2 text-center">
-        <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-rose-600 font-bold disabled:opacity-30">
-      </td>
-    </tr>
-  `).join('');
-}
+      tbody.innerHTML = sortAthletesTactically(state.athletes).map(a => `
+
+        <tr class="hover:bg-slate-50">
+
+          <td class="p-2 text-center">
+
+            <input type="checkbox" id="played_${a.id}" class="played-checkbox accent-emerald-600 w-4 h-4 cursor-pointer" onchange="toggleRatingField('${a.id}')">
+
+          </td>
+
+          <td class="p-2">
+
+            <div class="font-bold text-slate-900 text-xs">${a.name}</div>
+
+            <div class="text-[10px] text-slate-500">${a.pos} • OVR ${a.currentOvr}</div>
+
+          </td>
+
+          <td class="p-2 text-center">
+
+            <input type="number" step="0.1" min="1" max="10" placeholder="6.5" id="rating_${a.id}" disabled class="rating-input w-16 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-amber-600 font-bold disabled:opacity-30">
+
+          </td>
+
+          <td class="p-2 text-center">
+
+            <input type="number" min="0" max="2" value="0" id="yellow_${a.id}" disabled class="yellow-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-yellow-600 font-bold disabled:opacity-30">
+
+          </td>
+
+          <td class="p-2 text-center">
+
+            <input type="number" min="0" max="1" value="0" id="red_${a.id}" disabled class="red-input w-12 bg-slate-50 border border-slate-300 rounded p-1 text-center text-xs text-rose-600 font-bold disabled:opacity-30">
+
+          </td>
+
+        </tr>
+
+      `).join('');
+
+    }
 
 
 
@@ -6395,11 +6424,10 @@ function updateTourneyHomeAwayDashboard() {
 
 
 
-function renderPlayerMemorialTable() {
+    function renderPlayerMemorialTable() {
       const tbody = document.getElementById('playerMemorialTableBody');
       if (!tbody) return;
 
-      // 1. Mapeia todos os títulos conquistados por temporada
       const trophiesBySeason = {};
       (state.trophiesWon || []).forEach(t => {
         const s = t.season || t.temporada;
@@ -6408,25 +6436,15 @@ function renderPlayerMemorialTable() {
         }
       });
 
-      // 2. Calcula as estatísticas completas de TODOS os jogos salvos no banco de dados (Partidas)
-      // Isso garante que jogos da 1ª, 2ª ou qualquer temporada anterior sejam computados com exatidão
       const matchStatsByPlayer = {};
       (state.matches || []).forEach(m => {
         const season = m.season || m.temporada;
 
-        // Processa as notas e presenças de cada jogador que esteve em campo
         (m.performances || []).forEach(p => {
           const pid = String(p.playerId);
           if (!matchStatsByPlayer[pid]) {
             matchStatsByPlayer[pid] = {
-              matches: 0,
-              goals: 0,
-              assists: 0,
-              ssg: 0,
-              yellow: 0,
-              red: 0,
-              ratingSum: 0,
-              seasons: new Set()
+              matches: 0, goals: 0, assists: 0, ssg: 0, yellow: 0, red: 0, ratingSum: 0, seasons: new Set()
             };
           }
 
@@ -6436,14 +6454,12 @@ function renderPlayerMemorialTable() {
           matchStatsByPlayer[pid].red += (Number(p.red) || 0);
           if (season) matchStatsByPlayer[pid].seasons.add(season);
 
-          // SSG (Clean Sheet) para defensores/goleiros quando a equipe não sofreu gols
           const oppScore = Number(m.oppScore !== undefined ? m.oppScore : m.gols_contra) || 0;
           if (oppScore === 0) {
             matchStatsByPlayer[pid].ssg += 1;
           }
         });
 
-        // Processa os autores dos gols e assistências da partida
         (m.goals || []).forEach(g => {
           if (g.scorerId) {
             const scId = String(g.scorerId);
@@ -6464,12 +6480,10 @@ function renderPlayerMemorialTable() {
         });
       });
 
-      // 3. Monta a lista dos atletas que estão atualmente no elenco
       const currentList = state.athletes.map(a => {
         const pid = String(a.id);
         const pStats = matchStatsByPlayer[pid] || { matches: 0, goals: 0, assists: 0, ssg: 0, ratingSum: 0, seasons: new Set() };
 
-        // Usa os dados compilados das partidas se existirem; se não houver jogos salvos na aba Partidas, usa o acumulador do atleta
         const totalMatches = Math.max(Number(a.matches) || 0, pStats.matches);
         const totalGoals = Math.max(Number(a.goals) || 0, pStats.goals);
         const totalAssists = Math.max(Number(a.assists) || 0, pStats.assists);
@@ -6478,19 +6492,14 @@ function renderPlayerMemorialTable() {
 
         const avg = totalMatches > 0 ? (totalRatingSum / totalMatches).toFixed(2) : '-';
 
-        // Identifica as temporadas em que ele atuou ou esteve no clube
         pStats.seasons.add(state.currentSeason);
         const epocasCount = pStats.seasons.size;
 
-        // Calcula títulos conquistados nas temporadas em que o atleta participou
         let titulosAtleta = 0;
         pStats.seasons.forEach(s => {
-          if (trophiesBySeason[s]) {
-            titulosAtleta += trophiesBySeason[s];
-          }
+          if (trophiesBySeason[s]) titulosAtleta += trophiesBySeason[s];
         });
 
-        // Caso os troféus não estejam separados por época, atribui o total conquistado pelo clube
         if (titulosAtleta === 0 && (state.trophiesWon || []).length > 0 && totalMatches > 0) {
           titulosAtleta = state.trophiesWon.length;
         }
@@ -6517,7 +6526,6 @@ function renderPlayerMemorialTable() {
         };
       });
 
-      // 4. Monta a lista dos ex-atletas (transferidos/vendidos)
       const departedList = (state.departedAthletes || state.pastAthletes || []).map(d => {
         const pid = String(d.id);
         const pStats = matchStatsByPlayer[pid] || { matches: 0, goals: 0, assists: 0, ssg: 0, ratingSum: 0, seasons: new Set() };
@@ -6532,10 +6540,12 @@ function renderPlayerMemorialTable() {
 
         let titulosAtleta = 0;
         pStats.seasons.forEach(s => {
-          if (trophiesBySeason[s]) {
-            titulosAtleta += trophiesBySeason[s];
-          }
+          if (trophiesBySeason[s]) titulosAtleta += trophiesBySeason[s];
         });
+
+        const isRetired = d.status === 'APOSENTADO' || d.destClub === 'Pendurou as Chuteiras';
+        const statusText = isRetired ? 'Aposentado 🎖️' : `Vendido (${d.destClub || 'Outro'})`;
+        const statusClass = isRetired ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-600 border-slate-200';
 
         return {
           id: d.id,
@@ -6545,8 +6555,8 @@ function renderPlayerMemorialTable() {
           pos: d.pos,
           nat: d.nat,
           isCurrent: false,
-          statusText: `Vendido (${d.destClub || 'Outro'})`,
-          statusClass: 'bg-slate-100 text-slate-600 border-slate-200',
+          statusText: statusText,
+          statusClass: statusClass,
           initialOvr: d.initialOvr || d.currentOvr,
           currentOvr: d.currentOvr,
           epocas: pStats.seasons.size > 0 ? `${pStats.seasons.size} épocas` : 'Anterior',
@@ -6563,7 +6573,6 @@ function renderPlayerMemorialTable() {
       if (currentHistPlayerFilter === 'CURRENT') combined = combined.filter(p => p.isCurrent);
       if (currentHistPlayerFilter === 'PAST') combined = combined.filter(p => !p.isCurrent);
 
-      // Ordena por partidas totais
       combined.sort((a, b) => b.matches - a.matches);
 
       if (combined.length === 0) {
